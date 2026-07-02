@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Row, Col, Form, Button } from "react-bootstrap";
 import deleteIcon from "../../../../assets/delete_icon.png";
+import { useTranslation } from "react-i18next";
 const DynamicField = ({
   field,
   updateField,
@@ -10,6 +11,7 @@ const DynamicField = ({
   removeOption,
   isViewMode = false,
 }) => {
+  const { t } = useTranslation("jobPostingsList");
   return (
     <Card className="mb-3 shadow-sm">
       <Card.Body>
@@ -17,12 +19,12 @@ const DynamicField = ({
           <Col md={5}>
             <Form.Group>
               <Form.Label>
-                Label <span className="text-danger">*</span>
+                {t("jobPostingsList:label")} <span className="text-danger">*</span>
               </Form.Label>
 
               <Form.Control
                 value={field.label}
-                placeholder="Enter Label"
+                placeholder={t("jobPostingsList:enter_label")}
                 disabled={isViewMode}
                 onChange={(e) => updateField(field.id, "label", e.target.value)}
               />
@@ -33,7 +35,7 @@ const DynamicField = ({
 
           <Col md={3}>
             <Form.Group>
-              <Form.Label>Required</Form.Label>
+              <Form.Label>{t("jobPostingsList:required")}</Form.Label>
 
               <Form.Check
                 type="switch"
@@ -64,11 +66,11 @@ const DynamicField = ({
           <Row className="mt-3">
             <Col md={6}>
               <Form.Group>
-                <Form.Label>Placeholder</Form.Label>
+                <Form.Label>{t("jobPostingsList:placeholder")}</Form.Label>
 
                 <Form.Control
                   value={field.placeholder}
-                  placeholder="Enter Placeholder"
+                  placeholder={t("jobPostingsList:enter_placeholder")}
                   disabled={isViewMode}
                   onChange={(e) => updateField(field.id, "placeholder", e.target.value)}
                 />
@@ -77,7 +79,7 @@ const DynamicField = ({
 
             <Col md={6}>
               <Form.Group>
-                <Form.Label>Character Limit</Form.Label>
+                <Form.Label>{t("jobPostingsList:character_limit")}</Form.Label>
 
                 <Form.Control
                   type="number"
@@ -95,14 +97,14 @@ const DynamicField = ({
 
         {field.type === "dropdown" && (
           <div className="mt-3">
-            <Form.Label>Dropdown Options</Form.Label>
+            <Form.Label>{t("jobPostingsList:dropdown_options")}</Form.Label>
 
             {field.options.map((option, index) => (
               <Row key={index} className="mb-2">
                 <Col md={10}>
                   <Form.Control
                     value={option}
-                    placeholder={`Option ${index + 1}`}
+                    placeholder={t("jobPostingsList:option", { index: index + 1 })}
                     disabled={isViewMode}
                     onChange={(e) => updateOption(field.id, index, e.target.value)}
                   />
@@ -123,7 +125,7 @@ const DynamicField = ({
 
             {!isViewMode && (
               <Button size="sm" variant="primary" onClick={() => addOption(field.id)}>
-                + Add Option
+                + {t("jobPostingsList:add_option")}
               </Button>
             )}
           </div>
@@ -134,7 +136,7 @@ const DynamicField = ({
         {field.type === "date" && (
           <div className="mt-3">
             <Form.Text className="text-muted">
-              Date field will display a calendar while filling the form.x
+              {t("jobPostingsList:date_field_description")}
             </Form.Text>
           </div>
         )}

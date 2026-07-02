@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import DynamicField from "./DynamicField";
 import "../../../../style/css/EducationModal.css";
-
-const FIELD_TYPES = [
-  { label: "Textbox", value: "text" },
-  { label: "Dropdown", value: "dropdown" },
-  { label: "Date", value: "date" },
-];
+import { useTranslation } from "react-i18next";
 
 const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }) => {
+  const { t } = useTranslation("translation");
+
+  const FIELD_TYPES = [
+    { label: t("jobPostingsList:text"), value: "text" },
+    { label: t("jobPostingsList:dropdown"), value: "dropdown" },
+    { label: t("jobPostingsList:date"), value: "date" },
+  ];
   const [title, setTitle] = useState("");
   const [fields, setFields] = useState([]);
   const [generatedJson, setGeneratedJson] = useState(null);
@@ -44,7 +46,7 @@ const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }
           ...field,
           [key]: value,
           ...(key === "label" && {
-            error: value.trim() ? "" : "This field is required",
+            error: value.trim() ? "" : "{t('jobPostingsList:label_required')}",
           }),
         };
       })
@@ -104,7 +106,7 @@ const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }
         hasError = true;
         return {
           ...field,
-          error: "This field is required",
+          error: t("jobPostingsList:label_required"),
         };
       }
 
