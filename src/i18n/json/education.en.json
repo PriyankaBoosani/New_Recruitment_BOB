@@ -32,5 +32,11 @@
    "group_placeholder": "Enter group",
   "course_code": "Course Code",
   "specialization_name": "Specialization Name",
-  "specialization_code": "Specialization Code"
+  "specialization_code": "Specialization Code",
+    "course_required": "Course is required",
+  "view_education": "View Education",
+  "edit_education": "Edit Education",
+  "course_code_required": "Course Code is required",
+  "specialization_code_required": "Specialization Code is required",
+  "duplicate_specialization_code": "Duplicate specialization code"
 }

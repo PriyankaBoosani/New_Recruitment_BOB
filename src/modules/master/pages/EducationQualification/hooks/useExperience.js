@@ -150,6 +150,14 @@ if (field === "specialization") {
         : t("education:course_code_required", "Course code is required");
     }
 
+
+
+    if (field === "group") {
+  fieldError = value?.trim()
+    ? null
+    : t("education:group_required", "Group is required");
+}
+
     if (field === "specialization") {
       fieldError = validateSpecialization(
         updated[formIndex].specializationOthers
@@ -322,6 +330,24 @@ const saveExperience = async () => {
       currentId: formData[0].educationQualificationsId,
       editMode: isEditMode,
     });
+
+
+    // ===== Group Validation =====
+    const hideGroupForCourse = [
+      "Any Graduation",
+      "Any Post-Graduation",
+    ].includes(formData[0].course?.trim());
+
+    const showTopGroup =
+      !hideGroupForCourse &&
+      (formData[0].specializationOthers?.length || 0) === 0;
+
+    if (showTopGroup && !formData[0].group?.trim()) {
+      newErrors.group = t(
+        "education:group_required",
+        "Group is required"
+      );
+    }
 
     setErrors([newErrors]);
 
