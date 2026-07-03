@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+import Select from "react-select";
 import "../../../../../style/Experience.css";
 import { useTranslation } from "react-i18next";
 import deleteIcon from "../../../../../assets/delete_icon.png";
@@ -16,7 +17,7 @@ const ExperienceModal = ({
   isViewing,
   isEditing,
   educationOptions,
-  isSubmitting
+  groupOptions
 }) => {
   const { t } = useTranslation(["education", "common"]);
 
@@ -59,14 +60,21 @@ const ExperienceModal = ({
     };
   };
 
+  
+
   return (
-    <Modal show={show} onHide={handleCloseModal} size="lg" centered>
+   <Modal
+  show={show}
+  onHide={handleCloseModal}
+  centered
+  dialogClassName="education-modal"
+>
       <Modal.Header closeButton className="modal-header-custom">
         <Modal.Title className="cerhead">
           {isViewing
-            ? "View Education"
+            ? t("education:view_education")
             : isEditing
-              ? "Edit Education"
+              ? t("education:edit_education")
               : t("education:title")}
         </Modal.Title>
       </Modal.Header>
@@ -77,12 +85,21 @@ const ExperienceModal = ({
             form.specializationOthers
           );
 
+          const hideGroupForCourse = [
+  "Any Graduation",
+  "Any Post-Graduation",
+].includes(form.course?.trim());
+
+const showTopGroup =
+  !hideGroupForCourse &&
+  (form.specializationOthers?.length || 0) === 0;
+
           return (
             <div key={formIndex} className="border rounded p-3 mb-3">
               {/* ✅ FIRST ROW */}
               <div className="row g-3">
                 {/* EDUCATION LEVEL */}
-                <div className="col-md-4">
+             <div className="col-md-4">
                   <label className="form-label">
                     {t("education:education_level")}{" "}
                     <span className="text-danger">*</span>
@@ -96,7 +113,7 @@ const ExperienceModal = ({
                     }
                     disabled={isViewing}
                   >
-                    <option value="">Select</option>
+                    <option value="">{t("common:select")}</option>
                     {educationOptions?.map((item) => (
                       <option
                         key={item.documentTypeId}
@@ -115,7 +132,7 @@ const ExperienceModal = ({
                 </div>
 
                 {/* COURSE */}
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <label className="form-label">
                     {t("education:course")}{" "}
                     <span className="text-danger">*</span>
@@ -144,7 +161,7 @@ const ExperienceModal = ({
                   )}
                 </div>
 
-                <div className="col-md-4">
+              <div className="col-md-2">
                   <label className="form-label">
                     {t("education:course_code")}{" "}
                     <span className="text-danger">*</span>
@@ -157,9 +174,8 @@ const ExperienceModal = ({
                   ) : (
                     <input
                       type="text"
-                      className={`form-control ${
-                        errors[formIndex]?.courseCode ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors[formIndex]?.courseCode ? "is-invalid" : ""
+                        }`}
                       value={form.courseCode}
                       placeholder={t("education:course_code_placeholder")}
                       onChange={(e) =>
@@ -174,7 +190,116 @@ const ExperienceModal = ({
                     </small>
                   )}
                 </div>
+
+
+
+                {/* {showTopGroup && (
+ <div className="col">
+    <label className="form-label">
+      {t("education:group")}
+      <span className="text-danger">*</span>
+    </label>
+
+    <select
+     options={groupOptions}
+      className={`form-select ${
+        errors[formIndex]?.group ? "is-invalid" : ""
+      }`}
+      value={groupOptions.find(x => x.value === form.group)}
+       onChange={(option) =>
+    onChange(formIndex, "group", option?.value || "")
+    
+  }
+  menuPlacement="bottom"
+  menuPosition="fixed"
+      
+    >
+      <option value="">{t("common:select")}</option>
+
+      {groupOptions?.map((item) => (
+        <option
+          key={item.value}
+          value={item.value}
+        >
+          {item.label}
+        </option>
+      ))}
+    </select>
+
+    <small className="text-danger">
+      {errors[formIndex]?.group}
+    </small>
+  </div>
+)} */}
+
+
+
+{showTopGroup && (
+  <div className="col">
+    <label className="form-label">
+      {t("education:group")}
+      <span className="text-danger">*</span>
+    </label>
+
+    <Select
+      classNamePrefix="react-select"
+      className={errors[formIndex]?.group ? "is-invalid" : ""}
+      options={groupOptions}
+      value={
+        groupOptions.find((option) => option.value === form.group) || null
+      }
+      onChange={(option) =>
+        onChange(formIndex, "group", option?.value || "")
+      }
+      placeholder={t("common:select")}
+      isDisabled={isViewing}
+      menuPlacement="bottom"
+      menuPosition="fixed"
+      menuShouldScrollIntoView={false}
+      styles={{
+        control: (base, state) => ({
+          ...base,
+          minHeight: "46px",
+          borderColor: errors[formIndex]?.group
+            ? "#dc3545"
+            : state.isFocused
+            ? "#86b7fe"
+            : "#ced4da",
+          boxShadow: "none",
+          "&:hover": {
+            borderColor: state.isFocused ? "#86b7fe" : "#ced4da",
+          },
+        }),
+        menu: (base) => ({
+          ...base,
+          zIndex: 9999,
+        }),
+      }}
+    />
+
+    <small className="text-danger">
+      {errors[formIndex]?.group}
+    </small>
+  </div>
+)}
+                
               </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
               <div className="row mt-3">
                 <div className="col-md-12">
                   {/* TITLE ALWAYS TOP */}
@@ -184,8 +309,11 @@ const ExperienceModal = ({
                         {t("education:specialization")}
                       </label>
 
-                      <div className="row g-2 align-items-start mb-2">
-                        <div className="col-md-5">
+                    <div
+  className="row g-2 align-items-start"
+  style={{ marginBottom: "2px" }}
+>
+                        <div className="col-md-4">
                           <label
                             className="form-label"
                             style={{ fontSize: "13px", fontWeight: "400" }}
@@ -194,7 +322,7 @@ const ExperienceModal = ({
                           </label>
                         </div>
 
-                        <div className="col-md-5">
+                        <div className="col-md-4">
                           <label
                             className="form-label"
                             style={{ fontSize: "13px", fontWeight: "400" }}
@@ -202,21 +330,31 @@ const ExperienceModal = ({
                             {t("education:specialization_code")}
                           </label>
                         </div>
+                        <div className="col-md-3">
+  <label
+    className="form-label"
+    style={{ fontSize: "13px", fontWeight: "400" }}
+  >
+    {t("education:group")}
+  </label>
+</div>
 
-                        <div className="col-md-2"></div>
+                      <div className="col-md-1"></div>
                       </div>
                     </>
                   )}
                   {isViewing ? (
                     <div
-                      style={{
-                        maxHeight: "220px",
-                        overflowY: "auto",
-                        overflowX: "hidden",
-                        paddingRight: "5px",
-                      }}
+  style={{
+    maxHeight: "220px",
+    overflowY: "auto",
+    overflowX: "hidden",
+    paddingRight: "5px",
+    marginTop: "0px",
+  }}
+
                     >
-                      <div className="row">
+                     
                         {form.specializationOthers
                           ?.filter(
                             (s) =>
@@ -226,11 +364,12 @@ const ExperienceModal = ({
                                 s.name.trim().length > 0)
                           )
                           .map((s, i) => (
-                            <div key={i} className="col-md-12 mb-2">
+                      <div key={i} className="col-md-12 mb-2">
                               <div className="row g-2 align-items-start">
                                 {/* SPECIALIZATION NAME */}
-                                <div className="col-md-5">
+                                <div className="col-md-4">
                                   <input
+                                  style={{  width: "100%"}}
                                     type="text"
                                     className="form-control-view"
                                     value={typeof s === "string" ? s : s.name}
@@ -239,25 +378,46 @@ const ExperienceModal = ({
                                 </div>
 
                                 {/* SPECIALIZATION CODE */}
-                                <div className="col-md-5">
-                                  <input
-                                    type="text"
-                                    className="form-control-view"
-                                    value={
-                                      typeof s === "object"
-                                        ? s.code || "-"
-                                        : "-"
-                                    }
-                                    readOnly
-                                  />
-                                </div>
+                          {/* SPECIALIZATION CODE */}
+<div className="col-md-4">
+  <input
+    type="text"
+      style={{  width: "100%"}}
+    className="form-control-view"
+    value={
+      typeof s === "object"
+        ? s.code || "-"
+        : "-"
+    }
+    readOnly
+  />
+</div>
 
-                                {/* EMPTY SPACE LIKE DELETE BUTTON */}
-                                <div className="col-md-2"></div>
+{/* GROUP */}
+<div className="col-md-4">
+  <input
+    type="text"
+      style={{  width: "100%"}}
+    className="form-control-view"
+  value={
+  typeof s === "object"
+    ? (
+        s.groupName ||
+        groupOptions.find(g => g.value === s.group)?.label ||
+        "-"
+      )
+    : "-"
+}
+    readOnly
+  />
+</div>
+
+<div className="col-md-1"></div>
                               </div>
                             </div>
                           ))}
-                      </div>
+                          
+                     
                     </div>
                   ) : (
                     <>
@@ -271,22 +431,21 @@ const ExperienceModal = ({
                             paddingRight: "5px",
                           }}
                         >
-                          
+
                           <div className="row">
                             {form.specializationOthers.map((val, i) => (
                               <div key={i} className="col-md-12 mb-2">
                                 <div className="row g-2 align-items-start">
                                   {/* SPECIALIZATION NAME */}
-                                  <div className="col-md-5">
+                                 <div className="col-md-4">
                                     <input
                                       type="text"
-                                      className={`form-control ${
-                                        duplicateNames.has(i)
+                                      className={`form-control ${duplicateNames.has(i)
                                           ? "is-invalid"
                                           : ""
-                                      }`}
+                                        }`}
                                       value={val?.name || ""}
-                                      placeholder="Specialization Name"
+                                      placeholder={t("education:specialization_name")}
                                       onChange={(e) =>
                                         onChange(
                                           formIndex,
@@ -299,54 +458,131 @@ const ExperienceModal = ({
                                   </div>
 
                                   {/* SPECIALIZATION CODE */}
-                                  <div className="col-md-5">
-                                    <input
-                                      type="text"
-                                      className={`form-control ${
-                                        duplicateCodes.has(i)
-                                          ? "is-invalid"
-                                          : ""
-                                      }`}
-                                      value={val?.code || ""}
-                                      placeholder="Specialization Code"
-                                      onChange={(e) =>
-                                        onChange(
-                                          formIndex,
-                                          "specializationCode",
-                                          e.target.value,
-                                          i
-                                        )
-                                      }
-                                    />
-                                  </div>
+                               {/* SPECIALIZATION CODE */}
+<div className="col-md-4">
+  <input
+    type="text"
+    className={`form-control ${
+      duplicateCodes.has(i) ? "is-invalid" : ""
+    }`}
+    value={val?.code || ""}
+    placeholder={t("education:specialization_code")}
+    onChange={(e) =>
+      onChange(
+        formIndex,
+        "specializationCode",
+        e.target.value,
+        i
+      )
+    }
+  />
+</div>
 
-                                  {/* DELETE BUTTON */}
-                                  <div className="col-md-2 d-flex align-items-center">
-                                    {(!isEditing ||
+{/* GROUP */}
+{/* <div className="col-md-3">
+  <select
+    className="form-select"
+    value={val?.group || ""}
+    onChange={(e) =>
+      onChange(
+        formIndex,
+        "specializationGroup",
+        e.target.value,
+        i
+      )
+    }
+  >
+    <option value="">{t("common:select")}</option>
+
+    {groupOptions?.map((item) => (
+      <option key={item.value} value={item.value}>
+        {item.label}
+      </option>
+    ))}
+  </select>
+</div> */}
+
+
+{/* GROUP */}
+<div className="col-md-3">
+  <Select
+    classNamePrefix="react-select"
+    options={groupOptions}
+    value={
+      groupOptions.find(
+        (option) => option.value === val?.group
+      ) || null
+    }
+    onChange={(option) =>
+      onChange(
+        formIndex,
+        "specializationGroup",
+        option?.value || "",
+        i
+      )
+    }
+    placeholder={t("common:select")}
+    menuPlacement="bottom"
+    menuPosition="fixed"
+    menuShouldScrollIntoView={false}
+    styles={{
+      control: (base, state) => ({
+        ...base,
+        minHeight: "38px",
+        borderColor: state.isFocused ? "#86b7fe" : "#ced4da",
+        boxShadow: "none",
+        "&:hover": {
+          borderColor: "#86b7fe",
+        },
+      }),
+      menu: (base) => ({
+        ...base,
+        zIndex: 9999,
+      }),
+    }}
+  />
+</div>
+
+{/* DELETE BUTTON */}
+<div className="col-md-1 d-flex align-items-center justify-content-center">                                {(!isEditing ||
                                       (isEditing && !val?.id)) && (
-                                      <Button
-                                        type="button"
-                                        variant="link"
-                                        className="action-btn delete-btn"
-                                        onClick={() =>
-                                          onRemoveSpec(formIndex, i)
-                                        }
-                                      >
-                                        <img
-                                          src={deleteIcon}
-                                          alt="Delete"
-                                          className="icon-16"
-                                        />
-                                      </Button>
-                                    )}
+                                        <Button
+                                          type="button"
+                                          variant="link"
+                                          className="action-btn delete-btn"
+                                          onClick={() =>
+                                            onRemoveSpec(formIndex, i)
+                                          }
+                                        >
+                                          <img
+                                            src={deleteIcon}
+                                            alt="Delete"
+                                            className="icon-16"
+                                          />
+                                        </Button>
+                                      )}
                                   </div>
                                 </div>
-                                <div className="row mt-1">
+                              <div
+  className="row"
+  style={{
+    marginTop: "2px",
+    minHeight: "18px"
+  }}
+>
                                   {/* NAME ERROR */}
-                                  <div className="col-md-5">
+                                <div className="col-md-4">
                                     {/* Duplicate Name */}
                                     {duplicateNames.has(i) && (
-                                      <small className="text-danger">
+                                     <small
+  className="text-danger"
+  style={{
+    fontSize: "12px",
+    lineHeight: "14px",
+    marginTop: "2px",
+    display: "block"
+  }}
+>
                                         {t(
                                           "education:duplicate_specialization"
                                         )}
@@ -356,7 +592,15 @@ const ExperienceModal = ({
                                     {/* Name Required */}
                                     {val?.code?.trim() &&
                                       !val?.name?.trim() && (
-                                        <small className="text-danger">
+                                      <small
+  className="text-danger"
+  style={{
+    fontSize: "12px",
+    lineHeight: "14px",
+    marginTop: "2px",
+    display: "block"
+  }}
+>
                                           {t(
                                             "education:specialization_required",
                                             "Specialization name is required"
@@ -366,10 +610,18 @@ const ExperienceModal = ({
                                   </div>
 
                                   {/* CODE ERROR */}
-                                  <div className="col-md-5">
+                                  <div className="col-md-4">
                                     {/* Duplicate Code */}
                                     {duplicateCodes.has(i) && (
-                                      <small className="text-danger">
+                                     <small
+  className="text-danger"
+  style={{
+    fontSize: "12px",
+    lineHeight: "14px",
+    marginTop: "2px",
+    display: "block"
+  }}
+>
                                         {t(
                                           "education:duplicate_specialization_code",
                                           "Duplicate specialization code"
@@ -377,19 +629,47 @@ const ExperienceModal = ({
                                       </small>
                                     )}
 
+
                                     {/* Code Required */}
-                                    {val?.name?.trim() &&
-                                      !val?.code?.trim() && (
-                                        <small className="text-danger">
+                                    
+                                  {val?.name?.trim() &&
+ !val?.code?.trim() &&
+ !duplicateCodes.has(i) && (
+                                      <small
+  className="text-danger"
+  style={{
+    fontSize: "12px",
+    lineHeight: "14px",
+    marginTop: "2px",
+    display: "block"
+  }}
+>
                                           {t(
                                             "education:specialization_code_required",
                                             "Specialization code is required"
                                           )}
                                         </small>
                                       )}
+                                      
                                   </div>
+                                  
+<div className="col-md-3">
+  {val?.name?.trim() && !val?.group?.trim() && (
+    <small
+      className="text-danger"
+      style={{
+        fontSize: "12px",
+        lineHeight: "14px",
+        marginTop: "2px",
+        display: "block",
+      }}
+    >
+      {t("education:group_required")}
+    </small>
+  )}
+</div>
 
-                                  <div className="col-md-2"></div>
+<div className="col-md-1"></div>
                                 </div>
                               </div>
                             ))}
@@ -413,7 +693,7 @@ const ExperienceModal = ({
                 </div>
               </div>
 
-              
+
             </div>
           );
         })}
@@ -421,12 +701,12 @@ const ExperienceModal = ({
 
       <Modal.Footer className="modal-footer-custom">
         <Button variant="outline-secondary" onClick={handleCloseModal}>
-          {isViewing ? "Close" : t("common:cancel")}
+        {isViewing ? t("common:close") : t("common:cancel")}
         </Button>
 
         {!isViewing && (
-          <Button variant="primary" onClick={saveExperience} disabled={isSubmitting}>
-            {isEditing ? "Update" : t("common:save")}
+          <Button variant="primary" onClick={saveExperience}>
+            {isEditing ? t("common:update") : t("common:save")}
           </Button>
         )}
       </Modal.Footer>

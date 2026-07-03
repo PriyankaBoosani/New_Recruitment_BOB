@@ -71,12 +71,14 @@ const EducationTable = ({
                     {item.course}({item.qualificationCode})
                   </td>
 
-                  <td>
-                    {item.specialization
-                      .map((s) => `${s.name} (${s.code})`)
-                      .join(", ")}
-                  </td>
-
+               <td>
+  {item.specialization
+    .map(
+      (s) =>
+        `${s.name} (${s.code})${s.groupName ? ` - ${s.groupName}` : ""}`
+    )
+    .join(", ")}
+</td>
                   <td>
                     <div className="action-buttons">
                       {/* VIEW */}

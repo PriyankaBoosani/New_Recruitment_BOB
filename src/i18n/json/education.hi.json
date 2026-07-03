@@ -16,6 +16,7 @@
   "delete": "हटाएं",
   "cancel": "रद्द करें",
   "confirm_delete": "हटाने की पुष्टि करें",
+  "course_required": "पाठ्यक्रम आवश्यक है",
   "education_details": "शिक्षा विवरण",
   "search_placeholder": "शिक्षा खोजें",
   "validation_error": "कृपया त्रुटियों को ठीक करें",
@@ -24,6 +25,17 @@
   "deleted_success": "सफलतापूर्वक हटाया गया",
   "invalid_characters": "अमान्य अक्षर",
   "duplicate_specialization": "डुप्लिकेट विशेषज्ञता",
+  "group_required": "समूह आवश्यक है",
+  "group": "समूह",
   "duplicate_course": "यह कोर्स पहले से मौजूद है",
-  "specialization_required": "विशेषज्ञता आवश्यक है"
+  "specialization_required": "विशेषज्ञता आवश्यक है",
+  "view_education": "शिक्षा देखें",
+  "edit_education": "शिक्षा संपादित करें",
+  "course_code": "पाठ्यक्रम कोड",
+  "course_code_placeholder": "पाठ्यक्रम कोड दर्ज करें",
+  "course_code_required": "पाठ्यक्रम कोड आवश्यक है",
+  "specialization_name": "विशेषज्ञता का नाम",
+  "specialization_code": "विशेषज्ञता कोड",
+  "specialization_code_required": "विशेषज्ञता कोड आवश्यक है",
+  "duplicate_specialization_code": "डुप्लिकेट विशेषज्ञता कोड"
 }

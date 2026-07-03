@@ -27,6 +27,9 @@
   "duplicate_course": "Course already exists",
   "specialization_required": "Specialization is required",
   "course": "Course",
+   "group_required": "Group is required",
+   "group": "Group",
+   "group_placeholder": "Enter group",
   "course_code": "Course Code",
   "specialization_name": "Specialization Name",
   "specialization_code": "Specialization Code"

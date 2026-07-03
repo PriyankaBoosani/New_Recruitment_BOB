@@ -26,6 +26,12 @@ const masterApiService = {
       },
     });
   },
+
+    getEducationGroups: () =>
+  apis.get("/master-dd-data/get/edu-groups"),
+
+
+
   deleteUser: (id) => apis.delete(`/user/delete/${id}`),
 
   // city
