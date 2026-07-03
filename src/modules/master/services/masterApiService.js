@@ -319,6 +319,9 @@ const masterApiService = {
     }),
 
   getRequestTypes: () => apis.get("/master-dd-data/get/request-types"),
+  getExServiceCategories: () => apis.get(
+    "/master-dd-data/get/ex-service-men"
+  ),
 };
 
 export default masterApiService;

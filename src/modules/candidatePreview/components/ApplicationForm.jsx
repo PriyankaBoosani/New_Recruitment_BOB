@@ -51,6 +51,8 @@ const ApplicationForm = ({
 
   const navigate = useNavigate();
   const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3", "4"]);
+  const [exServicemen, setExServicemen] = useState([]);
+
   const [criteria, setCriteria] = useState({});
   const location = useLocation();
   const isInterviewView = location.state?.fromInterviewPool;
@@ -85,6 +87,19 @@ const ApplicationForm = ({
 
   useEffect(() => {}, [candidate]);
 
+ useEffect(() => {
+  const fetchMasterData = async () => {
+    try {
+      const exServiceRes = await masterApiService.getExServiceCategories();
+      console.log("exServiceRes", exServiceRes.data);
+      setExServicemen(exServiceRes.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchMasterData();
+}, []);
   const [screeningForm, setScreeningForm] = useState({
     applicationId,
     candidateId,
@@ -501,7 +516,12 @@ const ApplicationForm = ({
       setDocStatusLoading(false);
     }
   };
-
+ const exServiceName =
+    exServicemen.find(
+      (item) =>
+        item.exServicemanCategoryId === previewData?.personalDetails?.exService,
+    )?.exsCategoryName || "Not Applicable";
+    console.log("exServiceName", exServiceName);
   // const refreshDocStatuses = async () => {
   //   try {
   //     setDocStatusLoading(true);
@@ -1328,8 +1348,8 @@ const ApplicationForm = ({
                   <tr>
                     <td className="fw-med">{t("ex_serviceman")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {data.personalDetails.exService || "N/A"}
-                    </td>
+                        {exServiceName}
+                      </td>
                     <td className="fw-med">{t("physical_disability")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.physicalDisability || "N"}

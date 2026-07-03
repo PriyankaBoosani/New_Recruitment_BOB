@@ -191,7 +191,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
       address: presentAddressFull + " - " + address.pincode || "-",
       permanentAddress: permanentAddressFull + " - " + address.permanentPincode || "-",
 
-      exService: yesNo(profile.exServiceman),
+     // exService: yesNo(profile.exServiceman),
+     exService: profile.exServiceman,
       physicalDisability: yesNo(profile.disability),
       centralGovtEmployment: yesNo(profile.centralGovtEmployed),
       servingLowerPost: yesNo(profile.employedInLowerPost),
