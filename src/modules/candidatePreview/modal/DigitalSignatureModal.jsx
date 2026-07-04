@@ -107,7 +107,7 @@ const DigitalSignatureModal = ({
       setLoading(true);
       setValidationErrors([]);
 
-      const res = await jobPositionApiService.uploadSignedOffers(file);
+      const res = await jobPositionApiService.uploadSignedOffers(file,positionId);
 
       if (res?.success === true) {
         const { successCount = 0, failureCount = 0 } = res.data || {};

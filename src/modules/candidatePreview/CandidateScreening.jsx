@@ -3504,6 +3504,7 @@ export default function CandidateScreening({ selectedJob }) {
       <DigitalSignatureModal
         showDigitalSignatureModal={showDigitalSignatureModal}
         setShowDigitalSignatureModal={setShowDigitalSignatureModal}
+        positionId={selectedPositionId?.[0]}
         selectedIds={offerSelectedIds}
         setSelectedIds={setOfferSelectedIds}
         offerData={offerData}
