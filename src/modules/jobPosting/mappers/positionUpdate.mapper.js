@@ -125,9 +125,11 @@ const buildEduRulesJson = (edu, mode) => {
             conditions.push({
               educationType: edu.educationTypeId,
               qualification: edu.educationQualificationsId,
-              specialization: edu.specializationId || "",
+              specialization: edu.group ? "" : (edu.specializationId || ""),
+  group: edu.group || "",
               duration: edu.duration || "",
               percentage: edu.percentage || "",
+            
             });
           }
         });

@@ -91,13 +91,15 @@ const EducationTable = ({
                       </Button>
 
                       {/* EDIT */}
-                      <Button
-                        variant="link"
-                        className="action-btn edit-btn"
-                        onClick={() => onEdit(item, idx)}
-                      >
-                        <img src={editIcon} alt="Edit" className="icon-16" />
-                      </Button>
+                     {!["Any Graduation", "Any Post-Graduation"].includes(item.course) && (
+  <Button
+    variant="link"
+    className="action-btn edit-btn"
+    onClick={() => onEdit(item, idx)}
+  >
+    <img src={editIcon} alt="Edit" className="icon-16" />
+  </Button>
+)}
                     </div>
                   </td>
                 </tr>

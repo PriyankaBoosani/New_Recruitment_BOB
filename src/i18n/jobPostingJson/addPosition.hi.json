@@ -92,6 +92,7 @@
   "select_type": "प्रकार चुनें",
   "select_degree": "डिग्री चुनें",
   "select_specialization": "विशेषज्ञता चुनें",
+  "select_group": "समूह चुनें",
   "duration_placeholder": "अवधि (वर्ष)",
   "select_education_group": "शिक्षा समूह चुनें",
   "add_group": "+ समूह जोड़ें",

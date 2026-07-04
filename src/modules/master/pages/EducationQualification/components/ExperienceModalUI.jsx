@@ -85,13 +85,35 @@ const ExperienceModal = ({
             form.specializationOthers
           );
 
-          const hideGroupForCourse = [
-  "Any Graduation",
-  "Any Post-Graduation",
-].includes(form.course?.trim());
+const selectedEducation = educationOptions.find(
+  (item) => item.documentTypeId === form.educationLevel
+);
+
+const hideGroup =
+  [
+    "Any Graduation",
+    "Any Post-Graduation",
+  ].includes(form.course?.trim()) ||
+  [
+    "10th / SSC",
+    "Intermediate / 12th / HSC",
+  ].includes(selectedEducation?.documentName);
+
+
+  const readOnlyCodes =
+  isEditing &&
+  [
+    "Graduation",
+    "Post-Graduation",
+    "Any Graduation",
+    "Any Post-Graduation",
+  ].includes(form.course?.trim());
+
+
+ 
 
 const showTopGroup =
-  !hideGroupForCourse &&
+  !hideGroup &&
   (form.specializationOthers?.length || 0) === 0;
 
           return (
@@ -174,6 +196,12 @@ const showTopGroup =
                   ) : (
                     <input
                       type="text"
+                        readOnly={readOnlyCodes}
+                          style={{
+    backgroundColor: readOnlyCodes ? "#e9ecef" : "#fff",
+    cursor: readOnlyCodes ? "not-allowed" : "text",
+    color: readOnlyCodes ? "#6c757d" : "#212529",
+  }}
                       className={`form-control ${errors[formIndex]?.courseCode ? "is-invalid" : ""
                         }`}
                       value={form.courseCode}
@@ -235,6 +263,7 @@ const showTopGroup =
 
 
 {showTopGroup && (
+  
   <div className="col">
     <label className="form-label">
       {t("education:group")}
@@ -330,6 +359,7 @@ const showTopGroup =
                             {t("education:specialization_code")}
                           </label>
                         </div>
+                        {!hideGroup && (
                         <div className="col-md-3">
   <label
     className="form-label"
@@ -338,6 +368,7 @@ const showTopGroup =
     {t("education:group")}
   </label>
 </div>
+)}
 
                       <div className="col-md-1"></div>
                       </div>
@@ -465,6 +496,15 @@ const showTopGroup =
     className={`form-control ${
       duplicateCodes.has(i) ? "is-invalid" : ""
     }`}
+        readOnly={readOnlyCodes && !!val?.id}
+  style={{
+    backgroundColor:
+      readOnlyCodes && !!val?.id ? "#f8f9fa" : "#fff",
+    cursor:
+      readOnlyCodes && !!val?.id ? "not-allowed" : "text",
+    color:
+      readOnlyCodes && !!val?.id ? "#6c757d" : "#212529",
+  }}
     value={val?.code || ""}
     placeholder={t("education:specialization_code")}
     onChange={(e) =>
@@ -504,6 +544,7 @@ const showTopGroup =
 
 
 {/* GROUP */}
+{!hideGroup && (
 <div className="col-md-3">
   <Select
     classNamePrefix="react-select"
@@ -542,6 +583,7 @@ const showTopGroup =
     }}
   />
 </div>
+)}
 
 {/* DELETE BUTTON */}
 <div className="col-md-1 d-flex align-items-center justify-content-center">                                {(!isEditing ||
@@ -652,7 +694,7 @@ const showTopGroup =
                                       )}
                                       
                                   </div>
-                                  
+           {!hideGroup && (                       
 <div className="col-md-3">
   {val?.name?.trim() && !val?.group?.trim() && (
     <small
@@ -668,6 +710,7 @@ const showTopGroup =
     </small>
   )}
 </div>
+)}  
 
 <div className="col-md-1"></div>
                                 </div>

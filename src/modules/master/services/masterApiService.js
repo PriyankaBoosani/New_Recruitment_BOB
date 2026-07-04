@@ -307,6 +307,12 @@ const masterApiService = {
 
   getAllEducation: (ids) => apis.post("/admin-education-master/all", ids),
 
+
+
+  getEducationGroupes() {
+  return apis.get("/master-dd-data/get/edu-groups");
+},
+
   saveEducation: (payload) => apis.post("/admin-education-master/save", payload),
 
   getAllTemplates: () => apis.get("/templates/all"),

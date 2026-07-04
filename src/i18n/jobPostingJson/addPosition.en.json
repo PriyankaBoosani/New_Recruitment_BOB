@@ -91,6 +91,7 @@
   "select_type": "Select Type",
   "select_degree": "Select Degree",
   "select_specialization": "Select Specialization",
+  "select_group": "Select Group",
   "duration_placeholder": "Duration (Years)",
   "select_education_group": "Select Education Group",
   "add_group": "+ Add Group",

@@ -28,6 +28,7 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
           group: sp?.group?.educationGroupId || "",
           groupName: sp?.group?.groupName || "",
           groupCode: sp?.group?.groupCode || "",
+          readOnly: true,
         })) || [],
 
       educationQualificationsId:
