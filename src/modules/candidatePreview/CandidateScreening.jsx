@@ -54,6 +54,7 @@ import ScheduleApprovalModal from "../candidatePreview/components/ScheduleApprov
 import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
 import { BsFileEarmarkPlus } from "react-icons/bs";
 import DigitalSignatureModal from "./modal/DigitalSignatureModal";
+import Loader from "../../shared/components/Loader";
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -556,6 +557,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [signatoryDesignation, setSignatoryDesignation] = useState("");
   const dispatch = useDispatch();
   const [templates, setTemplates] = useState([]);
+  const [generatingOffer, setGeneratingOffer] = useState(false);
 
   const isRankEnabled = useSelector((state) => state.rank.isRankEnabled);
   const isScoreEnabled = useSelector((state) => state.rank.isScoreEnabled);
@@ -2232,67 +2234,87 @@ export default function CandidateScreening({ selectedJob }) {
       console.error("Preview failed", err);
     }
   };
-  const handleGenerateOffer = async () => {
-    if (offerSelectedIds.length === 0) {
-      toast.error("Please select at least one candidate");
-      return;
-    }
+  
+ const handleGenerateOffer = async () => {
+  if (offerSelectedIds.length === 0) {
+    toast.error("Please select at least one candidate");
+    return;
+  }
 
-    if (!offerTemplateId) {
-      toast.error("Please select an offer template");
-      return;
-    }
+  if (!offerTemplateId) {
+    toast.error("Please select an offer template");
+    return;
+  }
 
-    if (!joiningDate || !acceptBeforeDate) {
-      toast.error("Please select the dates");
-      return;
-    }
+  if (!joiningDate || !acceptBeforeDate) {
+    toast.error("Please select the dates");
+    return;
+  }
 
-    if (!signatory.trim()) {
-      toast.error("Please enter signatory");
-      return;
-    }
+  if (!signatory.trim()) {
+    toast.error("Please enter signatory");
+    return;
+  }
 
-    if (!signatoryDesignation.trim()) {
-      toast.error("Please enter designation");
-      return;
-    }
-    const selectedOffers = offerData.filter((offer) =>
-      offerSelectedIds.includes(offer.id)
-    );
+  if (!signatoryDesignation.trim()) {
+    toast.error("Please enter designation");
+    return;
+  }
 
-    const invalidLocationOffers = selectedOffers.filter(
-      (offer) => !offer.state || !offer.location
-    );
+  const selectedOffers = offerData.filter((offer) =>
+    offerSelectedIds.includes(offer.id)
+  );
 
-    if (invalidLocationOffers.length > 0) {
-      toast.error("State and City are mandatory to generate the offer.");
-      return;
-    }
+  const invalidLocationOffers = selectedOffers.filter(
+    (offer) => !offer.state || !offer.location
+  );
 
-    try {
-      const payload = {
-        offerTemplateId,
-        joiningDate,
-        acceptBeforeDate,
-        designationId: null, // Selected designation ID
-        offerIds: offerSelectedIds,
-        signatoryName: signatory,
-        signatoryDesignation: signatoryDesignation,
-      };
+  if (invalidLocationOffers.length > 0) {
+    toast.error("State and City are mandatory to generate the offer.");
+    return;
+  }
 
-      const res = await jobPositionApiService.generateOffers(payload);
+  try {
+    setGeneratingOffer(true);
 
-      toast.success("Offer generated successfully");
-      setOfferRefreshKey((prev) => prev + 1);
+    const payload = {
+      offerTemplateId,
+      joiningDate,
+      acceptBeforeDate,
+      designationId: null,
+      offerIds: offerSelectedIds,
+      signatoryName: signatory,
+      signatoryDesignation: signatoryDesignation,
+    };
 
-      console.log(res);
-    } catch (err) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || "Failed to generate offers");
-    }
-  };
+    const res = await jobPositionApiService.generateOffers(payload);
 
+    toast.success("Offer generated successfully");
+
+    setOfferRefreshKey((prev) => prev + 1);
+
+    // Clear form
+    setOfferTemplateId("");
+    setSelectedTemplate("");
+    setAcceptBeforeDate("");
+    setJoiningDate("");
+    setSignatory("");
+    setSignatoryDesignation("");
+    setOfferSelectedIds([]);
+
+    setFormErrors({
+      acceptBeforeDate: "",
+      joiningDate: "",
+    });
+
+    console.log(res);
+  } catch (err) {
+    console.error(err);
+    toast.error(err?.response?.data?.message || "Failed to generate offers");
+  } finally {
+    setGeneratingOffer(false);
+  }
+};
   const handleSubmitBeforeDateChange = (value) => {
     const today = todayString();
 
@@ -3050,7 +3072,8 @@ export default function CandidateScreening({ selectedJob }) {
                           type="button"
                           className="btn orange-bg text-white"
                           onClick={handleGenerateOffer}
-                          disabled={offerSelectedIds.length === 0}
+                         // disabled={offerSelectedIds.length === 0}
+                         disabled={generatingOffer || offerSelectedIds.length === 0}
                         >
                           <i className="bi bi-file-earmark-plus"></i>
                         </button>
@@ -3641,6 +3664,7 @@ export default function CandidateScreening({ selectedJob }) {
         reservationCategories={reservationCategories}
         examConfigMap={examConfigMap}
       />
+      {generatingOffer && <Loader />}
     </div>
   );
 }
