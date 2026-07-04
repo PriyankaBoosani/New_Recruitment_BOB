@@ -3021,14 +3021,14 @@ export default function CandidateScreening({ selectedJob }) {
                     {/* Signatory */}
                     <div>
                       <p className="mb-1 fw-normal fs-13 blue-color">
-                        Signatory
+                        {t("candidateWorkflow:signatory")}
                       </p>
 
                       <input
                         type="text"
                         className="form-control fs-13 py-1"
                         style={{ width: "100px" }}
-                        placeholder="Signatory"
+                        placeholder={t("candidateWorkflow:signatory")}
                         value={signatory}
                         onChange={(e) => setSignatory(e.target.value)}
                       />
@@ -3040,7 +3040,7 @@ export default function CandidateScreening({ selectedJob }) {
                     {/* Designation */}
                     <div>
                       <p className="mb-1 fw-normal fs-13 blue-color">
-                        Designation
+                        {t("candidateWorkflow:designation")}
                       </p>
 
                       <input
@@ -3066,7 +3066,7 @@ export default function CandidateScreening({ selectedJob }) {
 
                       <OverlayTrigger
                         placement="bottom"
-                        overlay={<Tooltip>Generate Offer</Tooltip>}
+                        overlay={<Tooltip>{t("candidateWorkflow:generate_offer")}</Tooltip>}
                       >
                         <button
                           type="button"
@@ -3125,7 +3125,7 @@ export default function CandidateScreening({ selectedJob }) {
 
                     <OverlayTrigger
                       placement="bottom"
-                      overlay={<Tooltip>Upload Digital Signature</Tooltip>}
+                      overlay={<Tooltip>{t("candidateWorkflow:upload_digital_signature")}</Tooltip>}
                     >
                       <button
                         type="button"
