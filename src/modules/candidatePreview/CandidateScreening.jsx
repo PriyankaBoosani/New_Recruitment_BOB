@@ -871,12 +871,16 @@ export default function CandidateScreening({ selectedJob }) {
 
       // examQualificationStatus: c.examQualificationStatus || "-",
 
-      examQualificationStatus:
-        c.examQualificationStatus === "QUALIFIED_UNDER_UR"
-          ? "Qualified Under UR"
-          : c.examQualificationStatus === "NOT_MARKED"
-            ? "Not Marked"
-            : c.examQualificationStatus || "-",
+      // examQualificationStatus:
+      //   c.examQualificationStatus === "QUALIFIED_UNDER_UR"
+      //     ? "Qualified Under UR"
+      //     : c.examQualificationStatus === "NOT_MARKED"
+      //       ? "Not Marked"
+      //       : c.examQualificationStatus || "-",
+
+      examQualificationStatus: c.examQualificationStatus
+  ? c.examQualificationStatus.replaceAll("_", " ")
+  : "-",
 
       educationScore: c?.candidateRankingResults?.educationScore ?? "-",
 
@@ -1352,7 +1356,7 @@ export default function CandidateScreening({ selectedJob }) {
 
       return (
         c.status === "Shortlisted" &&
-        ["QUALIFIED", "QUALIFIED_UNDER_UR"].includes(c.examQualificationStatus)
+        ["QUALIFIED", "QUALIFIED_UNDER_UR", "QUALIFIED UNDER UR", "Qualified Under UR"].includes(c.examQualificationStatus)
       );
     });
 
