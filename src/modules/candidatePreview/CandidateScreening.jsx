@@ -308,6 +308,9 @@ export default function CandidateScreening({ selectedJob }) {
       setExamConfigMap({});
     }
   }, [selectedPositionId]);
+  useEffect(() => {
+    setOfferSelectedIds([]);
+  }, [selectedPositionId]);
 
   const handleOpenZonalComments = (comment) => {
     setZonalComment(comment || "-");
@@ -1262,7 +1265,7 @@ export default function CandidateScreening({ selectedJob }) {
     setSelectedCandidateIds([]);
     setSelectedInterviewCandidateIds([]);
     setSelectedCompensationIds([]);
-    setOfferSelectedIds([]); 
+    setOfferSelectedIds([]);
     setPage(0);
     setTotalElements(0);
 
@@ -1276,7 +1279,7 @@ export default function CandidateScreening({ selectedJob }) {
     dispatch(clearRankState());
     setRankListGenerated(false);
     setSelectedPositionId(ids);
-    setOfferSelectedIds([]); 
+    setOfferSelectedIds([]);
 
     // CLEAR EVERYTHING WHEN NO POSITION SELECTED
     if (!ids || ids.length === 0) {
@@ -2236,87 +2239,87 @@ export default function CandidateScreening({ selectedJob }) {
       console.error("Preview failed", err);
     }
   };
-  
- const handleGenerateOffer = async () => {
-  if (offerSelectedIds.length === 0) {
-    toast.error("Please select at least one candidate");
-    return;
-  }
 
-  if (!offerTemplateId) {
-    toast.error("Please select an offer template");
-    return;
-  }
+  const handleGenerateOffer = async () => {
+    if (offerSelectedIds.length === 0) {
+      toast.error("Please select at least one candidate");
+      return;
+    }
 
-  if (!joiningDate || !acceptBeforeDate) {
-    toast.error("Please select the dates");
-    return;
-  }
+    if (!offerTemplateId) {
+      toast.error("Please select an offer template");
+      return;
+    }
 
-  if (!signatory.trim()) {
-    toast.error("Please enter signatory");
-    return;
-  }
+    if (!joiningDate || !acceptBeforeDate) {
+      toast.error("Please select the dates");
+      return;
+    }
 
-  if (!signatoryDesignation.trim()) {
-    toast.error("Please enter designation");
-    return;
-  }
+    if (!signatory.trim()) {
+      toast.error("Please enter signatory");
+      return;
+    }
 
-  const selectedOffers = offerData.filter((offer) =>
-    offerSelectedIds.includes(offer.id)
-  );
+    if (!signatoryDesignation.trim()) {
+      toast.error("Please enter designation");
+      return;
+    }
 
-  const invalidLocationOffers = selectedOffers.filter(
-    (offer) => !offer.state || !offer.location
-  );
+    const selectedOffers = offerData.filter((offer) =>
+      offerSelectedIds.includes(offer.id)
+    );
 
-  if (invalidLocationOffers.length > 0) {
-    toast.error("State and City are mandatory to generate the offer.");
-    return;
-  }
+    const invalidLocationOffers = selectedOffers.filter(
+      (offer) => !offer.state || !offer.location
+    );
 
-  try {
-    setGeneratingOffer(true);
+    if (invalidLocationOffers.length > 0) {
+      toast.error("State and City are mandatory to generate the offer.");
+      return;
+    }
 
-    const payload = {
-      offerTemplateId,
-      joiningDate,
-      acceptBeforeDate,
-      designationId: null,
-      offerIds: offerSelectedIds,
-      signatoryName: signatory,
-      signatoryDesignation: signatoryDesignation,
-    };
+    try {
+      setGeneratingOffer(true);
 
-    const res = await jobPositionApiService.generateOffers(payload);
+      const payload = {
+        offerTemplateId,
+        joiningDate,
+        acceptBeforeDate,
+        designationId: null,
+        offerIds: offerSelectedIds,
+        signatoryName: signatory,
+        signatoryDesignation: signatoryDesignation,
+      };
 
-    toast.success("Offer generated successfully");
+      const res = await jobPositionApiService.generateOffers(payload);
 
-    setOfferRefreshKey((prev) => prev + 1);
+      toast.success("Offer generated successfully");
 
-    // Clear form
-    setOfferTemplateId("");
-    setSelectedTemplate("");
-    setAcceptBeforeDate("");
-    setJoiningDate("");
-    setSignatory("");
-    setSignatoryDesignation("");
-    setOfferSelectedIds([]);
+      setOfferRefreshKey((prev) => prev + 1);
 
-    setFormErrors({
-      acceptBeforeDate: "",
-      joiningDate: "",
-    });
+      // Clear form
+      setOfferTemplateId("");
+      setSelectedTemplate("");
+      setAcceptBeforeDate("");
+      setJoiningDate("");
+      setSignatory("");
+      setSignatoryDesignation("");
+      setOfferSelectedIds([]);
 
-    console.log(res);
-  } catch (err) {
-    console.error(err);
-    toast.error(err?.response?.data?.message || "Failed to generate offers");
-  } finally {
-    setGeneratingOffer(false);
-  }
-};
+      setFormErrors({
+        acceptBeforeDate: "",
+        joiningDate: "",
+      });
+
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.response?.data?.message || "Failed to generate offers");
+    } finally {
+      setGeneratingOffer(false);
+    }
+  };
   const handleSubmitBeforeDateChange = (value) => {
     const today = todayString();
 
@@ -3068,14 +3071,20 @@ export default function CandidateScreening({ selectedJob }) {
 
                       <OverlayTrigger
                         placement="bottom"
-                        overlay={<Tooltip>{t("candidateWorkflow:generate_offer")}</Tooltip>}
+                        overlay={
+                          <Tooltip>
+                            {t("candidateWorkflow:generate_offer")}
+                          </Tooltip>
+                        }
                       >
                         <button
                           type="button"
                           className="btn orange-bg text-white"
                           onClick={handleGenerateOffer}
-                         // disabled={offerSelectedIds.length === 0}
-                         disabled={generatingOffer || offerSelectedIds.length === 0}
+                          // disabled={offerSelectedIds.length === 0}
+                          disabled={
+                            generatingOffer || offerSelectedIds.length === 0
+                          }
                         >
                           <i className="bi bi-file-earmark-plus"></i>
                         </button>
@@ -3127,7 +3136,11 @@ export default function CandidateScreening({ selectedJob }) {
 
                     <OverlayTrigger
                       placement="bottom"
-                      overlay={<Tooltip>{t("candidateWorkflow:upload_digital_signature")}</Tooltip>}
+                      overlay={
+                        <Tooltip>
+                          {t("candidateWorkflow:upload_digital_signature")}
+                        </Tooltip>
+                      }
                     >
                       <button
                         type="button"
