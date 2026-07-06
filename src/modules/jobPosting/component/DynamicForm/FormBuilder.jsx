@@ -3,6 +3,7 @@ import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import DynamicField from "./DynamicField";
 import "../../../../style/css/EducationModal.css";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }) => {
   const { t } = useTranslation();
@@ -99,6 +100,10 @@ const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }
   };
 
   const handleSave = () => {
+     if (fields.length === 0) {
+      toast.error("Please add at least one field.");
+      return;
+    }
     let hasError = false;
 
     const validatedFields = fields.map((field) => {
