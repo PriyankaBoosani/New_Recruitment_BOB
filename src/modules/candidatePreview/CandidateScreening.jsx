@@ -2293,6 +2293,11 @@ export default function CandidateScreening({ selectedJob }) {
       };
 
       const res = await jobPositionApiService.generateOffers(payload);
+      if (!res.success) {
+        toast.error(res.data || res.message || "Failed to generate offers");
+        return;
+      }
+      console.log("Generate Offer Response:", res);
 
       toast.success("Offer generated successfully");
 
@@ -2314,8 +2319,13 @@ export default function CandidateScreening({ selectedJob }) {
 
       console.log(res);
     } catch (err) {
-      console.error(err);
-      toast.error(err?.response?.data?.message || "Failed to generate offers");
+      // console.error(err);
+      // toast.error(err?.response?.data?.message || "Failed to generate offers");
+      toast.error(
+        err?.response?.data?.data ||
+          err?.response?.data?.message ||
+          "Failed to generate offers"
+      );
     } finally {
       setGeneratingOffer(false);
     }
