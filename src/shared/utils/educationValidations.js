@@ -68,21 +68,19 @@ export const validateSpecializationTest = (list = []) => {
 
     const code = typeof val === "object" ? val?.code : "";
 
-    // ✅ specialization required
-    if (!value || !value.trim()) {
-      return i18n.t(
-        "education:specialization_required",
-        "Specialization is required"
-      );
-    }
+  // Empty row is allowed here.
+// Save validation will decide whether it's required.
+if (!value?.trim()) {
+  continue;
+}
 
-    // ✅ specialization code required
-    if (!code || !code.trim()) {
-      return i18n.t(
-        "education:specialization_code_required",
-        "Specialization code is required"
-      );
-    }
+// Once Name is entered, Code becomes mandatory.
+if (!code?.trim()) {
+  return i18n.t(
+    "education:specialization_code_required",
+    "Specialization code is required"
+  );
+}
 
     const normalized = normalize(value);
     const normalizedCode = normalize(code);
@@ -123,20 +121,19 @@ export const validateSpecialization = (list = []) => {
     const code = typeof val === "object" ? val?.code : "";
 
     // ✅ specialization required
-    if (!value || !value.trim()) {
-      return i18n.t(
-        "education:specialization_required",
-        "Specialization is required"
-      );
-    }
+ // Empty row is allowed here.
+// Save validation will decide whether it's required.
+if (!value?.trim()) {
+  continue;
+}
 
-    // ✅ specialization code required
-    if (!code || !code.trim()) {
-      return i18n.t(
-        "education:specialization_code_required",
-        "Specialization code is required"
-      );
-    }
+// Once Name is entered, Code becomes mandatory.
+if (!code?.trim()) {
+  return i18n.t(
+    "education:specialization_code_required",
+    "Specialization code is required"
+  );
+}
 
     const normalized = normalize(value);
     const normalizedCode = normalize(code);

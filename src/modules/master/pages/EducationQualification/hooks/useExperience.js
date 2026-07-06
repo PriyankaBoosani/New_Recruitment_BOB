@@ -367,12 +367,32 @@ export const useExperience = () => {
         );
       }
 
-      setErrors([newErrors]);
+const specs = formData[0].specializationOthers || [];
 
+// Validate specialization rows BEFORE returning
+specs.forEach((s, index) => {
+  // User added a specialization row but left Name empty
+  if (!s.name?.trim()) {
+    newErrors.specialization = newErrors.specialization || [];
+    newErrors.specialization[index] = {
+      name: t(
+        "education:specialization_required",
+        "Specialization Name is required"
+      ),
+    };
+  }
+});
 
-      if (!valid || newErrors.group) return;
+const hasSpecializationError =
+  newErrors.specialization?.some((e) => e?.name);
 
-      const specs = formData[0].specializationOthers || [];
+// Set all errors only once
+setErrors([newErrors]);
+
+// Return only after all validations are completed
+if (!valid || newErrors.group || hasSpecializationError) {
+  return;
+}
 
       const specializations =
         specs.length > 0

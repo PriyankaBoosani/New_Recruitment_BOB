@@ -288,7 +288,7 @@ const showTopGroup =
       styles={{
         control: (base, state) => ({
           ...base,
-          minHeight: "46px",
+          minHeight: "42px",
           borderColor: errors[formIndex]?.group
             ? "#dc3545"
             : state.isFocused
@@ -469,33 +469,38 @@ const showTopGroup =
                                 <div className="row g-2 align-items-start">
                                   {/* SPECIALIZATION NAME */}
                                  <div className="col-md-4">
-                                    <input
-                                      type="text"
-                                      className={`form-control ${duplicateNames.has(i)
-                                          ? "is-invalid"
-                                          : ""
-                                        }`}
-                                      value={val?.name || ""}
-                                      placeholder={t("education:specialization_name")}
-                                      onChange={(e) =>
-                                        onChange(
-                                          formIndex,
-                                          "specialization",
-                                          e.target.value,
-                                          i
-                                        )
-                                      }
-                                    />
+                                  <input
+  type="text"
+  className={`form-control ${
+    duplicateNames.has(i) ||
+    errors[formIndex]?.specialization?.[i]?.name
+      ? "is-invalid"
+      : ""
+  }`}
+  value={val?.name || ""}
+  placeholder={t("education:specialization_name")}
+  onChange={(e) =>
+    onChange(
+      formIndex,
+      "specialization",
+      e.target.value,
+      i
+    )
+  }
+/>
                                   </div>
 
                                   {/* SPECIALIZATION CODE */}
                                {/* SPECIALIZATION CODE */}
 <div className="col-md-4">
-  <input
-    type="text"
-    className={`form-control ${
-      duplicateCodes.has(i) ? "is-invalid" : ""
-    }`}
+<input
+  type="text"
+  className={`form-control ${
+    duplicateCodes.has(i) ||
+    (val?.name?.trim() && !val?.code?.trim())
+      ? "is-invalid"
+      : ""
+  }`}
         readOnly={readOnlyCodes && !!val?.id}
   style={{
     backgroundColor:
@@ -546,42 +551,58 @@ const showTopGroup =
 {/* GROUP */}
 {!hideGroup && (
 <div className="col-md-3">
-  <Select
-    classNamePrefix="react-select"
-    options={groupOptions}
-    value={
-      groupOptions.find(
-        (option) => option.value === val?.group
-      ) || null
-    }
-    onChange={(option) =>
-      onChange(
-        formIndex,
-        "specializationGroup",
-        option?.value || "",
-        i
-      )
-    }
-    placeholder={t("common:select")}
-    menuPlacement="bottom"
-    menuPosition="fixed"
-    menuShouldScrollIntoView={false}
-    styles={{
-      control: (base, state) => ({
-        ...base,
-        minHeight: "38px",
-        borderColor: state.isFocused ? "#86b7fe" : "#ced4da",
-        boxShadow: "none",
-        "&:hover": {
-          borderColor: "#86b7fe",
-        },
-      }),
-      menu: (base) => ({
-        ...base,
-        zIndex: 9999,
-      }),
-    }}
-  />
+ <Select
+  classNamePrefix="react-select"
+  className={
+    val?.name?.trim() && !val?.group?.trim()
+      ? "is-invalid"
+      : ""
+  }
+  options={groupOptions}
+  value={
+    groupOptions.find(
+      (option) => option.value === val?.group
+    ) || null
+  }
+  onChange={(option) =>
+    onChange(
+      formIndex,
+      "specializationGroup",
+      option?.value || "",
+      i
+    )
+  }
+  placeholder={t("common:select")}
+  menuPlacement="bottom"
+  menuPosition="fixed"
+  menuShouldScrollIntoView={false}
+  styles={{
+control: (base, state) => ({
+  ...base,
+  minHeight: "42px",
+  borderRadius: "0.375rem", // Bootstrap form-control radius
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor:
+    val?.name?.trim() && !val?.group?.trim()
+      ? "#dc3545"
+      : state.isFocused
+      ? "#86b7fe"
+      : "#ced4da",
+  boxShadow: "none",
+  "&:hover": {
+    borderColor:
+      val?.name?.trim() && !val?.group?.trim()
+        ? "#dc3545"
+        : "#86b7fe",
+  },
+}),
+    menu: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+  }}
+/>
 </div>
 )}
 
@@ -630,6 +651,20 @@ const showTopGroup =
                                         )}
                                       </small>
                                     )}
+
+{errors[formIndex]?.specialization?.[i]?.name && (
+  <small
+    className="text-danger"
+    style={{
+      fontSize: "12px",
+      lineHeight: "14px",
+      marginTop: "2px",
+      display: "block",
+    }}
+  >
+    {errors[formIndex].specialization[i].name}
+  </small>
+)}
 
                                     {/* Name Required */}
                                     {val?.code?.trim() &&
