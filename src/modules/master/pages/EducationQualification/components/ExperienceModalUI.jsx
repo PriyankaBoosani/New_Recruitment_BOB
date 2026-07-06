@@ -183,7 +183,7 @@ const showTopGroup =
                   )}
                 </div>
 
-              <div className="col-md-2">
+              <div className="col-md-3">
                   <label className="form-label">
                     {t("education:course_code")}{" "}
                     <span className="text-danger">*</span>
@@ -579,7 +579,7 @@ const showTopGroup =
   styles={{
 control: (base, state) => ({
   ...base,
-  minHeight: "42px",
+  minHeight: "40px",
   borderRadius: "0.375rem", // Bootstrap form-control radius
   borderWidth: "1px",
   borderStyle: "solid",
