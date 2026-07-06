@@ -1262,6 +1262,7 @@ export default function CandidateScreening({ selectedJob }) {
     setSelectedCandidateIds([]);
     setSelectedInterviewCandidateIds([]);
     setSelectedCompensationIds([]);
+    setOfferSelectedIds([]); 
     setPage(0);
     setTotalElements(0);
 
@@ -1275,6 +1276,7 @@ export default function CandidateScreening({ selectedJob }) {
     dispatch(clearRankState());
     setRankListGenerated(false);
     setSelectedPositionId(ids);
+    setOfferSelectedIds([]); 
 
     // CLEAR EVERYTHING WHEN NO POSITION SELECTED
     if (!ids || ids.length === 0) {
