@@ -62,11 +62,20 @@ const ApplicationForm = ({
   page,
   pageSize,
   isCandidateWorkflow,
+  dynamicFormData,
+  dynamicFields,
 }) => {
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
-  const [activeAccordion, setActiveAccordion] = useState(["0", "1", "2", "3"]);
+  const [activeAccordion, setActiveAccordion] = useState([
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+  ]);
+   const [exServicemen, setExServicemen] = useState([]);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [isEligible, setIsEligible] = useState(false);
   const [otherDocuments, setOtherDocuments] = useState([]);
@@ -79,7 +88,8 @@ const ApplicationForm = ({
   const submitRef = useRef(false);
   const zonalSubmitRef = useRef(false);
   const docActionRef = useRef(false);
-  const isZonalAbsent =String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
+  const isZonalAbsent =
+    String(zonalVerificationStatus || "").toUpperCase() === "ZONAL_ABSENT";
   const [isLptRequired, setIsLptRequired] = useState("");
   const [lptType, setLptType] = useState("");
 
@@ -97,8 +107,14 @@ const ApplicationForm = ({
     // Clear radio selection whenever LPT changes
     setZonalDecision("");
   }, [lptType]);
-const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [zonalSubmitting, setZonalSubmitting] = useState(false);
+  const formatDate = (date) => {
+    if (!date) return "-";
+
+    const [year, month, day] = date.split("-");
+    return `${day}-${month}-${year}`;
+  };
   const deriveShortlistStatus = () => {
     const ageOk = isCategorySatisfied("AGE");
     const workOk = isCategorySatisfied("WORK");
@@ -109,10 +125,7 @@ const [submitting, setSubmitting] = useState(false);
     return "YES";
   };
 
-
-
-  const isExamDisqualified =
-  examQualificationStatus === "DISQUALIFIED";
+  const isExamDisqualified = examQualificationStatus === "DISQUALIFIED";
 
   useEffect(() => {
     if (!candidate) return;
@@ -134,6 +147,19 @@ const [submitting, setSubmitting] = useState(false);
       setLptType("");
     }
   }, [candidate]);
+  useEffect(() => {
+  const fetchMasterData = async () => {
+    try {
+      const exServiceRes = await masterApiService.getExServiceCategories();
+      console.log("exServiceRes", exServiceRes.data);
+      setExServicemen(exServiceRes.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchMasterData();
+}, []);
 
   const [screeningForm, setScreeningForm] = useState({
     applicationId,
@@ -304,9 +330,7 @@ const [submitting, setSubmitting] = useState(false);
 
     // 4️⃣ Decision = PROVISIONAL but all VERIFIED
     if (zonalDecision === "PROVISIONALLY_APPROVED" && allVerified) {
-      toast.warning(
-        t("all_documents_verified_select_other")
-      );
+      toast.warning(t("all_documents_verified_select_other"));
       return;
     }
 
@@ -403,8 +427,7 @@ const [submitting, setSubmitting] = useState(false);
       });
 
       console.error(err);
-    }
-     finally {
+    } finally {
       zonalSubmitRef.current = false;
       setZonalSubmitting(false);
     }
@@ -535,14 +558,20 @@ const [submitting, setSubmitting] = useState(false);
 
   const isCategorySatisfied = (category) => {
     const docs = groupedDocs[category] || [];
- if (category === "WORK" && docs.length === 0) {
-    return true;
-  }
+    if (category === "WORK" && docs.length === 0) {
+      return true;
+    }
     return docs.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return status === "VERIFIED";
     });
   };
+  const exServiceName =
+    exServicemen.find(
+      (item) =>
+        item.exServicemanCategoryId === previewData?.personalDetails?.exService,
+    )?.exsCategoryName || "Not Applicable";
+    console.log("exServiceName", exServiceName);
 
   const refreshDocStatuses = async () => {
     try {
@@ -762,16 +791,15 @@ const [submitting, setSubmitting] = useState(false);
       await refreshDocStatuses();
     } catch (err) {
       console.error(t("reject_failed"), err);
-    }finally {
+    } finally {
       docActionRef.current = false;
     }
   };
 
   const handleReject = async (comment) => {
-   if (!selectedDoc) return;
+    if (!selectedDoc) return;
     if (docActionRef.current) return;
     docActionRef.current = true;
-
 
     try {
       if (isZonalHr) {
@@ -985,11 +1013,11 @@ const [submitting, setSubmitting] = useState(false);
 
   const handleFinalSubmit = async () => {
     console.log("Final submit clicked");
-     if (submitRef.current) {
-    return;
-  }
-  submitRef.current = true;
-  setSubmitting(true);
+    if (submitRef.current) {
+      return;
+    }
+    submitRef.current = true;
+    setSubmitting(true);
 
     // ✅ Validation 1: Criteria must be selected
     const isValid = validateForm();
@@ -1019,7 +1047,7 @@ const [submitting, setSubmitting] = useState(false);
         .map((doc) => doc.documentName?.trim())
         .filter(Boolean),
     };
-submitRef.current = true;
+    submitRef.current = true;
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
       // toast.success("Screening submitted successfully");
@@ -1133,10 +1161,7 @@ submitRef.current = true;
         isShortlisted: undefined,
       }));
     }
-  }, [
-    screeningForm.isAgeCriteriaMet,
-    screeningForm.isEducationCriteriaMet,
-  ]);
+  }, [screeningForm.isAgeCriteriaMet, screeningForm.isEducationCriteriaMet]);
 
   useEffect(() => {
     if (!disableShortlistedSection) return;
@@ -1181,24 +1206,18 @@ submitRef.current = true;
   }, [hasMissingUploads]);
 
   const allDocsAreVerified = areAllDocumentsVerified();
-const hasWorkDiscrepancy = (groupedDocs["WORK"] || []).some((doc) => {
-  const status = docStatusMap[doc.candidateDocumentId]?.status;
+  const hasWorkDiscrepancy = (groupedDocs["WORK"] || []).some((doc) => {
+    const status = docStatusMap[doc.candidateDocumentId]?.status;
 
-  return (
-    status === "REJECTED" ||
-    status === "PENDING" ||
-    status === "DISCREPANCY"
-  );
-});
+    return (
+      status === "REJECTED" || status === "PENDING" || status === "DISCREPANCY"
+    );
+  });
   const isOptionDisabled = (option, category) => {
     const categorySatisfied = isCategorySatisfied(category);
-if (
-  category === "WORK" &&
-  option === "YES" &&
-  hasWorkDiscrepancy
-) {
-  return true;
-}
+    if (category === "WORK" && option === "YES" && hasWorkDiscrepancy) {
+      return true;
+    }
     // Disable YES if no VERIFIED doc exists
     if (option === "YES" && !categorySatisfied) {
       return true;
@@ -1208,8 +1227,6 @@ if (
     if (option === "DISCREPANCY" && allDocsAreVerified) {
       return true;
     }
-
-    
 
     return false;
   };
@@ -1401,9 +1418,9 @@ if (
       const updated = prev.map((row) =>
         row.id === id
           ? {
-            ...row,
-            [field]: value,
-          }
+              ...row,
+              [field]: value,
+            }
           : row
       );
 
@@ -1607,7 +1624,8 @@ if (
                   <tr>
                     <td className="fw-med">{t("ex_serviceman")}</td>
                     <td className="fw-reg" colSpan={2}>
-                      {data.personalDetails.exService || t("not_available")}
+                      {/* {data.personalDetails.exService || t("not_available")} */}
+                      {exServiceName}
                     </td>
                     <td className="fw-med">{t("physical_disability")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -1637,7 +1655,6 @@ if (
                     </td>
                   </tr>
                   <tr>
-
                     <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
@@ -1658,8 +1675,6 @@ if (
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.expectedCtc}
                     </td>
-
-
                   </tr>
                   <tr>
                     <td className="fw-med">{t("language_proficiency")}</td>
@@ -1744,7 +1759,6 @@ if (
                       {data.personalDetails.disciplinaryAction || "No"}
                     </td>
                   </tr>
-
                 </tbody>
               </table>
             </div>
@@ -1772,12 +1786,9 @@ if (
                 </thead>
 
                 <tbody>
-
                   {/* {(data.education || []).map((edu, index) => ( */}
                   {(data.education || [])
-                    .sort(
-                      (a, b) => parseDate(b.endDate) - parseDate(a.endDate)
-                    )
+                    .sort((a, b) => parseDate(b.endDate) - parseDate(a.endDate))
                     .map((edu, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
@@ -1849,7 +1860,35 @@ if (
             </table>
           </Accordion.Body>
         </Accordion.Item>
+        {dynamicFields?.fields?.length > 0 && (
+          <Accordion.Item eventKey="4" className="additional-accordion">
+            <Accordion.Header>Additional Details</Accordion.Header>
 
+            <Accordion.Body>
+              <table className="table table-bordered bob-table add-table">
+                <thead>
+                  <tr className="exp-table-header">
+                    <th>Detail</th>
+                    <th>Provided Information</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {dynamicFields.fields.map((field) => (
+                    <tr key={field.id}>
+                      <td style={{ width: "35%" }}>{field.label}</td>
+                      <td>
+                        {field.type === "date"
+                          ? formatDate(dynamicFormData?.[field.id])
+                          : (dynamicFormData?.[field.id] ?? "-")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Accordion.Body>
+          </Accordion.Item>
+        )}
         <Accordion.Item eventKey="3">
           <Accordion.Header>{t("documents_details")}</Accordion.Header>
 
@@ -1894,12 +1933,12 @@ if (
                     const leftStatus = !left?.url
                       ? "YET TO UPLOAD"
                       : docStatusMap[left?.candidateDocumentId]?.status ||
-                      "PENDING";
+                        "PENDING";
 
                     const rightStatus = !right?.url
                       ? "YET TO UPLOAD"
                       : docStatusMap[right?.candidateDocumentId]?.status ||
-                      "PENDING";
+                        "PENDING";
 
                     return (
                       <tr key={rowIndex}>
@@ -2127,15 +2166,14 @@ if (
                     color: "#162B75",
                   }}
                 >
-                   {t("additional_required_documents")}
-
+                  {t("additional_required_documents")}
                 </label>
                 <button
                   className="btn-submit-orange py-1 px-2"
                   style={{ height: "auto", fontSize: "0.75rem" }}
                   onClick={handleAddDocumentRow}
                 >
-                  +  {t("add_document")}
+                  + {t("add_document")}
                 </button>
               </div>
 
@@ -2150,7 +2188,7 @@ if (
                         fontWeight: 500,
                       }}
                     >
-                   {t("document_name")}
+                      {t("document_name")}
                     </label>
 
                     <input
@@ -2165,7 +2203,7 @@ if (
                         )
                       }
                       style={{ minHeight: "auto", padding: "0.4rem 0.8rem" }}
-                       placeholder={t("enter_document_name")}
+                      placeholder={t("enter_document_name")}
                     />
                     {otherDocumentErrors[row.id] && (
                       <small className="text-danger fs-12">
@@ -2205,10 +2243,7 @@ if (
 
                   <div className="criteria-radio mb-0">
                     {CRITERIA_OPTIONS.map((option) => (
-                      <label
-                        key={option}
-                        className={`radio-label`}
-                      >
+                      <label key={option} className={`radio-label`}>
                         <input
                           type="radio"
                           name="workCriteria"
@@ -2216,7 +2251,7 @@ if (
                           onChange={() =>
                             handleRadioChange("isWorkCriteriaMet", option)
                           }
-                        disabled={isOptionDisabled(option, "WORK")}
+                          disabled={isOptionDisabled(option, "WORK")}
                         />
                         <span className="custom-radio"></span>
                         {t(option)}
@@ -2239,7 +2274,7 @@ if (
                     }
                     maxLength={2000}
                     rows={4}
-                  // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
+                    // disabled={screeningForm.isWorkCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.workCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2288,7 +2323,7 @@ if (
                     }
                     maxLength={2000}
                     rows={4}
-                  // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
+                    // disabled={screeningForm.isAgeCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.ageCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2345,7 +2380,7 @@ if (
                     }
                     maxLength={2000}
                     rows={4}
-                  // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
+                    // disabled={screeningForm.isEducationCriteriaMet !== "DISCREPANCY"}
                   />
                   {errors.educationCriteriaRemark && (
                     <small className="text-danger fs-12">
@@ -2356,8 +2391,9 @@ if (
 
                 {/* FINAL REMARK */}
                 <div
-                  className={`criteria-card ${disableShortlistedSection ? "criteria-disabled" : ""
-                    }`}
+                  className={`criteria-card ${
+                    disableShortlistedSection ? "criteria-disabled" : ""
+                  }`}
                 >
                   <label className="criteria-title">{t("shortlisted")}</label>
 
@@ -2415,10 +2451,11 @@ if (
 
               {/* ================= SUBMIT ROW ================= */}
               <div
-                className={`criteria-submit-row ${shouldShowSubmitBefore
+                className={`criteria-submit-row ${
+                  shouldShowSubmitBefore
                     ? "justify-content-between"
                     : "justify-content-end"
-                  }`}
+                }`}
               >
                 {!isZonalHr && shouldShowSubmitBefore && (
                   <div className="d-grid">
@@ -2474,24 +2511,26 @@ if (
                       className="me-4"
                       onClick={() => setShowCommentsModal(true)}
                     >
-                     {t("view_all_comments")}
+                      {t("view_all_comments")}
                       <FontAwesomeIcon
                         icon={faUpRightFromSquare}
                         style={{ fontSize: "12px" }}
                         className="ms-1"
                       />
                     </span>
-                              <button
-              className="btn-submit-orange"
-              onClick={handleFinalSubmit}
-              disabled={isExamDisqualified || submitting || zonalSubmitting}
-              style={{
-                opacity: isExamDisqualified ? 0.5 : 1,
-                cursor: isExamDisqualified ? "not-allowed" : "pointer",
-              }}
-            >
-              {t("submit")}
-            </button>
+                    <button
+                      className="btn-submit-orange"
+                      onClick={handleFinalSubmit}
+                      disabled={
+                        isExamDisqualified || submitting || zonalSubmitting
+                      }
+                      style={{
+                        opacity: isExamDisqualified ? 0.5 : 1,
+                        cursor: isExamDisqualified ? "not-allowed" : "pointer",
+                      }}
+                    >
+                      {t("submit")}
+                    </button>
                   </div>
                 )}
               </div>
@@ -2499,9 +2538,7 @@ if (
           )}
         {isZonalHr && (
           <Card className="criteria-main-card p-3 mb-3">
-            <label className="criteria-title mb-3">
-            { t("lpt_title")}
-            </label>
+            <label className="criteria-title mb-3">{t("lpt_title")}</label>
 
             <div className="d-flex align-items-start gap-3 flex-wrap">
               {/* LPT REQUIRED */}
@@ -2513,7 +2550,7 @@ if (
                     fontSize: "13px",
                   }}
                 >
-          {t("lpt_required")}
+                  {t("lpt_required")}
                 </label>
 
                 <select
@@ -2547,7 +2584,7 @@ if (
                       fontSize: "13px",
                     }}
                   >
-                  { t("lpt_status")}
+                    {t("lpt_status")}
                   </label>
 
                   <select
@@ -2576,8 +2613,9 @@ if (
 
         {isZonalHr && !isInterviewView && (
           <Card
-            className={`criteria-main-card p-3 ${isZonalAbsent ? "criteria-disabled" : ""
-              }`}
+            className={`criteria-main-card p-3 ${
+              isZonalAbsent ? "criteria-disabled" : ""
+            }`}
           >
             <label className="criteria-title mb-2">
               {t("all_docs_verified_q")}
@@ -2585,7 +2623,6 @@ if (
 
             {/* RADIO OPTIONS — same pattern as Shortlisted */}
             <div className="criteria-radio mb-3">
-
               {["YES", "NO", "PROVISIONALLY_APPROVED"].map((opt) => {
                 const isLptSelectionPending =
                   !isLptRequired || (isLptRequired === "YES" && !lptType);
@@ -2706,7 +2743,9 @@ if (
               <div className="remarks-button">
                 <button
                   className="btn-submit-orange"
-                  disabled={docStatusLoading || isZonalAbsent || zonalSubmitting}
+                  disabled={
+                    docStatusLoading || isZonalAbsent || zonalSubmitting
+                  }
                   onClick={handleZonalSubmit}
                 >
                   {t("submit")}

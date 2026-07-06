@@ -63,10 +63,11 @@ const CandidatePreviewPage = ({ onHide }) => {
     ? state?.applicationId
     : (state?.applicationId ?? state?.candidate?.id);
 
- 
   const [masters, setMasters] = useState({});
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dynamicFormData, setDynamicFormData] = useState([]);
+  const [dynamicFields, setDynamicFields] = useState([]);
 
   const isFromInterview = state?.from === "/candidate-interviewer";
 
@@ -114,6 +115,7 @@ const CandidatePreviewPage = ({ onHide }) => {
           );
 
           setPreviewData(mapped);
+          setDynamicFormData(mapped?.additionalDetails?.dynamicFormData || []);
         }
       } catch (error) {
         console.error("Candidate preview load failed", error);
@@ -153,7 +155,7 @@ const CandidatePreviewPage = ({ onHide }) => {
                 page: state.page,
                 pageSize: state.pageSize,
                 filters: state.filters,
-                   activeTab: state.activeTab,
+                activeTab: state.activeTab,
               },
             });
           }}
@@ -214,6 +216,7 @@ const CandidatePreviewPage = ({ onHide }) => {
           isSaveEnabled={false}
           showSaveButton={true}
           isSaveBtn={false}
+          setDynamicFields={setDynamicFields}
         />
       )}
 
@@ -223,6 +226,7 @@ const CandidatePreviewPage = ({ onHide }) => {
           position={position}
           isCardBg
           isSaveEnabled={false}
+          setDynamicFields={setDynamicFields}
         />
       )}
 
@@ -256,6 +260,8 @@ const CandidatePreviewPage = ({ onHide }) => {
               isFromCompensationPool={isFromCompensationPool}
               page={state.page}
               pageSize={state.pageSize}
+              dynamicFormData={dynamicFormData}
+              dynamicFields={dynamicFields || []}
               isCandidateWorkflow={isCandidateWorkflow}
             />
           )
