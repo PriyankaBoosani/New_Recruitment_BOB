@@ -5,7 +5,7 @@ import "../../../../style/css/EducationModal.css";
 import { useTranslation } from "react-i18next";
 
 const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }) => {
-  const { t } = useTranslation("translation");
+  const { t } = useTranslation();
 
   const FIELD_TYPES = [
     { label: t("jobPostingsList:text"), value: "text" },
@@ -46,7 +46,7 @@ const FormBuilder = ({ initialSchema, onSave, isViewMode = false, registerSave }
           ...field,
           [key]: value,
           ...(key === "label" && {
-            error: value.trim() ? "" : "{t('jobPostingsList:label_required')}",
+            error: value.trim() ? "" : t("jobPostingsList:label_required"),
           }),
         };
       })
