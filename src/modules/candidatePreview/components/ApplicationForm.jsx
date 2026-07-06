@@ -65,6 +65,7 @@ const ApplicationForm = ({
   dynamicFormData,
   dynamicFields,
 }) => {
+   console.log("test55 1", dynamicFormData, dynamicFields);
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();

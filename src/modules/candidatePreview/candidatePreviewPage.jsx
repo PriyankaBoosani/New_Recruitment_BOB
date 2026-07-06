@@ -116,6 +116,7 @@ const CandidatePreviewPage = ({ onHide }) => {
 
           setPreviewData(mapped);
           setDynamicFormData(mapped?.additionalDetails?.dynamicFormData || []);
+           console.log("PreviewPage mapped ", mapped || []);
         }
       } catch (error) {
         console.error("Candidate preview load failed", error);
