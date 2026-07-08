@@ -82,9 +82,9 @@ const RecruiterPerformanceTable = ({
             </div>
 
             <div>
-             <h4>{t("recruiter_performance")}</h4>
+              <h4>{t("recruiter_performance")}</h4>
 
-<p>{t("recruitment_metrics")}</p>
+              <p>{t("recruitment_metrics")}</p>
             </div>
           </div>
 
@@ -147,41 +147,41 @@ const RecruiterPerformanceTable = ({
               <tr>
                 <th>{t("requisition")}</th>
 
-<th>{t("position")}</th>
+                
 
-<th>{t("vacancy")}</th>
+                <th>{t("vacancy")}</th>
 
-<th>{t("applied")}</th>
+                <th>{t("applied")}</th>
 
-<th>{t("shortlisted")}</th>
+                <th>{t("shortlisted")}</th>
 
-<th>{t("interview")}</th>
+                <th>{t("interview")}</th>
 
-<th>{t("qualified")}</th>
+                <th>{t("qualified")}</th>
 
-<th>{t("offer_sent")}</th>
+                <th>{t("offer_sent")}</th>
 
-<th>{t("offer_accepted")}</th>
+                <th>{t("offer_accepted")}</th>
 
-<th>{t("joined")}</th>
+                <th>{t("joined")}</th>
 
-<th>{t("extension")}</th>
+                <th>{t("extension")}</th>
 
-<th>{t("cancelled")}</th>
+                
 
-<th>{t("offer_rejected")}</th>
+                <th>{t("offer_rejected")}</th>
 
-<th>{t("waitlist")}</th>
+                <th>{t("waitlist")}</th>
 
-<th>{t("status")}</th>
+                <th>{t("status")}</th>
               </tr>
             </thead>
 
             <tbody>
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan="15" className="text-center py-4">
-                   {t("no_records_found")}
+                  <td colSpan="13" className="text-center py-4">
+                    {t("no_records_found")}
                   </td>
                 </tr>
               ) : (
@@ -189,7 +189,7 @@ const RecruiterPerformanceTable = ({
                   <tr key={index}>
                     <td className="req-cell">{row.requisition}</td>
 
-                    <td>{row.position}</td>
+                    
                     <td>{row.vacancy}</td>
 
                     <td>
@@ -217,7 +217,7 @@ const RecruiterPerformanceTable = ({
 
                     <td className="extension">{row.extension}</td>
 
-                    <td className="cancelled">{row.cancelled}</td>
+                 
 
                     <td className="rejected">{row.rejected}</td>
 
@@ -237,7 +237,8 @@ const RecruiterPerformanceTable = ({
 
         <div className="pagination-wrapper">
           <span>
-           {t("showing")} {paginatedData.length} {t("of")} {filteredData.length} {t("requisitions")}
+            {t("showing")} {paginatedData.length} {t("of")}{" "}
+            {filteredData.length} {t("requisitions")}
           </span>
 
           <Pagination className="custom-pagination">
