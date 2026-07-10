@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect } from "react";
 import { toast } from "react-toastify";
 import searchIcon from "../../../assets/search-icon.png";
+import { useTranslation } from "react-i18next";
 
 export default function BulkCommunicationPool({
   candidates,
@@ -18,6 +19,7 @@ export default function BulkCommunicationPool({
   hasLocationData,
   onTriggerCommunication,
 }) {
+  const { t } = useTranslation("bulkCommunication");
 
   const CANDIDATE_POOL_STATUSES = [
     "PENDING", "APPLIED", "RESCHEDULED", "NOT_SCHEDULED", "SCHEDULED", 
@@ -86,7 +88,7 @@ export default function BulkCommunicationPool({
 
   const toggleSelectAll = () => {
     if (!filters?.status?.length) {
-      toast.error("Please select the status filter first before bulk selection matching.");
+      toast.error(t("please_select_status_filter"));
       return;
     }
     const allIds = allCandidatesForFilters.map((c) => c.id);
@@ -94,7 +96,9 @@ export default function BulkCommunicationPool({
       setSelectedIds([]);
     } else {
       setSelectedIds(allIds);
-      toast.success(`${allIds.length} candidate(s) added to the communication scope context.`);
+     toast.success(
+  t("candidates_added_to_scope", { count: allIds.length })
+);
     }
   };
 
@@ -115,12 +119,12 @@ export default function BulkCommunicationPool({
         
         {/* Row 1: Filter Labels & Action Pickers */}
         <div className="d-flex align-items-center gap-3 flex-wrap mb-3">
-          <span className="fs-14 text-secondary">Filter by:</span>
+          <span className="fs-14 text-secondary">{t("filter_by")}:</span>
           <button
             className="btn fs-14 text-danger border-0 bg-transparent p-0 fw-medium"
             onClick={() => setFilters({ status: [], stateId: "", categoryId: "", searchText: "" })}
           >
-            Clear all
+           {t("clear_all")}
           </button>
           
           <div className="d-flex align-items-center gap-2 ms-2">
@@ -133,7 +137,7 @@ export default function BulkCommunicationPool({
                 setFilters((prev) => ({ ...prev, status: e.target.value ? [e.target.value] : [] }));
               }}
             >
-              <option value="">All Statuses</option>
+             <option value="">{t("all_statuses")}</option>
               {CANDIDATE_POOL_STATUSES.map((status) => (
                 <option key={status} value={status}>
                   {STATUS_LABEL_MAP[status] || formatStatusFallback(status)}
@@ -148,7 +152,7 @@ export default function BulkCommunicationPool({
                 value={filters?.stateId}
                 onChange={(e) => { onPageChange(0); setFilters(prev => ({ ...prev, stateId: e.target.value })); }}
               >
-                <option value="">All Locations</option>
+              <option value="">{t("all_locations")}</option>
                 {availableLocations?.map((loc) => (
                   <option key={loc.id} value={loc.id}>{loc.name}</option>
                 ))}
@@ -179,7 +183,7 @@ export default function BulkCommunicationPool({
               <input
                 type="text"
                 className="form-control border-start-0 fs-14 py-2"
-                placeholder="Search candidates..."
+               placeholder={t("search_candidates")}
                 value={filters.searchText}
                 onChange={(e) => setFilters((prev) => ({ ...prev, searchText: e.target.value }))}
                 style={{ borderRadius: "0 6px 6px 0" }}
@@ -198,7 +202,8 @@ export default function BulkCommunicationPool({
                 fontWeight: "400"
               }}
             >
-              {selectedIds.length} Candidates Selected
+              {/* {selectedIds.length} Candidates Selected */}
+              {selectedIds.length} {t("candidates_selected")}
             </span>
           </div>
 
@@ -209,7 +214,7 @@ export default function BulkCommunicationPool({
             onClick={onTriggerCommunication}
             style={{ borderRadius: "6px", minWidth: "180px" }}
           >
-            Trigger Communication
+           {t("trigger_communication")}
           </button>
         </div>
 
@@ -223,25 +228,25 @@ export default function BulkCommunicationPool({
               <th className="fs-14 fw-normal py-3" style={{ paddingLeft: "1rem", width: "40px" }}>
                 <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} />
               </th>
-              <th className="fs-14 fw-normal py-3">Candidate</th>
-              <th className="fs-14 fw-normal py-3">Email Address</th>
-              <th className="fs-14 fw-normal py-3">Experience</th>
-              <th className="fs-14 fw-normal py-3">Status</th>
-              {hasLocationData && <th className="fs-14 fw-normal py-3">Location</th>}
-              <th className="fs-14 fw-normal py-3">Category</th>
+              <th className="fs-14 fw-normal py-3">{t("candidate")}</th>
+              <th className="fs-14 fw-normal py-3">{t("email_address")}</th>
+              <th className="fs-14 fw-normal py-3">{t("experience")}</th>
+              <th className="fs-14 fw-normal py-3">{t("status")}</th>
+              {hasLocationData && <th className="fs-14 fw-normal py-3">{t("location")}</th>}
+              <th className="fs-14 fw-normal py-3">{t("category")}</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
                 <td colSpan={dynamicColSpan} className="text-center py-4">
-                  Loading candidates...
+                  {t("loading_candidates")}
                 </td>
               </tr>
             ) : candidates.length === 0 ? (
               <tr>
                 <td colSpan={dynamicColSpan} className="text-center py-4">
-                  No candidates found
+                 {t("no_candidates_found")}
                 </td>
               </tr>
             ) : (
@@ -252,16 +257,20 @@ export default function BulkCommunicationPool({
                   </td>
                   <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c.name}</p>
-                    <small className="text-muted fs-12 d-block">Application Number: {c.applicationNo}</small>
+                    <small className="text-muted fs-12 d-block">{t("application_number")}: {c.applicationNo}</small>
                     <small className="text-primary fs-12 d-block mt-0.5 fw-medium">{c.positionName}</small>
                   </td>
                   <td className="align-content-center fs-14 text-secondary">
                     {c.email}
                   </td>
-                  <td className="align-content-center">{((c.experienceMonths ?? 0) / 12).toFixed(1)} years</td>
+                  <td className="align-content-center">
+                    {/* {((c.experienceMonths ?? 0) / 12).toFixed(1)} years */}
+                    {((c.experienceMonths ?? 0) / 12).toFixed(1)} {t("years")}
+                    </td>
                   <td className="align-content-center">
                     <span className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"}`}>
-                      {c.status}
+                      {/* {c.status} */}
+                      {t(c.status.toLowerCase())}
                     </span>
                   </td>
                   {hasLocationData && <td className="align-content-center">{c.location}</td>}
@@ -276,7 +285,7 @@ export default function BulkCommunicationPool({
       {/* Pagination Toolbar Footer Container */}
       <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
         <div className="fs-14 text-muted">
-          Showing {page * pageSize + 1}–{Math.min((page + 1) * pageSize, totalElements)} of {totalElements}
+         {t("showing")} {page * pageSize + 1}–{Math.min((page + 1) * pageSize, totalElements)} {t("of")} {totalElements}
         </div>
 
         <div className="d-flex align-items-center gap-2">
@@ -293,8 +302,8 @@ export default function BulkCommunicationPool({
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
-          <button className="btn btn-sm btn-outline-secondary" disabled={page === 0} onClick={() => onPageChange(page - 1)}>Prev</button>
-          <button className="btn btn-sm btn-outline-secondary" disabled={(page + 1) * pageSize >= totalElements} onClick={() => onPageChange(page + 1)}>Next</button>
+          <button className="btn btn-sm btn-outline-secondary" disabled={page === 0} onClick={() => onPageChange(page - 1)}>{t("prev")}</button>
+          <button className="btn btn-sm btn-outline-secondary" disabled={(page + 1) * pageSize >= totalElements} onClick={() => onPageChange(page + 1)}>{t("next")}</button>
         </div>
       </div>
     </div>

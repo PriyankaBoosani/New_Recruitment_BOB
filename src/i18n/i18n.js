@@ -103,6 +103,8 @@ import interviewRequestHi from "../i18n/InterviewRequestJson/interviewRequest.hi
 
 import offerLetterRequestEn from "../i18n/offerLetterRequest/offerLetterRequest.en.json";
 import offerLetterRequestHi from "../i18n/offerLetterRequest/offerLetterRequest.hi.json";
+import bulkCommunicationEn from "../i18n/Bulk communication/Bulkcommunication.en.json";
+import bulkCommunicationHi from "../i18n/Bulk communication/Bulkcommunication.hi.json";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -141,7 +143,8 @@ i18n.use(initReactI18next).init({
       examRequest: examRequestEn,
       interviewRequest: interviewRequestEn,
       offerLetterRequest: offerLetterRequestEn,
-        dashboard: dashboardEn,
+      dashboard: dashboardEn,
+      bulkCommunication: bulkCommunicationEn,
     },
     hi: {
       common: commonHi,
@@ -178,7 +181,8 @@ i18n.use(initReactI18next).init({
       examRequest: examRequestHi,
       interviewRequest: interviewRequestHi,
       offerLetterRequest: offerLetterRequestHi,
-       dashboard: dashboardHi,  
+      dashboard: dashboardHi,
+      bulkCommunication: bulkCommunicationHi,
     },
   },
   lng: "en",
