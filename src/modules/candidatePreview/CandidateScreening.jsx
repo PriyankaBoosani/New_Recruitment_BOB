@@ -2066,7 +2066,6 @@ export default function CandidateScreening({ selectedJob }) {
       const selectedOffers = offerData.filter((o) =>
         offerSelectedIds.includes(o.id)
       );
-      
 
       const approvedOffers = selectedOffers.filter(
         (o) => o.status === "APPROVED"
@@ -2099,18 +2098,22 @@ export default function CandidateScreening({ selectedJob }) {
     offerSelectedIds.includes(offer.id)
   );
 
-  const canSendOfferForApproval =
-    selectedOffers.length > 0 &&
-    selectedOffers.every((offer) => offer.status === "APPROVED");
-    
   const selectedOfferObjects = useMemo(() => {
     return offerData.filter((o) => offerSelectedIds.includes(o.id));
   }, [offerData, offerSelectedIds]);
 
   const canGenerateOffer =
     selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every((o) => o.qnq === "Q" && !o.waitList);
+    selectedOfferObjects.every(
+      (o) =>
+        ["OFFER_AWAITED", "L1_REJECTED", "L2_REJECTED"].includes(o.status) &&
+        o.qnq === "Q" &&
+        !o.waitList
+    );
 
+  const canSendOfferForApproval =
+    selectedOfferObjects.length > 0 &&
+    selectedOfferObjects.every((o) => o.status === "APPROVED");
   const allHaveLocationAndState =
     selectedOfferObjects.length > 0 &&
     selectedOfferObjects.every(
@@ -3219,11 +3222,7 @@ export default function CandidateScreening({ selectedJob }) {
                         // disabled={
                         //   generatingOffer || offerSelectedIds.length === 0
                         // }
-                        disabled={
-                          generatingOffer ||
-                          offerSelectedIds.length === 0 ||
-                          !canGenerateOffer
-                        }
+                        disabled={!canGenerateOffer}
                       >
                         {/* <i className="bi bi-file-earmark-plus"></i> */}
                         Generate Offer
