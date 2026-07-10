@@ -2808,7 +2808,7 @@ export default function CandidateScreening({ selectedJob }) {
                 </button>
               </li>
             ))}
-            {selectedPositionId.length > 0 && selectedRequisitionId && (
+            {/* {selectedPositionId.length > 0 && selectedRequisitionId && (
               <li className="nav-item ms-auto">
                 <button
                   type="button"
@@ -2818,7 +2818,7 @@ export default function CandidateScreening({ selectedJob }) {
                   {t("candidateWorkflow:download_excel")}
                 </button>
               </li>
-            )}
+            )} */}
           </ul>
 
           {/* Download all candidate details moved to the right actions area */}
