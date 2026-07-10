@@ -87,5 +87,6 @@
   "state_city_conflict_empty_first": "A state-only entry already exists for this state. Please do not add a city-wise entry for the same state.",
   "invalid_description": "Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # are allowed",
   "invalid_requisition_title":"Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # % + are allowed",
-  "invalid_requisition_description":"Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # % + are allowed"
+  "invalid_requisition_description":"Only letters, numbers and . , - _ / ( ) & : ; ' \" @ # % + are allowed",
+  "exservicemen_exceeds_category": "Total Ex Servicemen reservation ({{exServicemenTotal}}) cannot exceed total category vacancies ({{categoryTotal}})."
 }

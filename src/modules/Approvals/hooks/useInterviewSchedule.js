@@ -128,6 +128,7 @@ const useInterviewSchedule = () => {
                       zones: h?.zonalData || [],
                       panels: h?.panelData || [],
                       isHistory: true,
+                       batchId: h?.batchId, 
                     }))
                 : [];
 
@@ -203,6 +204,62 @@ const useInterviewSchedule = () => {
     },
     []
   );
+  const downloadL1PendingExcel = useCallback(async (positionId) => {
+    if (!positionId) return;
+
+    try {
+      const response =
+        await committeeManagementService.downloadL1PendingScheduledCandidatesExcel(
+          positionId
+        );
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Scheduled_Candidates.xlsx";
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to download Excel");
+    }
+  }, []);
+  const downloadHistoryExcel = useCallback(async (batchId) => {
+    if (!batchId) return;
+
+    try {
+      const response =
+        await committeeManagementService.downloadScheduledCandidatesHistoryExcel(
+          batchId
+        );
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Scheduled_Candidates_History.xlsx";
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to download Excel");
+    }
+  }, []);
 
   useEffect(() => {
     fetchMasters();
@@ -221,7 +278,10 @@ const useInterviewSchedule = () => {
 
     submitL1Approval,
     loadingL1Approval,
+    downloadL1PendingExcel,
+    downloadHistoryExcel
   };
+
 };
 
 export default useInterviewSchedule;

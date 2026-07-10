@@ -1863,14 +1863,14 @@ const ApplicationForm = ({
         </Accordion.Item>
         {dynamicFields?.fields?.length > 0 && (
           <Accordion.Item eventKey="4" className="additional-accordion">
-            <Accordion.Header>Additional Details</Accordion.Header>
+            <Accordion.Header>{t("additional_details")}</Accordion.Header>
 
             <Accordion.Body>
               <table className="table table-bordered bob-table add-table">
                 <thead>
                   <tr className="exp-table-header">
-                    <th>Detail</th>
-                    <th>Provided Information</th>
+                    <th>{t("detail")}</th>
+                    <th>{t("provided_info")}</th>
                   </tr>
                 </thead>
 

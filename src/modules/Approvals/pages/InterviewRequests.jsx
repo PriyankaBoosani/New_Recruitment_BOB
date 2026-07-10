@@ -11,7 +11,12 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import Select from "react-select";
-import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
+import {
+  BoxArrowDown,
+  ChevronDown,
+  ChevronUp,
+  
+} from "react-bootstrap-icons";
 import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import "../../../style/css/InterviewRequest.css";
 import start_icon from "../../../assets/start_icon.png";
@@ -19,7 +24,6 @@ import I_icon from "../../../assets/I_icon.png";
 import useInterviewSchedule from "../hooks/useInterviewSchedule";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-
 
 const selectStyles = {
   control: (base) => ({
@@ -118,6 +122,8 @@ const InterviewRequests = () => {
     loadingPositionDetails,
     fetchPositionDetailsByRequisition,
     submitL1Approval,
+    downloadL1PendingExcel,
+    downloadHistoryExcel,
   } = useInterviewSchedule();
 
   useEffect(() => {
@@ -126,10 +132,10 @@ const InterviewRequests = () => {
 
   const selectedRequisitionOption = selectedRequisition
     ? {
-      label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
-      value: selectedRequisition.id,
-      raw: selectedRequisition,
-    }
+        label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
+        value: selectedRequisition.id,
+        raw: selectedRequisition,
+      }
     : null;
   const formatStatus = (status = "") => {
     return status
@@ -280,7 +286,9 @@ const InterviewRequests = () => {
       <Container fluid className="interview-page">
         <Row className="mb-3 align-items-center">
           <Col>
-            <h5 className="page-title">{t("interviewRequest:interview_schedule_request")}</h5>
+            <h5 className="page-title">
+              {t("interviewRequest:interview_schedule_request")}
+            </h5>
             <p className="page-subtitle">
               {t("interviewRequest:review_interview_schedule_request")}
             </p>
@@ -289,7 +297,9 @@ const InterviewRequests = () => {
 
         <Row className="mb-3 align-items-end filters-row border rounded p-3 bulk-actions">
           <Col xs={12} md={4}>
-            <div className="field-label">{t("approvalHistory:requisition")}</div>
+            <div className="field-label">
+              {t("approvalHistory:requisition")}
+            </div>
             <Select
               placeholder={t("approvalHistory:select_requisition")}
               styles={selectStyles}
@@ -462,6 +472,37 @@ const InterviewRequests = () => {
                               >
                                 {t("approvalHistory:reject")}
                               </Button>
+                              <OverlayTrigger
+                                placement="bottom"
+                                overlay={
+                                  <Tooltip>Download Candidate Details</Tooltip>
+                                }
+                              >
+                                <span
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!pos.canTakeAction) return;
+                                    downloadL1PendingExcel(pos.positionId);
+                                  }}
+                                  style={{
+                                    cursor: pos.canTakeAction
+                                      ? "pointer"
+                                      : "not-allowed",
+                                    opacity: pos.canTakeAction ? 1 : 0.5,
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    marginLeft: "10px",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  <BoxArrowDown
+                                    size={22}
+                                    color={
+                                      pos.canTakeAction ? "#198754" : "#6c757d"
+                                    }
+                                  />
+                                </span>
+                              </OverlayTrigger>
                             </div>
 
                             <div className="historyposition-card-inner mt-3">
@@ -471,7 +512,9 @@ const InterviewRequests = () => {
                                   alt="History"
                                   style={{ width: 18, height: 18 }}
                                 />
-                                <span className="hisname">{t("interviewRequest:history")}</span>
+                                <span className="hisname">
+                                  {t("interviewRequest:history")}
+                                </span>
                               </div>
 
                               {pos.history?.length > 0 ? (
@@ -523,7 +566,10 @@ const InterviewRequests = () => {
 
                                           <div className="col-md-3">
                                             <div className="field-label">
-                                              {t("interviewRequest:scheduled_candidates")}:{" "}
+                                              {t(
+                                                "interviewRequest:scheduled_candidates"
+                                              )}
+                                              :{" "}
                                               <span className="field-value">
                                                 {item.totalCandidateCount || 0}
                                               </span>
@@ -532,7 +578,8 @@ const InterviewRequests = () => {
 
                                           <div className="col-md-2">
                                             <div className="field-label">
-                                              {t("interviewRequest:zone_count")}:{" "}
+                                              {t("interviewRequest:zone_count")}
+                                              :{" "}
                                               <span className="field-value">
                                                 {item.totalZonalCount || 0}
                                               </span>
@@ -541,7 +588,10 @@ const InterviewRequests = () => {
 
                                           <div className="col-md-2">
                                             <div className="field-label">
-                                              {t("interviewRequest:panel_count")}:{" "}
+                                              {t(
+                                                "interviewRequest:panel_count"
+                                              )}
+                                              :{" "}
                                               <span className="field-value ms-1">
                                                 {item.totalPanelCount || 0}
                                               </span>
@@ -554,6 +604,34 @@ const InterviewRequests = () => {
                                             >
                                               {formatStatus(item.status)}
                                             </Badge>
+                                            <OverlayTrigger
+                                              placement="bottom"
+                                              overlay={
+                                                <Tooltip>
+                                                  Download Excel
+                                                </Tooltip>
+                                              }
+                                            >
+                                              <span
+                                                onClick={(e) => {
+                                                  e.stopPropagation();
+                                                  downloadHistoryExcel(
+                                                    item.batchId
+                                                  );
+                                                }}
+                                                style={{
+                                                  cursor: "pointer",
+                                                  display: "inline-flex",
+                                                  verticalAlign: "middle",
+                                                  marginLeft: "15px"
+                                                }}
+                                              >
+                                                <BoxArrowDown
+                                                  size={20}
+                                                  color="#198754"
+                                                />
+                                              </span>
+                                            </OverlayTrigger>
                                           </div>
                                         </div>
                                       </div>
@@ -563,8 +641,10 @@ const InterviewRequests = () => {
                                           <div className="row g-3">
                                             <div className="col-md-6">
                                               <div className="field-label mb-2">
-                                                {t("interviewRequest:zone_details")} (
-                                                {item.zones?.length || 0})
+                                                {t(
+                                                  "interviewRequest:zone_details"
+                                                )}{" "}
+                                                ({item.zones?.length || 0})
                                               </div>
 
                                               <Table
@@ -574,8 +654,16 @@ const InterviewRequests = () => {
                                               >
                                                 <thead>
                                                   <tr>
-                                                    <th>{t("interviewRequest:zone_name")}</th>
-                                                    <th>{t("interviewRequest:candidates")}</th>
+                                                    <th>
+                                                      {t(
+                                                        "interviewRequest:zone_name"
+                                                      )}
+                                                    </th>
+                                                    <th>
+                                                      {t(
+                                                        "interviewRequest:candidates"
+                                                      )}
+                                                    </th>
                                                   </tr>
                                                 </thead>
                                                 <tbody>
@@ -597,7 +685,9 @@ const InterviewRequests = () => {
                                                         colSpan="2"
                                                         className="text-center text-muted"
                                                       >
-                                                        {t("interviewRequest:no_zone_details_found")}
+                                                        {t(
+                                                          "interviewRequest:no_zone_details_found"
+                                                        )}
                                                       </td>
                                                     </tr>
                                                   )}
@@ -618,10 +708,26 @@ const InterviewRequests = () => {
                                               >
                                                 <thead>
                                                   <tr>
-                                                    <th>{t("approvalHistory:panel_name")}</th>
-                                                    <th>{t("approvalHistory:panel_members")}</th>
-                                                    <th>{t("approvalHistory:start_date")}</th>
-                                                    <th>{t("approvalHistory:end_date")}</th>
+                                                    <th>
+                                                      {t(
+                                                        "approvalHistory:panel_name"
+                                                      )}
+                                                    </th>
+                                                    <th>
+                                                      {t(
+                                                        "approvalHistory:panel_members"
+                                                      )}
+                                                    </th>
+                                                    <th>
+                                                      {t(
+                                                        "approvalHistory:start_date"
+                                                      )}
+                                                    </th>
+                                                    <th>
+                                                      {t(
+                                                        "approvalHistory:end_date"
+                                                      )}
+                                                    </th>
                                                   </tr>
                                                 </thead>
                                                 <tbody>
@@ -636,13 +742,13 @@ const InterviewRequests = () => {
                                                             {Array.isArray(
                                                               p.members
                                                             ) &&
-                                                              p.members.length > 0
+                                                            p.members.length > 0
                                                               ? p.members
-                                                                .map(
-                                                                  (m) =>
-                                                                    m.name
-                                                                )
-                                                                .join(", ")
+                                                                  .map(
+                                                                    (m) =>
+                                                                      m.name
+                                                                  )
+                                                                  .join(", ")
                                                               : "-"}
                                                           </td>
                                                           <td>
@@ -664,7 +770,9 @@ const InterviewRequests = () => {
                                                         colSpan="4"
                                                         className="text-center text-muted"
                                                       >
-                                                        {t("approvalHistory:no_panels_found")}
+                                                        {t(
+                                                          "approvalHistory:no_panels_found"
+                                                        )}
                                                       </td>
                                                     </tr>
                                                   )}

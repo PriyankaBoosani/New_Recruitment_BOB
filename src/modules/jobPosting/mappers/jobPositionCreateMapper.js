@@ -13,6 +13,7 @@ export const mapAddPositionToCreateDto = ({
   disabilityCategories = [],
   nationalCategories = {},
   nationalDisabilities = {},
+  nationalExServicemen = {},
   isProficientInLocalLanguage,
 
   qualifications = [],
@@ -43,17 +44,17 @@ export const mapAddPositionToCreateDto = ({
       edu.groups.forEach((group) => {
         const conditions = [];
 
-          if (group.educations && Array.isArray(group.educations)) {
+        if (group.educations && Array.isArray(group.educations)) {
           group.educations.forEach((edu) => {
             if (edu.educationTypeId && edu.educationQualificationsId) {
-             conditions.push({
-  educationType: edu.educationTypeId,
-  qualification: edu.educationQualificationsId,
-  specialization: edu.group ? "" : (edu.specializationId || ""),
-  group: edu.group || "",
-  duration: edu.duration || "",
-  percentage: edu.percentage || "",
-});
+              conditions.push({
+                educationType: edu.educationTypeId,
+                qualification: edu.educationQualificationsId,
+                specialization: edu.group ? "" : edu.specializationId || "",
+                group: edu.group || "",
+                duration: edu.duration || "",
+                percentage: edu.percentage || "",
+              });
             }
           });
         }
@@ -231,6 +232,7 @@ export const mapAddPositionToCreateDto = ({
             reservationCategories,
             disabilityCategories,
             isProficientInLocalLanguage,
+            nationalExServicemen
           })
         )
       : [],
@@ -242,6 +244,7 @@ export const mapAddPositionToCreateDto = ({
           nationalDisabilities,
           reservationCategories,
           disabilityCategories,
+          nationalExServicemen,
         })
       : [],
   };
@@ -251,6 +254,7 @@ const mapStateDistribution = ({
   reservationCategories,
   disabilityCategories,
   isProficientInLocalLanguage,
+  nationalExServicemen,
 }) => {
   const distributions = [];
 
@@ -278,6 +282,22 @@ const mapStateDistribution = ({
     }
   });
 
+  Object.entries(currentState.exServicemen || {}).forEach(
+  ([groupId, value]) => {
+    const count = Number(value || 0);
+
+    if (count > 0) {
+      distributions.push({
+        reservationCategoryId: null,
+        disabilityCategoryId: null,
+        vacancyCount: count,
+        isDisability: false,
+        exServicemanGroupId: groupId,
+        isExServiceman: true,
+      });
+    }
+  }
+);
   return {
     stateId: currentState.state,
     cityId: currentState.city,
@@ -296,6 +316,7 @@ const mapNationalCategoryDistribution = ({
   nationalDisabilities,
   reservationCategories,
   disabilityCategories,
+  nationalExServicemen,
 }) => {
   const distributions = [];
 
@@ -319,6 +340,20 @@ const mapNationalCategoryDistribution = ({
         disabilityCategoryId: dis.id,
         vacancyCount: count,
         isDisability: true,
+      });
+    }
+  });
+  Object.entries(nationalExServicemen).forEach(([groupId, value]) => {
+    const count = Number(value || 0);
+
+    if (count > 0) {
+      distributions.push({
+        reservationCategoryId: null,
+        disabilityCategoryId: null,
+        vacancyCount: count,
+        isDisability: false,
+        exServicemanGroupId: groupId,
+        isExServiceman: true,
       });
     }
   });

@@ -112,10 +112,29 @@ const committeeManagementService = {
     return api.post("/recruiter/offer-approval/approve-or-reject", payload);
   },
   getOfferApprovalWorkflowHistory(historyId) {
-    return api.get(
-      `/recruiter/offer-approval/workflow-history/${historyId}`
-    );
+    return api.get(`/recruiter/offer-approval/workflow-history/${historyId}`);
   },
+  downloadL1PendingScheduledCandidatesExcel: (positionId) =>
+    api.get(
+      `/recruiter/schedule-pool/l1-pending-scheduled-candidates-excel/${positionId}`,
+      {
+        responseType: "blob",
+      }
+    ),
+  downloadScheduledCandidatesHistoryExcel: (batchId) =>
+    api.get(
+      `/recruiter/schedule-pool/scheduled-candidates-history-excel/${batchId}`,
+      {
+        responseType: "blob",
+      }
+    ),
+  downloadAllCandidateDetailsExcel: (positionId) =>
+    api.get(
+      `/recruiter/candidate-details/get-all-details-excel/${positionId}`,
+      {
+        responseType: "blob",
+      }
+    ),
 };
 
 export default committeeManagementService;

@@ -55,6 +55,7 @@ import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
 import { BsFileEarmarkPlus } from "react-icons/bs";
 import DigitalSignatureModal from "./modal/DigitalSignatureModal";
 import Loader from "../../shared/components/Loader";
+import committeeManagementService from "../committeeManagement/services/committeeManagementService";
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -73,6 +74,8 @@ export default function CandidateScreening({ selectedJob }) {
   const role = user?.role?.toLowerCase();
 
   const isRecruiter = role === "recruiter";
+
+  const isAdmin = role === "admin";
 
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
 
@@ -426,6 +429,42 @@ export default function CandidateScreening({ selectedJob }) {
       setSubmittingApproval(false);
     }
   };
+
+  const handleDownloadAllCandidateDetails = async () => {
+    try {
+      const positionId = selectedPositionId?.[0];
+
+      if (!positionId) {
+        toast.error("Please select a position");
+        return;
+      }
+
+      const res =
+        await committeeManagementService.downloadAllCandidateDetailsExcel(
+          positionId
+        );
+
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Candidate_Details.xlsx";
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Failed to download candidate details"
+      );
+    }
+  };
   const handleScheduleInterview = () => {
     if (!selectedCandidateIds.length) {
       toast.error("Please select candidates");
@@ -727,7 +766,7 @@ export default function CandidateScreening({ selectedJob }) {
         }
 
         // Recruiter -> only for contract positions
-        if (isRecruiter) {
+        if (isRecruiter || isAdmin) {
           return hasPrivilege("Compensation Pool") && isContractPosition;
         }
 
@@ -879,8 +918,8 @@ export default function CandidateScreening({ selectedJob }) {
       //       : c.examQualificationStatus || "-",
 
       examQualificationStatus: c.examQualificationStatus
-  ? c.examQualificationStatus.replaceAll("_", " ")
-  : "-",
+        ? c.examQualificationStatus.replaceAll("_", " ")
+        : "-",
 
       educationScore: c?.candidateRankingResults?.educationScore ?? "-",
 
@@ -1356,7 +1395,12 @@ export default function CandidateScreening({ selectedJob }) {
 
       return (
         c.status === "Shortlisted" &&
-        ["QUALIFIED", "QUALIFIED_UNDER_UR", "QUALIFIED UNDER UR", "Qualified Under UR"].includes(c.examQualificationStatus)
+        [
+          "QUALIFIED",
+          "QUALIFIED_UNDER_UR",
+          "QUALIFIED UNDER UR",
+          "Qualified Under UR",
+        ].includes(c.examQualificationStatus)
       );
     });
 
@@ -2719,7 +2763,21 @@ export default function CandidateScreening({ selectedJob }) {
                 </button>
               </li>
             ))}
+            {selectedPositionId.length > 0 && selectedRequisitionId && (
+              <li className="nav-item ms-auto">
+                <button
+                  type="button"
+                  className="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
+                  onClick={handleDownloadAllCandidateDetails}
+                >
+                 
+                  {t("candidateWorkflow:download_excel")}
+                </button>
+              </li>
+            )}
           </ul>
+
+          {/* Download all candidate details moved to the right actions area */}
 
           {/* Filters */}
 
@@ -2919,6 +2977,17 @@ export default function CandidateScreening({ selectedJob }) {
 
           {activeTab === "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-3 py-2 align-items-center">
+              {/* Digital Signature */}
+              <div className="d-flex flex-column align-items-end">
+                <button
+                  type="button"
+                  className="btn orange-bg text-white fs-12"
+                  onClick={() => setShowDigitalSignatureModal(true)}
+                >
+                  {/* <i className="bi bi-pen"></i> */}
+                  Upload & download Digital Signature
+                </button>
+              </div>
               {/* LEFT SECTION */}
               <div className="col-md-8 col-12">
                 <div className="d-flex flex-wrap gap-4 justify-content-between align-items-end">
@@ -3083,35 +3152,23 @@ export default function CandidateScreening({ selectedJob }) {
                     </div>
                     {/* Generate Offer */}
                     <div>
-                      <p className="mb-1 fw-normal fs-13 blue-color invisible">
-                        Generate
-                      </p>
-
-                      <OverlayTrigger
-                        placement="bottom"
-                        overlay={
-                          <Tooltip>
-                            {t("candidateWorkflow:generate_offer")}
-                          </Tooltip>
+                      <button
+                        type="button"
+                        className="btn orange-bg text-white fs-12"
+                        onClick={handleGenerateOffer}
+                        // disabled={offerSelectedIds.length === 0}
+                        // disabled={
+                        //   generatingOffer || offerSelectedIds.length === 0
+                        // }
+                        disabled={
+                          generatingOffer ||
+                          offerSelectedIds.length === 0 ||
+                          !canGenerateOffer
                         }
                       >
-                        <button
-                          type="button"
-                          className="btn orange-bg text-white"
-                          onClick={handleGenerateOffer}
-                          // disabled={offerSelectedIds.length === 0}
-                          // disabled={
-                          //   generatingOffer || offerSelectedIds.length === 0
-                          // }
-                          disabled={
-                            generatingOffer ||
-                            offerSelectedIds.length === 0 ||
-                            !canGenerateOffer
-                          }
-                        >
-                          <i className="bi bi-file-earmark-plus"></i>
-                        </button>
-                      </OverlayTrigger>
+                        {/* <i className="bi bi-file-earmark-plus"></i> */}
+                        Generate Offer
+                      </button>
 
                       <small className="d-block mt-1 fs-12 invisible">
                         {"\u00A0"}
@@ -3151,30 +3208,6 @@ export default function CandidateScreening({ selectedJob }) {
               {/* RIGHT SECTION */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end align-items-end gap-3">
-                  {/* Digital Signature */}
-                  <div className="d-flex flex-column align-items-center">
-                    {/* <label className="fs-13 blue-color mb-1">
-                      Digital Signature
-                    </label> */}
-
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={
-                        <Tooltip>
-                          {t("candidateWorkflow:upload_digital_signature")}
-                        </Tooltip>
-                      }
-                    >
-                      <button
-                        type="button"
-                        className="btn orange-bg text-white"
-                        onClick={() => setShowDigitalSignatureModal(true)}
-                      >
-                        <i className="bi bi-pen"></i>
-                      </button>
-                    </OverlayTrigger>
-                  </div>
-
                   {/* Merit List */}
                   <button
                     className="btn blue-border blue-color fs-13 px-3 py-1"

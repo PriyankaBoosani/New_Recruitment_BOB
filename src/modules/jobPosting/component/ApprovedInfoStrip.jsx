@@ -53,7 +53,7 @@ const ApprovedInfoStrip = ({
                 <div className="w-100">
                     <div className="approved-header-row">
                         <span className="approved-header-id">
-                            {requisition?.requisitionId} - {requisition?.code}
+                            {requisition?.code}
                         </span>
 
                         <span className="approved-header-date">

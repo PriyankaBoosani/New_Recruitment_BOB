@@ -21,6 +21,7 @@ export const useMasterData = () => {
     stateLanguages: [],
     approvingAuthorities: [],
     cities: [],
+    exServicemen: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,12 +37,14 @@ export const useMasterData = () => {
           certRes,
           stateLanguagesRes,
           documentTypesRes,
+          exservicemenRes,
         ] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           masterApiService.getApprovingAuthorities(),
           masterApiService.getAllCertificates(),
           masterApiService.getStateLanguages(),
           masterApiService.getAllDocumentTypes(),
+          masterApiService.getExServiceCategories(),
         ]);
 
         const mapped = mapMasterResponse(
@@ -49,7 +52,8 @@ export const useMasterData = () => {
           certRes.data,
           //languagesRes.data,
           stateLanguagesRes.data,
-          documentTypesRes.data
+          documentTypesRes.data,
+          exservicemenRes.data
         );
 
         setData({
@@ -70,6 +74,12 @@ export const useMasterData = () => {
           approvingAuthorities: (approvingRes.data || []).map((a) => ({
             id: a.approvingAuthorityId,
             name: a.authorityName,
+          })),
+
+          exServicemen: (exservicemenRes.data || []).map((ex) => ({
+            id: ex.exServicemanCategoryId,
+            code: ex.exsCategoryCode,
+            groupId: ex.groupId,
           })),
 
           // // NEW STATE-LANGUAGE MAPPING

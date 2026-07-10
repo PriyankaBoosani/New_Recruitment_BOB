@@ -589,7 +589,7 @@ const JobPostingsList = () => {
             <option value="APPROVED">
               {t("jobPostingsList:status_approved")}
             </option>
-            <option value="CLOSED">{t("jobPostingsList:status_closed")}</option>
+            {/* <option value="CLOSED">{t("jobPostingsList:status_closed")}</option> */}
           </Form.Select>
         </Col>
       </Row>
@@ -1196,7 +1196,7 @@ const JobPostingsList = () => {
                       </Button>
                     </OverlayTrigger>
 
-                    {req.status === "APPROVED" && (
+                    {/* {req.status === "APPROVED" && (
                       <OverlayTrigger
                         placement="bottom"
                         overlay={
@@ -1217,7 +1217,7 @@ const JobPostingsList = () => {
                           <XCircleFill size={20} color="#dc3545" />
                         </Button>
                       </OverlayTrigger>
-                    )}
+                    )} */}
                   </>
                 )}
                 {/* )} */}

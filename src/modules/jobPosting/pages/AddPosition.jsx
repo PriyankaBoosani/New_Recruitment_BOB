@@ -95,6 +95,7 @@ const AddPosition = () => {
     languages,
     stateLanguages,
     cities,
+    exServicemen,
   } = masterData;
 
   const [errors, setErrors] = useState({});
@@ -113,6 +114,7 @@ const AddPosition = () => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [nationalCategories, setNationalCategories] = useState({});
   const [nationalDisabilities, setNationalDisabilities] = useState({});
+  const [nationalExServicemen, setNationalExServicemen] = useState({});
   const [isProficientInLocalLanguage, setIsProficientInLocalLanguage] =
     useState(false);
   const [currentState, setCurrentState] = useState({
@@ -410,23 +412,36 @@ const AddPosition = () => {
       return;
     const natCat = {};
     const natDis = {};
+    const natEx = {};
+
     reservationCategories.forEach((c) => (natCat[c.code] = 0));
     disabilityCategories.forEach((d) => (natDis[d.disabilityCode] = 0));
+
     existingPosition.positionCategoryNationalDistributions.forEach((d) => {
-      if (d.isDisability) {
+      if (d.isExServiceman) {
+        natEx[d.exServicemanGroupId] = d.vacancyCount;
+      } else if (d.isDisability) {
         const dis = disabilityCategories.find(
           (x) => x.id === d.disabilityCategoryId
         );
-        if (dis) natDis[dis.disabilityCode] = d.vacancyCount;
+
+        if (dis) {
+          natDis[dis.disabilityCode] = d.vacancyCount;
+        }
       } else {
         const cat = reservationCategories.find(
           (x) => x.id === d.reservationCategoryId
         );
-        if (cat) natCat[cat.code] = d.vacancyCount;
+
+        if (cat) {
+          natCat[cat.code] = d.vacancyCount;
+        }
       }
     });
+
     setNationalCategories(natCat);
     setNationalDisabilities(natDis);
+    setNationalExServicemen(natEx);
   }, [existingPosition, reservationCategories, disabilityCategories]);
 
   // Handle State Distribution mapping
@@ -444,7 +459,7 @@ const AddPosition = () => {
         existingPosition.positionStateDistributions.map(async (sd) => {
           const categories = {};
           const disabilities = {};
-
+          const exServicemen = {};
           reservationCategories.forEach((c) => (categories[c.code] = 0));
           disabilityCategories.forEach(
             (d) => (disabilities[d.disabilityCode] = 0)
@@ -462,6 +477,9 @@ const AddPosition = () => {
               );
               if (cat) categories[cat.code] = d.vacancyCount;
             }
+            if (d.isExServiceman) {
+              exServicemen[d.exServicemanGroupId] = d.vacancyCount;
+            }
           });
 
           return {
@@ -475,6 +493,7 @@ const AddPosition = () => {
             // isProficientInLocalLanguage will be managed at AddPosition root level only
             categories,
             disabilities,
+            exServicemen,
             categoryDistributions: sd.positionCategoryDistributions.map(
               (cd) => ({
                 positionCategoryDistributionId:
@@ -877,6 +896,7 @@ const AddPosition = () => {
       existingIndentName,
       nationalCategories,
       nationalDisabilities,
+      nationalExServicemen,
       stateDistributions,
       // existingPositions: positionsByReq[requisitionId] || [],
       existingPositions: positionsByReq[reqKey] || [],
@@ -920,6 +940,7 @@ const AddPosition = () => {
       disabilityCategories,
       nationalCategories,
       nationalDisabilities,
+      nationalExServicemen,
       qualifications,
       certifications,
       indentOthers,
@@ -927,7 +948,7 @@ const AddPosition = () => {
       stateDistributions: stateDistributions.filter((s) => !s.__deleted),
       isAgeRelRiotVictimFamily,
       isAgeRelWdsWomen,
-       dynamicFields: additionalForm,
+      dynamicFields: additionalForm,
 
       jobPositionExclusion: exclusions.map((item) => {
         const existingExclusion = existingPosition?.jobPositionExclusions?.find(
@@ -1057,7 +1078,6 @@ const AddPosition = () => {
               setIndentOthers={setIndentOthers}
               onPositionSelect={onPositionSelect}
               educationData={educationData}
-              
               onEducationClick={(m) => {
                 if (isViewMode) return;
 
@@ -1120,6 +1140,9 @@ const AddPosition = () => {
               selectedExclusions={selectedExclusions}
               setSelectedExclusions={setSelectedExclusions}
               onOpenDynamicForm={() => setShowFormBuilder(true)}
+              exServicemen={exServicemen}
+              nationalExServicemen={nationalExServicemen}
+              setNationalExServicemen={setNationalExServicemen}
             />
 
             <div className="form-footer mt-4 mb-4">
@@ -1186,16 +1209,15 @@ const AddPosition = () => {
         onSelect={handleUseIndent}
         selectedIndent={selectedIndent}
       />
-       <FormBuilderModal
+      <FormBuilderModal
         show={showFormBuilder}
         onHide={() => setShowFormBuilder(false)}
         value={additionalForm}
         onSave={(schema) => {
           setAdditionalForm(schema);
         }}
-         isViewMode={isViewMode}
+        isViewMode={isViewMode}
       />
-     
     </Container>
   );
 };

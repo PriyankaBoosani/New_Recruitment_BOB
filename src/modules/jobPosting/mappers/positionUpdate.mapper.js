@@ -67,6 +67,21 @@ const buildCategoryDistributionsForUpdate = (
       }
     }
   });
+  Object.entries(sd.exServicemen || {}).forEach(([groupId, value]) => {
+    const count = Number(value || 0);
+
+    if (count > 0) {
+      result.push({
+        positionCategoryDistributionId: null,
+        reservationCategoryId: null,
+        disabilityCategoryId: null,
+        vacancyCount: count,
+        isDisability: false,
+        isExServiceman: true,
+        exServicemanGroupId: groupId,
+      });
+    }
+  });
 
   return result;
 };
@@ -90,18 +105,16 @@ const buildEduRulesJson = (edu, mode) => {
     edu.groups.forEach((group) => {
       const conditions = [];
 
-   
       if (group.educations && Array.isArray(group.educations)) {
         group.educations.forEach((edu) => {
           if (edu.educationTypeId && edu.educationQualificationsId) {
             conditions.push({
               educationType: edu.educationTypeId,
               qualification: edu.educationQualificationsId,
-              specialization: edu.group ? "" : (edu.specializationId || ""),
-  group: edu.group || "",
+              specialization: edu.group ? "" : edu.specializationId || "",
+              group: edu.group || "",
               duration: edu.duration || "",
               percentage: edu.percentage || "",
-            
             });
           }
         });
@@ -184,6 +197,7 @@ export const mapAddPositionToUpdateDto = ({
   isAgeRelWdsWomen,
   dynamicFields,
   jobPositionExclusion = [],
+  nationalExServicemen = {},
 }) => {
   const dto = {
     // positionId,
@@ -257,7 +271,6 @@ export const mapAddPositionToUpdateDto = ({
     isAgeRelRiotVictimFamily: !!isAgeRelRiotVictimFamily,
     isAgeRelWdsWomen: !!isAgeRelWdsWomen,
     dynamicFields,
-    
 
     approvedBy,
     approvedOn,
@@ -277,6 +290,7 @@ export const mapAddPositionToUpdateDto = ({
     positionCategoryNationalDistributions: [],
     positionStateDistributions: [],
     jobPositionExclusion,
+    nationalExServicemen
   };
 
   // NATIONAL
@@ -297,6 +311,20 @@ export const mapAddPositionToUpdateDto = ({
       });
     });
   }
+  Object.entries(nationalExServicemen || {}).forEach(([groupId, value]) => {
+    const count = Number(value || 0);
+
+    if (count > 0) {
+      dto.positionCategoryNationalDistributions.push({
+        reservationCategoryId: null,
+        disabilityCategoryId: null,
+        vacancyCount: count,
+        isDisability: false,
+        isExServiceman: true,
+        exServicemanGroupId: groupId,
+      });
+    }
+  });
 
   // STATE
   if (formData.enableStateDistribution) {
