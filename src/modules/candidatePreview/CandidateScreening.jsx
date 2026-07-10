@@ -98,6 +98,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [errorCandidates, setErrorCandidates] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [sendingOfferApproval, setSendingOfferApproval] = useState(false);
 
   const COMPENSATION_POOL_STATUSES =
     role === "committee_member"
@@ -2060,7 +2061,48 @@ export default function CandidateScreening({ selectedJob }) {
       setSendingOffer(false);
     }
   };
+  const handleSendOfferForApproval = async () => {
+    try {
+      const selectedOffers = offerData.filter((o) =>
+        offerSelectedIds.includes(o.id)
+      );
+      
 
+      const approvedOffers = selectedOffers.filter(
+        (o) => o.status === "APPROVED"
+      );
+
+      if (!approvedOffers.length) {
+        toast.error("Please select approved offers only.");
+        return;
+      }
+
+      setSendingOfferApproval(true);
+
+      const payload = approvedOffers.map((o) => o.candidateOfferId);
+
+      await candidateWorkflowServices.sendOfferForApproval(payload);
+
+      toast.success("Offer sent for approval successfully.");
+
+      setOfferRefreshKey((prev) => prev + 1);
+      setOfferSelectedIds([]);
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Failed to send offer for approval."
+      );
+    } finally {
+      setSendingOfferApproval(false);
+    }
+  };
+  const selectedOffers = offerData.filter((offer) =>
+    offerSelectedIds.includes(offer.id)
+  );
+
+  const canSendOfferForApproval =
+    selectedOffers.length > 0 &&
+    selectedOffers.every((offer) => offer.status === "APPROVED");
+    
   const selectedOfferObjects = useMemo(() => {
     return offerData.filter((o) => offerSelectedIds.includes(o.id));
   }, [offerData, offerSelectedIds]);
@@ -2770,7 +2812,6 @@ export default function CandidateScreening({ selectedJob }) {
                   className="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
                   onClick={handleDownloadAllCandidateDetails}
                 >
-                 
                   {t("candidateWorkflow:download_excel")}
                 </button>
               </li>
@@ -2978,14 +3019,32 @@ export default function CandidateScreening({ selectedJob }) {
           {activeTab === "OFFER_POOL" && (
             <div className="row g-2 mt-1 px-3 py-2 align-items-center">
               {/* Digital Signature */}
-              <div className="d-flex flex-column align-items-end">
+              <div className="d-flex justify-content-end align-items-center gap-2">
                 <button
                   type="button"
                   className="btn orange-bg text-white fs-12"
                   onClick={() => setShowDigitalSignatureModal(true)}
                 >
-                  {/* <i className="bi bi-pen"></i> */}
-                  Upload & download Digital Signature
+                  Upload & Download Digital Signature
+                </button>
+
+                <button
+                  type="button"
+                  className="btn orange-bg text-white fs-12"
+                  disabled={!canSendOfferForApproval || sendingOfferApproval}
+                  onClick={handleSendOfferForApproval}
+                >
+                  {sendingOfferApproval ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                      />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send For Approval"
+                  )}
                 </button>
               </div>
               {/* LEFT SECTION */}

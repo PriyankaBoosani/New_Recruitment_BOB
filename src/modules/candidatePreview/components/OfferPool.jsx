@@ -178,6 +178,7 @@ const OfferPool = ({
 
         return {
           id: offer.candidateOfferId,
+           candidateOfferId: offer.candidateOfferId,
           applicationNo: item.regNo,
           applicationId: offer.applicationId,
           offerFileUrl: offer.offerFileUrl,
@@ -298,6 +299,7 @@ const OfferPool = ({
       setPage(totalPages - 1);
     }
   }, [filteredOffers, pageSize, page]);
+  
 
   return (
     <div className="card-body p-0 d-none d-md-block">
@@ -474,7 +476,8 @@ const OfferPool = ({
                           "OFFER_AWAITED",
                           "L1_REJECTED",
                           "L2_REJECTED",
-                          "OFFER_GENERATED"
+                          "OFFER_GENERATED",
+                          "APPROVED"
                         ].includes(c.status)
                       }
                     />

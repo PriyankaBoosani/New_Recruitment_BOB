@@ -164,6 +164,9 @@ const candidateWorkflowServices = {
   submitForApproval(payload) {
     return api.post("/recruiter/schedule-pool/submit-for-approval", payload);
   },
+  sendOfferForApproval(payload) {
+    return api.post("/recruiter/candidate-offer/send-offer", payload);
+  },
 };
 
 export default candidateWorkflowServices;
