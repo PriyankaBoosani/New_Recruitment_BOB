@@ -99,7 +99,6 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   ]
     .filter(Boolean)
     .join(", ");
-    
 
   const educations = apiData?.educationDetails || [];
   const experiences = apiData?.experienceDetails || [];
@@ -305,6 +304,7 @@ export const mapJobPositionToRequisitionStrip = (
   const dynamicFields = apiData?.dynamicFields || {};
   const nationalCategoryCounts = {};
   const nationalDisabilityCounts = {};
+  const nationalExServicemenCounts = {};
 
   // initialize
   masters?.reservationCategories?.forEach((cat) => {
@@ -314,7 +314,9 @@ export const mapJobPositionToRequisitionStrip = (
   masters?.disabilityCategories?.forEach((dis) => {
     nationalDisabilityCounts[dis.disabilityCategoryId] = 0;
   });
-
+  masters?.exservicemen?.forEach((ex) => {
+    nationalExServicemenCounts[ex.groupId] = 0;
+  });
   // populate
   apiData.positionCategoryNationalDistributions?.forEach((c) => {
     if (!c.isDisability && c.reservationCategoryId) {
@@ -326,6 +328,11 @@ export const mapJobPositionToRequisitionStrip = (
     if (c.isDisability && c.disabilityCategoryId) {
       if (nationalDisabilityCounts.hasOwnProperty(c.disabilityCategoryId)) {
         nationalDisabilityCounts[c.disabilityCategoryId] += c.vacancyCount;
+      }
+    }
+    if (c.isExServiceman && c.exServicemanGroupId) {
+      if (nationalExServicemenCounts.hasOwnProperty(c.exServicemanGroupId)) {
+        nationalExServicemenCounts[c.exServicemanGroupId] += c.vacancyCount;
       }
     }
   });
@@ -365,12 +372,13 @@ export const mapJobPositionToRequisitionStrip = (
     roles_responsibilities: apiData.rolesResponsibilities || "-",
 
     isLocationWise: apiData.isLocationWise,
-     dynamicFields: dynamicFields,
+    dynamicFields: dynamicFields,
 
     /* ========= NATIONAL (READY FOR UI) ========= */
     nationalCategoryDistribution: {
       categories: nationalCategoryCounts,
       disabilities: nationalDisabilityCounts,
+      exServicemen: nationalExServicemenCounts,
       totalVacancies: apiData.totalVacancies ?? 0,
     },
 
@@ -379,6 +387,7 @@ export const mapJobPositionToRequisitionStrip = (
       apiData.positionStateDistributions?.map((state) => {
         const categoryCounts = {};
         const disabilityCounts = {};
+        const exServicemenCounts = {};
 
         // initialize using IDs
         masters?.reservationCategories?.forEach((cat) => {
@@ -388,7 +397,9 @@ export const mapJobPositionToRequisitionStrip = (
         masters?.disabilityCategories?.forEach((dis) => {
           disabilityCounts[dis.disabilityCategoryId] = 0;
         });
-
+        masters?.exservicemen?.forEach((ex) => {
+          exServicemenCounts[ex.groupId] = 0;
+        });
         state.positionCategoryDistributions?.forEach((c) => {
           // Reservation categories
           if (!c.isDisability && c.reservationCategoryId) {
@@ -403,6 +414,12 @@ export const mapJobPositionToRequisitionStrip = (
               disabilityCounts[c.disabilityCategoryId] += c.vacancyCount;
             }
           }
+          // Ex Servicemen
+          if (c.isExServiceman && c.exServicemanGroupId) {
+            if (exServicemenCounts.hasOwnProperty(c.exServicemanGroupId)) {
+              exServicemenCounts[c.exServicemanGroupId] += c.vacancyCount;
+            }
+          }
         });
 
         return {
@@ -413,6 +430,7 @@ export const mapJobPositionToRequisitionStrip = (
 
           categories: categoryCounts,
           disabilities: disabilityCounts,
+          exServicemen: exServicemenCounts,
         };
       }) || [],
   };

@@ -80,14 +80,16 @@ const RequisitionStrip = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-        const [masterRes, exclusionsRes] = await Promise.all([
+        const [masterRes, exclusionsRes, exservicemenRes] = await Promise.all([
           masterApiService.getMasterDisplayAll(),
           masterApiService.getExclusions(),
+          masterApiService.getExServiceCategories(),
         ]);
 
         setMasterData({
           ...(masterRes.data || {}),
           exclusions: exclusionsRes.data || [],
+          exservicemen: exservicemenRes.data || [],
         });
       } catch (err) {
         console.error("Failed to load master data", err);
@@ -464,6 +466,7 @@ const RequisitionStrip = ({
                     masterData?.reservationCategories || []
                   }
                   disabilityCategories={masterData?.disabilityCategories || []}
+                  exServicemenGroups={masterData?.exservicemen || []}
                 />
               )}
 
@@ -513,6 +516,7 @@ const RequisitionStrip = ({
                     disabilityCategories={
                       masterData?.disabilityCategories || []
                     }
+                    exServicemenGroups={masterData?.exservicemen || []}
                   />
                 )}
             </>

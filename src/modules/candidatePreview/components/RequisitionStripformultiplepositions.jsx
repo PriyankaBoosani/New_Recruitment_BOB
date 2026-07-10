@@ -36,8 +36,7 @@ const RequisitionStripformultiplepositions = ({
   //const orderedPattern = /^\s*(\(?\d+[.)\]]|\(?[ivxlcdm]+[.)\]])\s*/i;
   const MAX_REGEX_INPUT = 500;
 
-  const orderedPattern =
-    /^\s*(?:\(?\d+[).\]]|\(?[ivxlcdm]+[).\]])\s*/i;
+  const orderedPattern = /^\s*(?:\(?\d+[).\]]|\(?[ivxlcdm]+[).\]])\s*/i;
 
   const isOrderedListItem = (text) => {
     if (!text || text.length > MAX_REGEX_INPUT) {
@@ -86,15 +85,17 @@ const RequisitionStripformultiplepositions = ({
   useEffect(() => {
     const loadMasters = async () => {
       try {
-     const [masterRes, exclusionsRes] = await Promise.all([
-  masterApiService.getMasterDisplayAll(),
-  masterApiService.getExclusions(),
-]);
+        const [masterRes, exclusionsRes, exservicemenRes] = await Promise.all([
+          masterApiService.getMasterDisplayAll(),
+          masterApiService.getExclusions(),
+          masterApiService.getExServiceCategories(),
+        ]);
 
-setMasterData({
-  ...masterRes.data,
-  exclusions: exclusionsRes.data || [],
-});
+        setMasterData({
+          ...masterRes.data,
+          exclusions: exclusionsRes.data || [],
+          exservicemen: exservicemenRes.data || [],
+        });
       } catch (err) {
         console.error("Failed to load master data", err);
         setMasterData({});
@@ -106,56 +107,49 @@ setMasterData({
 
   /* ================= FETCH JOB ================= */
 
+  useEffect(() => {
+    if (!selectedPositionIdForModal || !masterData) return;
 
-useEffect(() => {
-  if (!selectedPositionIdForModal || !masterData) return;
+    const fetchJob = async () => {
+      try {
+        setLoading(true);
 
-  const fetchJob = async () => {
-    try {
-      setLoading(true);
+        const res = await candidateWorkflowServices.getJobPositionById(
+          selectedPositionIdForModal
+        );
 
-      const res = await candidateWorkflowServices.getJobPositionById(
-        selectedPositionIdForModal
-      );
+        const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
 
-      const mapped = mapJobPositionToRequisitionStrip(
-        res.data,
-        masterData
-      );
-
-      //  Correct property name from API
-      mapped.exclusionNames =
-        (res.data?.jobPositionExclusion || [])
+        //  Correct property name from API
+        mapped.exclusionNames = (res.data?.jobPositionExclusion || [])
           .filter((item) => item.isExcluded)
           .map((item) => {
             const exclusion = masterData?.exclusions?.find(
-              (e) =>
-                String(e.exclusionId) === String(item.exclusionId)
+              (e) => String(e.exclusionId) === String(item.exclusionId)
             );
 
             return exclusion?.exclusionValue;
           })
           .filter(Boolean);
 
-      mapped.isAgeRelRiotVictimFamily =
-        res.data?.isAgeRelRiotVictimFamily || false;
+        mapped.isAgeRelRiotVictimFamily =
+          res.data?.isAgeRelRiotVictimFamily || false;
 
-      mapped.isAgeRelWdsWomen =
-        res.data?.isAgeRelWdsWomen || false;
+        mapped.isAgeRelWdsWomen = res.data?.isAgeRelWdsWomen || false;
 
-      console.log("Mapped Exclusions:", mapped.exclusionNames);
+        console.log("Mapped Exclusions:", mapped.exclusionNames);
 
-      setJob(mapped);
-    } catch (err) {
-      console.error("Failed to fetch job details", err);
-      toast.error(t("candidateWorkflow:failed_load_position_details"));
-    } finally {
-      setLoading(false);
-    }
-  };
+        setJob(mapped);
+      } catch (err) {
+        console.error("Failed to fetch job details", err);
+        toast.error(t("candidateWorkflow:failed_load_position_details"));
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchJob();
-}, [selectedPositionIdForModal, masterData]);
+    fetchJob();
+  }, [selectedPositionIdForModal, masterData]);
 
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const formatExperience = (years = 0, months = 0) => {
@@ -246,7 +240,6 @@ useEffect(() => {
               {formatDMY(
                 requisition?.startDate || requisition?.registration_start_date
               )}
-              
             </span>
 
             <span className="date-divider">|</span>
@@ -486,44 +479,42 @@ useEffect(() => {
                 </ul>
               </div>
 
+              {/* INCLUSIONS */}
+              {(job?.isAgeRelRiotVictimFamily || job?.isAgeRelWdsWomen) && (
+                <div className="info-card">
+                  <div className="section-title">
+                    {" "}
+                    {t("addPosition:age_relaxation_for")}:
+                  </div>
+                  <ul className="section-lists">
+                    {job?.isAgeRelRiotVictimFamily && (
+                      <li>{t("addPosition:persons_affected_by_1984_riots")}</li>
+                    )}
 
-{/* INCLUSIONS */}
-{(job?.isAgeRelRiotVictimFamily || job?.isAgeRelWdsWomen) && (
-  <div className="info-card">
-    <div className="section-title">    {t("addPosition:age_relaxation_for")}:</div>
-    <ul className="section-lists">
-      {job?.isAgeRelRiotVictimFamily && (
-     <li>{t("addPosition:persons_affected_by_1984_riots")}</li>
-      )}
+                    {job?.isAgeRelWdsWomen && (
+                      <li>
+                        {t("addPosition:widowed_divorced_separated_women")}
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
 
-      {job?.isAgeRelWdsWomen && (
-        <li>
-         {t("addPosition:widowed_divorced_separated_women")}
-        </li>
-      )}
-    </ul>
-  </div>
-)}
+              {/* EXCLUSIONS */}
+              {/* EXCLUSIONS */}
+              {job?.exclusionNames?.length > 0 && (
+                <div className="info-card">
+                  <div className="section-title">
+                    {t("addPosition:Exclusions")}:
+                  </div>
 
-     
-
-{/* EXCLUSIONS */}
-{/* EXCLUSIONS */}
-{job?.exclusionNames?.length > 0 && (
-  <div className="info-card">
-    <div className="section-title">
-      {t("addPosition:Exclusions")}:
-    </div>
-
-    <ul className="section-lists">
-      {job.exclusionNames.map((name, index) => (
-        <li key={index}>{name}</li>
-      ))}
-    </ul>
-  </div>
-)}
-
-
+                  <ul className="section-lists">
+                    {job.exclusionNames.map((name, index) => (
+                      <li key={index}>{name}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {job?.positionStateDistributions?.length > 0 && (
                 <LocationWiseVacancyTable
@@ -534,6 +525,7 @@ useEffect(() => {
                     masterData?.reservationCategories || []
                   }
                   disabilityCategories={masterData?.disabilityCategories || []}
+                  exServicemenGroups={masterData?.exservicemen || []}
                 />
               )}
 
@@ -549,6 +541,7 @@ useEffect(() => {
                     disabilityCategories={
                       masterData?.disabilityCategories || []
                     }
+                    exServicemenGroups={masterData?.exservicemen || []}
                   />
                 )}
             </>

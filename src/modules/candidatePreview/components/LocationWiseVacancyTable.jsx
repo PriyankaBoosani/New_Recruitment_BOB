@@ -7,8 +7,26 @@ const LocationWiseVacancyTable = ({
   cities = [],
   reservationCategories = [], // ✅ ADD
   disabilityCategories = [],
+  exServicemenGroups = [],
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
+  const groupedExServicemen = Object.values(
+    exServicemenGroups.reduce((acc, item) => {
+      if (!acc[item.groupId]) {
+        acc[item.groupId] = {
+          groupId: item.groupId,
+          items: [],
+        };
+      }
+
+      acc[item.groupId].items.push(item);
+
+      return acc;
+    }, {})
+  ).map((group) => ({
+    ...group,
+    label: group.items.map((item) => item.exsCategoryCode).join("/"),
+  }));
 
   if (!positionStateDistributions.length) return null;
 
@@ -61,6 +79,12 @@ const LocationWiseVacancyTable = ({
               >
                 {t("disability")}
               </th>
+              <th
+                className="light_font fw-600 fs-13"
+                colSpan={exServicemenGroups.length}
+              >
+                {t("candidateWorkflow:ex_servicemen")}
+              </th>
             </tr>
             <tr>
               {reservationCategories.map((cat) => (
@@ -80,6 +104,12 @@ const LocationWiseVacancyTable = ({
                   key={d.disabilityCategoryId}
                 >
                   {d.disabilityCode}
+                </th>
+              ))}
+
+              {groupedExServicemen.map((group) => (
+                <th className="light_font fw-600 fs-12" key={group.groupId}>
+                  {group.label}
                 </th>
               ))}
             </tr>
@@ -116,6 +146,11 @@ const LocationWiseVacancyTable = ({
                 {disabilityCategories.map((d) => (
                   <td className="fw-500" key={d.disabilityCategoryId}>
                     {state.disabilities?.[d.disabilityCategoryId] ?? 0}
+                  </td>
+                ))}
+                {groupedExServicemen.map((group) => (
+                  <td className="fw-500" key={group.groupId}>
+                    {state.exServicemen?.[group.groupId] ?? 0}
                   </td>
                 ))}
               </tr>
