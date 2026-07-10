@@ -309,5 +309,6 @@
   "failed_to_upload_signed_offers": "साइन किए गए ऑफ़र अपलोड करने में विफल",
   "signed_offers_uploaded_successfully": "साइन किए गए ऑफ़र सफलतापूर्वक अपलोड किए गए",
   "digital_signature_upload_failed": "डिजिटल हस्ताक्षर अपलोड विफल",
-  "ex_servicemen": "भूतपूर्व सैनिक"
+  "ex_servicemen": "भूतपूर्व सैनिक",
+  "category": "श्रेणी"
 }

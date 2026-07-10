@@ -434,12 +434,22 @@ const ApplicationForm = ({
     }
   };
   const data = previewData || {
+    
     personalDetails: {},
     experienceSummary: {},
     documents: {},
     education: [],
     experience: [],
   };
+
+  console.log("previewData", previewData);
+console.log("personalDetails", previewData?.personalDetails);
+console.log(
+  "Application No in ApplicationForm:",
+  previewData?.personalDetails?.applicationNo
+);
+
+
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
   const documentRows = [
@@ -1588,6 +1598,15 @@ const ApplicationForm = ({
                       {data.personalDetails.fatherName}
                     </td>
                   </tr>
+
+
+                  <tr>
+  <td className="fw-med">{t("registration_no")}</td>
+  <td className="fw-med"colSpan={2}>{data.personalDetails.registrationNo}</td>
+
+  <td className="fw-med">{t("application_no")}</td>
+  <td className="fw-med"colSpan={2}>{data.personalDetails.applicationNo}</td>
+</tr>
 
                   <tr>
                     <td className="fw-med">{t("gender")}</td>

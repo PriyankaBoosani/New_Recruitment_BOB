@@ -10,6 +10,8 @@
   "email": "ईमेल",
   "mother_name": "माता का नाम",
   "father_name": "पिता का नाम",
+  "registration_no": "पंजीकरण संख्या",
+  "application_no": "आवेदन संख्या",
   "gender": "लिंग",
   "religion": "धर्म",
   "category": "श्रेणी",

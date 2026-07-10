@@ -15,6 +15,9 @@ export const mapInterviewCandidates = (
       regNo: item?.application?.applicationNo || "-",
       fileUrl: item?.resumeUrl || "-",
 
+
+        categoryName: item?.categoryName || "-",
+
       date: schedule.interviewStartAt
         ? (() => {
             const d = new Date(schedule.interviewStartAt);

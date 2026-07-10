@@ -10,6 +10,8 @@
   "email": "Email",
   "mother_name": "Mother’s Name",
   "father_name": "Father’s Name",
+  "registration_no": "Registration No.",
+  "application_no": "Application No.",
   "gender": "Gender",
   "religion": "Religion",
   "category": "Category",

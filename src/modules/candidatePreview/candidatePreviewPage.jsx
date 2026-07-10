@@ -115,6 +115,11 @@ const CandidatePreviewPage = ({ onHide }) => {
           );
 
           setPreviewData(mapped);
+          console.log("previewData", previewData);
+console.log(
+  "Application No:",
+  previewData?.personalDetails?.applicationNo
+);
           setDynamicFormData(mapped?.additionalDetails?.dynamicFormData || []);
            console.log("PreviewPage mapped ", mapped || []);
         }

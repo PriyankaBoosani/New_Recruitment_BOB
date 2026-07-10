@@ -33,7 +33,12 @@ const getInterviewCentreName = (masters, id) =>
 /* ===============================
    SINGLE SOURCE OF TRUTH
 ================================ */
+
 export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
+
+    console.log("========== API DATA ==========");
+  console.log(apiData);
+  console.log("applicationNo:", apiData?.applicationNo);
   const profile = apiData?.basicDetails?.candidateProfile || {};
   const languagesKnown = apiData?.basicDetails?.languagesKnown || [];
   const address = apiData?.addressDetails || {};
@@ -173,6 +178,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
       mobile: profile.contactNo || "-",
       email: profile.email || "-",
       motherName: profile.motherName || "-",
+       registrationNo: profile?.registrationNo || "-",
+applicationNo: apiData?.applicationNo || "-",
       fatherName: profile.fatherName || "-",
       spouseName: profile.spouseName || "-",
       dob: formatDateDDMMYYYY(profile.dateOfBirth) || "-",
