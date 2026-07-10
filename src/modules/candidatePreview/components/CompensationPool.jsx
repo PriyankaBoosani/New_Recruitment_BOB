@@ -62,6 +62,9 @@ export default function CompensationPool({
   });
 
 
+  const [showBulkApproveModal, setShowBulkApproveModal] = useState(false);
+const [bulkComments, setBulkComments] = useState("");
+const [bulkSaveClicked, setBulkSaveClicked] = useState(false);
 
   const [editingField, setEditingField] = useState(null);
 
@@ -186,43 +189,48 @@ export default function CompensationPool({
         return;
       }
 
-      const payload = {
-        compensation: {
-          candidateId: selectedCandidate.candidateId,
-          candidateProfile: selectedCandidate.candidateProfile,
-          application: selectedCandidate.application,
-          interviewScheduleId: selectedCandidate.interviewScheduleId,
-          submitBeforeDate: selectedCandidate.submitBeforeDate,
+const payload = {
+  compensations: [
+    {
+      candidateId: selectedCandidate.candidateId,
+      candidateProfile: selectedCandidate.candidateProfile,
+      application: selectedCandidate.application,
+      interviewScheduleId: selectedCandidate.interviewScheduleId,
+      submitBeforeDate: selectedCandidate.submitBeforeDate,
 
-          currentCtc: selectedCandidate.currentCtc ?? 0,
-          expectedCtc: selectedCandidate.expectedCtc ?? 0,
-          fixedPay:
-            parseAmount(managerForm.fixedPay) ||
-            selectedCandidate.fixedPay ||
-            0,
+      currentCtc: selectedCandidate.currentCtc ?? 0,
+      expectedCtc: selectedCandidate.expectedCtc ?? 0,
 
-          variablePay:
-            parseAmount(managerForm.variablePay) ||
-            selectedCandidate.variablePay ||
-            0,
+      fixedPay:
+        parseAmount(managerForm.fixedPay) ||
+        selectedCandidate.fixedPay ||
+        0,
 
-          joiningBonus:
-            parseAmount(managerForm.joiningBonus) ||
-            selectedCandidate.joiningBonus ||
-            0,
-          agreedCtc:
-            (parseAmount(managerForm.fixedPay) || 0) +
-            (parseAmount(managerForm.variablePay) || 0),
+      variablePay:
+        parseAmount(managerForm.variablePay) ||
+        selectedCandidate.variablePay ||
+        0,
 
-          hike: selectedCandidate?.hike || 0,
+      joiningBonus:
+        parseAmount(managerForm.joiningBonus) ||
+        selectedCandidate.joiningBonus ||
+        0,
 
-          recruiterComments: selectedCandidate.recruiterComments || "", //  IMPORTANT
-          panelComments: managerForm.panelComments || "",
-          compensationStatus: selectedCandidate.status,
-          candidateCompensationId: selectedCandidate.id,
-        },
-        action: actionType,
-      };
+      agreedCtc:
+        (parseAmount(managerForm.fixedPay) || 0) +
+        (parseAmount(managerForm.variablePay) || 0),
+
+      hike: selectedCandidate.hike ?? 0,
+
+      recruiterComments: selectedCandidate.recruiterComments || "",
+      panelComments: managerForm.panelComments || "",
+
+      compensationStatus: selectedCandidate.status,
+      candidateCompensationId: selectedCandidate.id,
+    },
+  ],
+  action: actionType,
+};
 
       const res =
         await candidateWorkflowServices.addCompensationDetails(payload);
@@ -263,6 +271,72 @@ export default function CompensationPool({
       toast.error(errorMsg);
     }
   };
+
+
+
+  const handleBulkApprove = async () => {
+  try {
+  const selectedCandidates = candidates.filter(
+  (c) =>
+    selectedIds.includes(c.id) &&
+    c.negotiation === "PENDING"
+);
+
+
+setBulkSaveClicked(true);
+
+if (!bulkComments.trim()) {
+  toast.error("Comments are required");
+  return;
+}
+
+    for (const candidate of selectedCandidates) {
+const payload = {
+  compensations: selectedCandidates.map((candidate) => ({
+    candidateId: candidate.candidateId,
+    candidateProfile: candidate.candidateProfile,
+    application: candidate.application,
+    interviewScheduleId: candidate.interviewScheduleId,
+    submitBeforeDate: candidate.submitBeforeDate,
+
+    currentCtc: candidate.currentCtc ?? 0,
+    expectedCtc: candidate.expectedCtc ?? 0,
+    fixedPay: candidate.fixedPay ?? 0,
+    variablePay: candidate.variablePay ?? 0,
+    joiningBonus: candidate.joiningBonus ?? 0,
+
+    agreedCtc:
+      (candidate.fixedPay ?? 0) +
+      (candidate.variablePay ?? 0),
+
+    hike: candidate.hike ?? 0,
+
+    recruiterComments: candidate.recruiterComments || "",
+    panelComments: bulkComments,
+
+    compensationStatus: candidate.status,
+    candidateCompensationId: candidate.id,
+  })),
+  action: "APPROVE",
+};
+
+await candidateWorkflowServices.addCompensationDetails(payload);
+
+      //await candidateWorkflowServices.addCompensationDetails(payload);
+    }
+
+    toast.success("Selected candidates approved successfully.");
+    setShowBulkApproveModal(false);
+setBulkComments("");
+setBulkSaveClicked(false);
+
+    setSelectedIds([]);
+    refetch();
+    triggerRefresh();
+  } catch (err) {
+    toast.error("Failed to approve selected candidates.");
+  }
+};
 
   const handleCompensationClick = (c) => {
     setSelectedCandidate(c);
@@ -343,35 +417,36 @@ export default function CompensationPool({
       //  ADD THIS BLOCK (no changes to your logic)
 
       const payload = {
-        compensation: {
-          candidateId: selectedCandidate.candidateId,
-          candidateProfile: selectedCandidate.candidateProfile,
-          application: selectedCandidate.application,
-          interviewScheduleId: selectedCandidate.interviewScheduleId,
-          submitBeforeDate: selectedCandidate.submitBeforeDate,
+  compensations: [
+    {
+      candidateId: selectedCandidate.candidateId,
+      candidateProfile: selectedCandidate.candidateProfile,
+      application: selectedCandidate.application,
+      interviewScheduleId: selectedCandidate.interviewScheduleId,
+      submitBeforeDate: selectedCandidate.submitBeforeDate,
 
-          currentCtc: selectedCandidate.currentCtc ?? 0,
-          expectedCtc: selectedCandidate.expectedCtc ?? 0,
+      currentCtc: selectedCandidate.currentCtc ?? 0,
+      expectedCtc: selectedCandidate.expectedCtc ?? 0,
 
-          fixedPay: parseAmount(formData.fixedPay) || 0,
-          variablePay: parseAmount(formData.variablePay) || 0,
-          joiningBonus: parseAmount(formData.joiningBonus) || 0,
+      fixedPay: parseAmount(formData.fixedPay) || 0,
+      variablePay: parseAmount(formData.variablePay) || 0,
+      joiningBonus: parseAmount(formData.joiningBonus) || 0,
 
-          agreedCtc:
-            (parseAmount(formData.fixedPay) || 0) +
-            (parseAmount(formData.variablePay) || 0),
+      agreedCtc:
+        (parseAmount(formData.fixedPay) || 0) +
+        (parseAmount(formData.variablePay) || 0),
 
-          hike: selectedCandidate?.hike || 0,
+      hike: selectedCandidate.hike ?? 0,
 
-          recruiterComments: formData.recruiterComments || "",
-          panelComments: formData.panelComments || "",
+      recruiterComments: formData.recruiterComments || "",
+      panelComments: formData.panelComments || "",
 
-          compensationStatus: selectedCandidate.status,
-          candidateCompensationId: selectedCandidate.id,
-        },
-        action: "SUBMIT",
-      };
-
+      compensationStatus: selectedCandidate.status,
+      candidateCompensationId: selectedCandidate.id,
+    },
+  ],
+  action: "SUBMIT",
+};
       const res =
         await candidateWorkflowServices.addCompensationDetails(payload);
 
@@ -417,9 +492,32 @@ export default function CompensationPool({
     return sortConfig.direction === "asc" ? "▲" : "▼";
   };
 
+  const pendingSelectedCount = candidates.filter(
+  (c) =>
+    selectedIds.includes(c.id) &&
+    c.negotiation === "PENDING"
+).length;
+
   return (
     <>
       <div className="card-body p-0">
+
+        
+
+      {userRole === "committee_member" && pendingSelectedCount > 0 && (
+<div className="d-flex justify-content-end pe-3 mt-3 mb-3">
+  <Button
+    variant="outline-success"
+    onClick={() => {
+      setBulkComments("");
+      setBulkSaveClicked(false);
+      setShowBulkApproveModal(true);
+    }}
+  >
+    {t("approve")}
+  </Button>
+</div>
+)}
         <table className="table table-hover mb-0">
           {/* ================= HEADER ================= */}
           <thead className="bg-light">
@@ -770,6 +868,56 @@ export default function CompensationPool({
           </div>
         </div>
       </div>
+
+
+      <Modal
+  show={showBulkApproveModal}
+  onHide={() => setShowBulkApproveModal(false)}
+  centered
+  backdrop="static"
+>
+  <Modal.Header closeButton>
+    <Modal.Title>Approval Comments</Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    <label className="form-label">
+      Comments <span className="text-danger">*</span>
+    </label>
+
+    <textarea
+      className={`form-control ${
+        bulkSaveClicked && !bulkComments.trim() ? "is-invalid" : ""
+      }`}
+      rows={4}
+      placeholder="Enter Comments"
+      value={bulkComments}
+      onChange={(e) => setBulkComments(e.target.value)}
+    />
+
+    {bulkSaveClicked && !bulkComments.trim() && (
+      <div className="invalid-feedback d-block">
+        Comments are required
+      </div>
+    )}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button
+      variant="light"
+      onClick={() => setShowBulkApproveModal(false)}
+    >
+      Cancel
+    </Button>
+
+    <Button
+      variant="success"
+      onClick={handleBulkApprove}
+    >
+      Approve
+    </Button>
+  </Modal.Footer>
+</Modal>  
 
       <Modal
         show={showRecruiterModal}

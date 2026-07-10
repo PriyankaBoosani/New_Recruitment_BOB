@@ -212,6 +212,25 @@ const jobPositionApiService = {
     );
   },
 
+
+
+  // Inside your jobPositionApiService.js file
+
+sendBulkEmail(formData) {
+  return api.post(
+    "/recruiter/bulk-communication/send-bulk-email",
+    formData,
+    {
+      headers: {
+        "X-Client": "AzureAD",
+         "Content-Type": "multipart/form-data",
+        // Note: Do not manually set "Content-Type". Axios will automatically
+        // set it along with the correct multi-part form boundaries.
+      },
+    }
+  );
+},
+
   submitOverallZonalVerification(payload) {
     return api.post(
       "/recruiter/zonal-verification/submit-overall-verification",

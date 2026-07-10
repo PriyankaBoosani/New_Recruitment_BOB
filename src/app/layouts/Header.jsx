@@ -85,6 +85,7 @@ const Header = () => {
     privileges?.["L1 Approval"] || privileges?.["L2 Approval"];
   const canL2 = privileges?.["L2 Approval"];
   const canMessages = privileges?.["Messages"];
+  const canBulkCommunication = privileges?.["Bulk Communication"];
   const canExaminationCutoffConfiguration =
     privileges?.["ExaminationCutoffConfiguration"];
 
@@ -329,6 +330,21 @@ const Header = () => {
                   {t("messages")}
                 </Nav.Link>
               )}
+
+            
+
+
+              {canMessages && (
+  <Nav.Link
+    as={NavLink}
+    to="/bulk-communication"
+    onClick={closeMenu}
+  >
+    {t("Bulk_Communication")}
+  </Nav.Link>
+)}
+
+
 
               {canApprovals && (
                 <NavDropdown

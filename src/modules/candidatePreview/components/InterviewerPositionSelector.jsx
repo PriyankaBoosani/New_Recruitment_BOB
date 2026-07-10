@@ -106,7 +106,31 @@ export default function InterviewerPositionSelector({
 
   /* ================= POSITION OPTIONS ================= */
 
+// const positionOptions = useMemo(() => {
+//   console.log("apiData", selectedRequisition?.requisition.id);
+//   const reqId = selectedRequisition?.requisition?.id;
+
+//   if (!reqId) return [];
+
+//   return apiData
+//     .filter((r) => r?.requisition?.id === reqId)
+//     .map((r) => ({
+//       value: r?.position?.positionId,
+//       label: r?.masterPosition?.positionName,
+//       raw: r,
+//     }));
+// }, [apiData, selectedRequisition]);
+//   const { t } = useTranslation(["candidateWorkflow", "common"]);
+
+
+
+
   const positionOptions = useMemo(() => {
+    console.log("selectedRequisition:", selectedRequisition);
+console.log("apiData:", apiData);
+console.log(
+  apiData.filter((r) => r.requisition === null)
+);
     if (!selectedRequisition) return [];
 
     return apiData

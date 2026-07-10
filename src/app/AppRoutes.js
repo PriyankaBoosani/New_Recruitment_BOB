@@ -21,6 +21,7 @@ import GenericOrAnnexuresPage from "../modules/master/pages/GenericOrAnnexures/G
 import CertificationPage from "../modules/master/pages/CertificationPage/CertificationPage";
 import EducationModal from "../modules/master/pages/EducationQualification/EducationQualificationPage";
 import StatesLanguagesPage from "../modules/master/pages/StatesLanguages/StatesLanguagesPage";
+import Bulkcommunication from "../modules/Bulk Communications/Bulkcommunication";
 import ExaminationCutoffConfiguration from "../modules/ExaminationCutoffConfiguration/ExaminationCutoffConfiguration";
 
 import AddPosition from "../modules/jobPosting/pages/AddPosition";
@@ -309,6 +310,16 @@ const AppRoutes = () => {
                   </PrivilegeRoute>
                 }
               />
+
+
+           <Route
+  path="/bulk-communication"
+  element={
+    <PrivilegeRoute privilege="Messages">
+      <Bulkcommunication />
+    </PrivilegeRoute>
+  }
+/>
 
               <Route
                 path="/messages"
