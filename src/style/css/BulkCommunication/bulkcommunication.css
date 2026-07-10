@@ -1,0 +1,19 @@
+.icon-btn {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.icon-16 {
+  width: 18px;
+  height: 18px;
+}

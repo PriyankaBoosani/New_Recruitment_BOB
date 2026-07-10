@@ -4,6 +4,10 @@ import RequisitionStripformultiplepositions from "../candidatePreview/components
 import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
 import masterApiService from "../master/services/masterApiService";
 import BulkCommunicationPool from "./components/BulkCommunicationPool";
+import upload_icon from "../../assets/upload_Icon.png";
+import edit_icon from "../../assets/edit_icon.png";
+import view_icon from "../../assets/view_icon.png";
+import file_icon from "../../assets/file_icon.png";
 import { toast } from "react-toastify"; 
 
 const Bulkcommunication = () => {
@@ -14,6 +18,7 @@ const Bulkcommunication = () => {
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
   const [selectedPositionId, setSelectedPositionId] = useState([]);
+  
 
   // Data Loading, Master Frameworks & Pagination States
   const [candidates, setCandidates] = useState([]);
@@ -25,6 +30,12 @@ const Bulkcommunication = () => {
   const [masterData, setMasterData] = useState(null);
   const [reservationCategories, setReservationCategories] = useState([]);
 
+
+  const [errors, setErrors] = useState({
+  subject: "",
+  body: "",
+});
+
   // Filter Pipeline State
   const [filters, setFilters] = useState({
     status: [],
@@ -32,6 +43,13 @@ const Bulkcommunication = () => {
     categoryId: "",
     searchText: "",
   });
+
+  const handleViewAttachment = () => {
+  if (!emailAttachment) return;
+
+  const fileUrl = URL.createObjectURL(emailAttachment);
+  window.open(fileUrl, "_blank");
+};
 
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
   const requisitionSearchTimeout = useRef(null);
@@ -60,6 +78,23 @@ const Bulkcommunication = () => {
       console.error("Master frameworks failed to load", err);
     }
   };
+
+
+
+  const resetCommunicationForm = () => {
+  setEmailSubject("");
+  setEmailBody("");
+  setEmailAttachment(null);
+
+  setErrors({
+    subject: "",
+    body: "",
+  });
+
+  if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
+};
 
   useEffect(() => {
     loadMasters();
@@ -301,56 +336,110 @@ const Bulkcommunication = () => {
     }
   };
 
-  const handleSendCommunication = async () => {
-    console.log("Send bulk email submission pipeline initiated");
-    
-    if (submitRef.current) return;
-    submitRef.current = true;
-    setSendingCommunication(true);
+ const handleSendCommunication = async () => {
+  console.log("Send bulk email submission pipeline initiated");
 
-    try {
-      const activeStatuses = filters.status.length === 0 
-        ? CANDIDATE_POOL_STATUSES 
-        : filters.status.map(s => s.toUpperCase());
-
-      const mailPayload = {
-        selectAll: allCandidatesForFilters.length === selectedCandidateIds.length,
-        applicationIds: selectedCandidateIds,
-        positionIds: selectedPositionId,
-        statusList: activeStatuses,
-        subject: emailSubject,
-        body: emailBody,
-      };
-
-      const formData = new FormData();
-      formData.append(
-        "mail",
-        new Blob([JSON.stringify(mailPayload)], {
-          type: "application/json",
-        })
-      );
-
-      if (emailAttachment) {
-        formData.append("attachment", emailAttachment);
-      }
-
-      await jobPositionApiService.sendBulkEmail(formData);
-      toast.success(`Communication successfully processed for ${selectedCandidateIds.length} candidate(s)!`);
-      
-      setIsModalOpen(false);
-      setSelectedCandidateIds([]);
-      setEmailSubject("");
-      setEmailBody("");
-      setEmailAttachment(null);
-    } catch (err) {
-      console.error("Communication transmission pipeline failure:", err);
-      const errorMessage = err?.response?.data?.message || "Submission failed. Please check network connectivity parameters.";
-      toast.error(errorMessage);
-    } finally {
-      setSendingCommunication(false);
-      submitRef.current = false;
-    }
+  // Validation
+  const validationErrors = {
+    subject: "",
+    body: "",
   };
+
+  let isValid = true;
+
+  if (!emailSubject.trim()) {
+    validationErrors.subject = "This field is required";
+    isValid = false;
+  }
+
+  if (!emailBody.trim()) {
+    validationErrors.body = "This field is required";
+    isValid = false;
+  }
+
+  setErrors(validationErrors);
+
+  if (!isValid) {
+    return;
+  }
+
+  if (submitRef.current) return;
+  submitRef.current = true;
+  setSendingCommunication(true);
+
+  try {
+    const activeStatuses =
+      filters.status.length === 0
+        ? CANDIDATE_POOL_STATUSES
+        : filters.status.map((s) => s.toUpperCase());
+
+    const mailPayload = {
+      selectAll:
+        allCandidatesForFilters.length === selectedCandidateIds.length,
+      applicationIds: selectedCandidateIds,
+      positionIds: selectedPositionId,
+      statusList: activeStatuses,
+      subject: emailSubject,
+      body: emailBody,
+    };
+
+    const formData = new FormData();
+
+    formData.append(
+      "mail",
+      new Blob([JSON.stringify(mailPayload)], {
+        type: "application/json",
+      })
+    );
+
+    if (emailAttachment) {
+      formData.append("attachment", emailAttachment);
+    }
+
+   const response = await jobPositionApiService.sendBulkEmail(formData);
+
+if (
+  response?.data?.success === false ||
+  response?.success === false
+) {
+  toast.error(
+    response?.data?.message ||
+    response?.message ||
+    "Failed to send communication."
+  );
+  return;
+}
+
+toast.success(
+  `Communication successfully processed for ${selectedCandidateIds.length} candidate(s)!`
+);
+    // Clear form
+    setErrors({
+      subject: "",
+      body: "",
+    });
+
+    setIsModalOpen(false);
+    setSelectedCandidateIds([]);
+    setEmailSubject("");
+    setEmailBody("");
+    setEmailAttachment(null);
+    resetCommunicationForm();
+setIsModalOpen(false);
+setSelectedCandidateIds([]);
+  } catch (err) {
+    console.error("Communication transmission pipeline failure:", err);
+
+    const errorMessage =
+      err?.response?.data?.message ||
+      "Submission failed. Please check network connectivity parameters.";
+
+    toast.error(errorMessage);
+  } finally {
+    setSendingCommunication(false);
+    submitRef.current = false;
+  }
+};
 
   const selectedRequisition = requisitions.find((r) => r.id === selectedRequisitionId);
   const normalizedRequisition = selectedRequisition ? {
@@ -445,70 +534,182 @@ const Bulkcommunication = () => {
             <div className="modal-content border-0 shadow rounded-3 overflow-hidden">
               <div className="modal-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
                 <h5 className="modal-title font-weight-bold mb-0 text-dark" style={{ fontSize: '1.25rem' }}>Bulk Communication</h5>
-                <button type="button" className="btn-close border-0 bg-transparent h4 mb-0 text-muted" onClick={() => setIsModalOpen(false)} style={{ cursor: 'pointer' }}>&times;</button>
+              <button
+  type="button"
+  className="btn-close border-0 bg-transparent p-0 text-muted"
+  onClick={() => {
+    resetCommunicationForm();
+    setIsModalOpen(false);
+  }}
+  style={{
+    cursor: "pointer",
+    fontSize: "1.2rem",
+    lineHeight: 1,
+  }}
+>
+  &times;
+</button>
               </div>
 
               <div className="modal-body p-4 bg-white overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-                <div className="mb-4">
-                  <label className="form-label small font-weight-bold mb-1">Subject <span className="text-danger">*</span></label>
-                  <input 
-                    type="text" 
-                    className="form-control rounded-2 py-2 px-3" 
-                    value={emailSubject}
-                    onChange={(e) => setEmailSubject(e.target.value)}
-                    placeholder="e.g., Interview Reminder"
-                    style={{ fontSize: '0.95rem' }}
-                  />
-                </div>
+             <div className="mb-4">
+  <label className="form-label small font-weight-bold mb-1">
+    Subject <span className="text-danger">*</span>
+  </label>
 
-                <div className="mb-4">
-                  <label className="form-label small font-weight-bold mb-1">Message Body <span className="text-danger">*</span></label>
-                  <textarea 
-                    className="form-control border rounded-2 p-3 text-secondary" 
-                    rows="12"
-                    value={emailBody}
-                    onChange={(e) => setEmailBody(e.target.value)}
-                    placeholder="Type your message contents here..."
-                    style={{ 
-                      fontSize: '0.92rem', 
-                      backgroundColor: '#fafafa',
-                      lineHeight: '1.6',
-                      resize: 'vertical'
-                    }}
-                  />
-                </div>
+  <input
+    type="text"
+    className={`form-control rounded-2 py-2 px-3 ${
+      errors.subject ? "is-invalid" : ""
+    }`}
+    value={emailSubject}
+    onChange={(e) => {
+      setEmailSubject(e.target.value);
 
-                <div className="mb-4">
-                  <label className="form-label small font-weight-bold mb-1">Attachments (Optional)</label>
-                  <div className="d-flex align-items-center gap-3">
-                    <input 
-                      type="file" 
-                      ref={fileInputRef} 
-                      className="d-none" 
-                      onChange={handleFileChange}
-                    />
-                    <button 
-                      type="button" 
-                      className="btn btn-sm btn-outline-secondary px-3 py-2 d-flex align-items-center gap-2 text-dark rounded-2"
-                      style={{ fontSize: '0.88rem', backgroundColor: '#fff', border: '1px solid #ced4da' }}
-                      onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                    >
-                      📎 Upload File
-                    </button>
-                    <span className="text-muted small" style={{ fontSize: '0.85rem' }}>
-                      {emailAttachment ? emailAttachment.name : "No file uploaded"}
-                    </span>
-                    {emailAttachment && (
-                      <button 
-                        type="button" 
-                        className="btn btn-sm text-danger border-0 bg-transparent p-0 ms-1"
-                        onClick={() => setEmailAttachment(null)}
-                      >
-                        Clear
-                      </button>
-                    )}
-                  </div>
-                </div>
+      if (errors.subject) {
+        setErrors((prev) => ({
+          ...prev,
+          subject: "",
+        }));
+      }
+    }}
+    placeholder="e.g., Interview Reminder"
+  />
+
+  {errors.subject && (
+    <div className="text-danger mt-1 small">
+      {errors.subject}
+    </div>
+  )}
+</div>
+
+               <div className="mb-4">
+  <label className="form-label small font-weight-bold mb-1">
+    Message Body <span className="text-danger">*</span>
+  </label>
+
+  <textarea
+    rows="12"
+    className={`form-control rounded-2 p-3 ${
+      errors.body ? "is-invalid" : ""
+    }`}
+    value={emailBody}
+    onChange={(e) => {
+      setEmailBody(e.target.value);
+
+      if (errors.body) {
+        setErrors((prev) => ({
+          ...prev,
+          body: "",
+        }));
+      }
+    }}
+    placeholder="Type your message contents here..."
+  />
+
+  {errors.body && (
+    <div className="text-danger mt-1 small">
+      {errors.body}
+    </div>
+  )}
+</div>
+
+           <div className="mb-4">
+  <label className="form-label small font-weight-bold mb-1">
+    Attachments (Optional)
+  </label>
+
+  <div className="d-flex align-items-center gap-3">
+
+    <input
+      type="file"
+      ref={fileInputRef}
+      className="d-none"
+      onChange={handleFileChange}
+    />
+
+    {!emailAttachment ? (
+      <>
+       <div
+  className="upload-indent-box"
+  onClick={() => fileInputRef.current?.click()}
+>
+  <div className="text-center text-muted">
+    <img
+      src={upload_icon}
+      alt="upload_icon"
+      className="icon-40"
+    />
+    <div>Click to browse</div>
+    <span className="support">
+      Supported formats: PDF, DOC, DOCX
+    </span>
+  </div>
+</div>
+
+        <span className="text-muted small">
+          No file uploaded
+        </span>
+      </>
+    ) : (
+      <div
+        className="d-flex align-items-center justify-content-between w-100 border rounded px-3 py-2"
+        style={{ background: "#f8f9ff" }}
+      >
+        <div className="d-flex align-items-center gap-2">
+          📄
+          <span className="fw-semibold">
+            {emailAttachment.name}
+          </span>
+        </div>
+
+     <div className="d-flex align-items-center gap-2">
+
+  <button
+    type="button"
+    className="icon-btn"
+    title="View"
+    onClick={handleViewAttachment}
+  >
+    <img
+      src={view_icon}
+      alt="view"
+      className="icon-16"
+    />
+  </button>
+
+  <button
+    type="button"
+    className="icon-btn"
+    title="Replace"
+    onClick={() => fileInputRef.current?.click()}
+  >
+    <img
+      src={edit_icon}
+      alt="edit"
+      className="icon-16"
+    />
+  </button>
+
+  <button
+    type="button"
+    className="icon-btn"
+    title="Remove"
+    onClick={() => {
+      setEmailAttachment(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }}
+  >
+    ✕
+  </button>
+
+</div>
+      </div>
+    )}
+  </div>
+</div>
 
                 <div className="p-3 border rounded-3 d-flex align-items-start gap-3" style={{ backgroundColor: '#fff5f2', borderColor: '#ffe2da' }}>
                   <span className="fs-5 text-secondary" style={{ marginTop: '-2px' }}>👥</span>
@@ -527,7 +728,10 @@ const Bulkcommunication = () => {
                 <button 
                   type="button" 
                   className="btn btn-outline-secondary px-4 py-2 bg-white rounded-2" 
-                  onClick={() => setIsModalOpen(false)}
+                 onClick={() => {
+  resetCommunicationForm();
+  setIsModalOpen(false);
+}}
                   style={{ fontSize: '0.95rem', color: '#333' }}
                 >
                   Cancel
@@ -535,7 +739,7 @@ const Bulkcommunication = () => {
                 <button 
                   type="button" 
                   className="btn px-4 py-2 rounded-2 text-white font-weight-bold shadow-sm d-flex align-items-center gap-2" 
-                  disabled={sendingCommunication || !emailSubject || !emailBody}
+                  disabled={sendingCommunication}
                   onClick={handleSendCommunication}
                   style={{ backgroundColor: '#e95420', border: 'none', fontSize: '0.95rem' }}
                 >
@@ -545,7 +749,7 @@ const Bulkcommunication = () => {
                       Sending...
                     </>
                   ) : (
-                    <>🚀 Send Communication</>
+                    <> Send Communication</>
                   )}
                 </button>
               </div>
