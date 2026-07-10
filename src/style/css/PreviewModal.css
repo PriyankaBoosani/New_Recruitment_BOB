@@ -168,6 +168,12 @@
   font-size: 0.698rem;
 }
 
+.bob-table td.fw-medd {
+  font-weight: 400;
+  color: #000;
+  font-size: 0.698rem;
+}
+
 .bob-table td.fw-reg {
   font-weight: 400;
   color: #333333;
