@@ -313,6 +313,8 @@
   "download_upload_digital_signature": "Download & Upload Digital Signature",
   "sending": "Sending...",
   "send_offer": "Send Offer",
-   "candidate_report": "Candidate Report"
+   "candidate_report": "Candidate Report",
+   "posting_location": "Posting Location",
+   "reporting_alpha": "Reporting Alpha"
 
 }

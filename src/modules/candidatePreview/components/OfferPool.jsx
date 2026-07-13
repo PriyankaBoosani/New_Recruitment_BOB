@@ -19,7 +19,7 @@ const OFFER_STATUS_CLASS_MAP = {
   L2_PENDING: "bg-info",
   L1_REJECTED: "bg-danger",
   L2_REJECTED: "bg-danger",
- OFFER_GENERATED: "bg-secondary",
+  OFFER_GENERATED: "bg-secondary",
   APPROVED: "bg-success",
 };
 
@@ -33,7 +33,7 @@ const OFFER_STATUS_LABEL_MAP = {
   L1_REJECTED: "L1 Rejected",
   L2_REJECTED: "L2 Rejected",
   OFFER_GENERATED: "Offer Generated",
-  APPROVED: "Approved"
+  APPROVED: "Approved",
 };
 
 const OfferPool = ({
@@ -48,7 +48,6 @@ const OfferPool = ({
   acceptBeforeDate,
   joiningDate,
   offerApprovalId,
-
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [offers, setOffers] = useState([]);
@@ -61,11 +60,6 @@ const OfferPool = ({
   const [pageSize, setPageSize] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
-
-
-
-
-
 
   const fetchExamConfiguration = async () => {
     try {
@@ -180,7 +174,7 @@ const OfferPool = ({
 
         return {
           id: offer.candidateOfferId,
-           candidateOfferId: offer.candidateOfferId,
+          candidateOfferId: offer.candidateOfferId,
           applicationNo: item.regNo,
           applicationId: offer.applicationId,
           offerFileUrl: offer.offerFileUrl,
@@ -189,9 +183,7 @@ const OfferPool = ({
           name: item.candidateFullName,
           categoryName: item.reservationCategory,
           // NEW FIELDS
-          dateOfBirth: item.candidateDob
-            ? formatDate(item.candidateDob)
-            : "-",
+          dateOfBirth: item.candidateDob ? formatDate(item.candidateDob) : "-",
 
           age: item.age || "-",
 
@@ -228,7 +220,8 @@ const OfferPool = ({
           historyId: item.offerApprovalId, // add this|
           cutOffDate: "-",
           shortlisted: "-",
-
+          postingLocation: offer.postingLocation,
+          reportingAlpha: item.reportingAlpha
         };
       });
 
@@ -301,7 +294,6 @@ const OfferPool = ({
       setPage(totalPages - 1);
     }
   }, [filteredOffers, pageSize, page]);
-  
 
   return (
     <div className="card-body p-0 d-none d-md-block">
@@ -342,7 +334,6 @@ const OfferPool = ({
               >
                 {t("candidateWorkflow:registration_number")}
               </th>
-
 
               <th
                 className="fs-14 fw-normal py-3 border-top"
@@ -400,9 +391,21 @@ const OfferPool = ({
               >
                 {t("candidateWorkflow:city")}
               </th>
-
-
                <th
+                className="fs-14 fw-normal py-3 border-top"
+                scope="col"
+                style={{ paddingLeft: "1.25rem" }}
+              >
+                {t("candidateWorkflow:reporting_alpha")}
+              </th>
+              <th
+                className="fs-14 fw-normal py-3 border-top"
+                scope="col"
+                style={{ paddingLeft: "1.25rem" }}
+              >
+                {t("candidateWorkflow:posting_location")}
+              </th>
+              <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
                 style={{ paddingLeft: "1.25rem" }}
@@ -432,8 +435,6 @@ const OfferPool = ({
                 {t("candidateWorkflow:joining_date")}
               </th>
 
-
-             
               <th
                 className="fs-14 fw-normal py-3 border-top sticky-col-action border-left"
                 scope="col"
@@ -479,7 +480,7 @@ const OfferPool = ({
                           "L1_REJECTED",
                           "L2_REJECTED",
                           "OFFER_GENERATED",
-                          "APPROVED"
+                          "APPROVED",
                         ].includes(c.status)
                       }
                     />
@@ -554,8 +555,9 @@ const OfferPool = ({
                     style={{ paddingLeft: "1.25rem", alignContent: "center" }}
                   >
                     <span
-                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
-                        }`}
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                        OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                      }`}
                     >
                       {OFFER_STATUS_LABEL_MAP[c.status] || c.status}
                     </span>
@@ -592,8 +594,25 @@ const OfferPool = ({
                       {c.location || "-"}
                     </p>
                   </td>
-
                     <td
+                    className="align-content-center"
+                    style={{ paddingLeft: "1.25rem" }}
+                  >
+                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                      {c.reportingAlpha || "-"}
+                    </p>
+                  </td>
+                  <td
+                    className="align-content-center"
+                    style={{ paddingLeft: "1.25rem" }}
+                  >
+                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                      {c.postingLocation || "-"}
+                    </p>
+                  </td>
+                  
+
+                  <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}
                   >
@@ -626,7 +645,6 @@ const OfferPool = ({
                       {c.joiningDate}
                     </p>
                   </td>
-                
 
                   <td
                     className="align-content-center sticky-col-action"
@@ -755,7 +773,6 @@ const OfferPool = ({
                     style={{ backgroundColor: "#f7f8fb" }}
                   >
                     <div className="row g-3">
-
                       <InfoField
                         label={t("candidateWorkflow:registration_number")}
                         value={selectedOffer.applicationNo}

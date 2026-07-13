@@ -315,5 +315,7 @@
   "sending": "भेजा जा रहा है...",
   "send_offer": "ऑफ़र भेजें",
   "offer_generated": "ऑफ़र जनरेट किया गया",
-"candidate_report": "उम्मीदवार रिपोर्ट"
+  "candidate_report": "उम्मीदवार रिपोर्ट",
+  "posting_location": "पोस्टिंग स्थान",
+  "reporting_alpha": "रिपोर्टिंग अल्फ़ा"
 }

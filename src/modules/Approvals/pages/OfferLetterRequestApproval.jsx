@@ -282,7 +282,7 @@ const OfferLetterRequestApproval = () => {
               <th>{t("common:score")}</th>
               <th>{t("offerLetterRequest:offer_letter_number")}</th>
               <th>{t("offerLetterRequest:offer_release_date")}</th>
-              <th>{t("offerLetterRequest:accept_before")}</th>
+              <th>{t("offerLetterRequest:accept_before_date")}</th>
               <th>{t("offerLetterRequest:joining_date")}</th>
               <th>{t("approvalHistory:status")}</th>
               <th>{t("common:action")}</th>
