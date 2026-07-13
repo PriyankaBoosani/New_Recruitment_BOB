@@ -32,7 +32,7 @@ const OFFER_STATUS_LABEL_MAP = {
   L2_PENDING: "L2 Pending",
   L1_REJECTED: "L1 Rejected",
   L2_REJECTED: "L2 Rejected",
-  OFFER_GENERATED: "Offer GeneratedS",
+  OFFER_GENERATED: "Offer Generated",
   APPROVED: "Approved"
 };
 
