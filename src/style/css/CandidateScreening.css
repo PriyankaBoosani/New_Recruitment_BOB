@@ -379,7 +379,12 @@ candidate-screening-tabs-header ul {
   cursor: pointer;
   background: none;
 }
-
+.rank-cell .info-icon {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  background: none !important;
+}
 .bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::after,
 .bs-popover-end > .popover-arrow::after {
   border-right-color: #243a5e;
