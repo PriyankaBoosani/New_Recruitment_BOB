@@ -2827,7 +2827,7 @@ const handleDownloadRankList = async () => {
                   className="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
                   onClick={handleDownloadAllCandidateDetails}
                 >
-                  {t("candidateWorkflow:download_excel")}
+                  {t("candidateWorkflow:candidate_report")}
                 </button>
               </li>
             )}

@@ -314,5 +314,6 @@
   "download_upload_digital_signature": "डिजिटल हस्ताक्षर डाउनलोड एवं अपलोड करें",
   "sending": "भेजा जा रहा है...",
   "send_offer": "ऑफ़र भेजें",
-  "offer_generated": "ऑफ़र जनरेट किया गया"
+  "offer_generated": "ऑफ़र जनरेट किया गया",
+"candidate_report": "उम्मीदवार रिपोर्ट"
 }

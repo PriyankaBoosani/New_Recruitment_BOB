@@ -312,6 +312,7 @@
   "category": "Category",
   "download_upload_digital_signature": "Download & Upload Digital Signature",
   "sending": "Sending...",
-  "send_offer": "Send Offer"
+  "send_offer": "Send Offer",
+   "candidate_report": "Candidate Report"
 
 }
