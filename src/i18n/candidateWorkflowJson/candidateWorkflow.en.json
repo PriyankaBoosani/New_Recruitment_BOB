@@ -309,5 +309,9 @@
   "signed_offers_uploaded_successfully.": "Signed offers uploaded successfully.",
   "digital_signature_upload_failed": "Digital signature upload failed.",
   "ex_servicemen": "Ex Servicemen",
-  "category": "Category"
+  "category": "Category",
+  "download_upload_digital_signature": "Download & Upload Digital Signature",
+  "sending": "Sending...",
+  "send_offer": "Send Offer"
+
 }

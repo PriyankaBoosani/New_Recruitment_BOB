@@ -310,5 +310,9 @@
   "signed_offers_uploaded_successfully": "साइन किए गए ऑफ़र सफलतापूर्वक अपलोड किए गए",
   "digital_signature_upload_failed": "डिजिटल हस्ताक्षर अपलोड विफल",
   "ex_servicemen": "भूतपूर्व सैनिक",
-  "category": "श्रेणी"
+  "category": "श्रेणी",
+  "download_upload_digital_signature": "डिजिटल हस्ताक्षर डाउनलोड एवं अपलोड करें",
+  "sending": "भेजा जा रहा है...",
+  "send_offer": "ऑफ़र भेजें",
+  "offer_generated": "ऑफ़र जनरेट किया गया"
 }

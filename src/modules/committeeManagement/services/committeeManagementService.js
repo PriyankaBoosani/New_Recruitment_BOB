@@ -128,9 +128,10 @@ const committeeManagementService = {
         responseType: "blob",
       }
     ),
-  downloadAllCandidateDetailsExcel: (positionId) =>
-    api.get(
-      `/recruiter/candidate-details/get-all-details-excel/${positionId}`,
+  downloadAllCandidateDetailsExcel: (positionIds) =>
+    api.post(
+      "/recruiter/candidate-details/get-all-details-excel",
+      positionIds,
       {
         responseType: "blob",
       }

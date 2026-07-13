@@ -178,7 +178,8 @@ export default function CandidateScreening({ selectedJob }) {
     "L2_PENDING",
     "L1_REJECTED",
     "L2_REJECTED",
-    "OFFER_GENERATED",
+     "OFFER_GENERATED",
+    "APPROVED"
   ];
   const SCHEDULE_POOL_STATUSES = ["L1_PENDING", "PENDING", "REJECTED"];
   const OFFER_STATUS_LABEL_MAP = {
@@ -190,7 +191,8 @@ export default function CandidateScreening({ selectedJob }) {
     L1_REJECTED: t("candidateWorkflow:l1_rejected"),
     L2_PENDING: t("candidateWorkflow:l2_pending"),
     L2_REJECTED: t("candidateWorkflow:l2_rejected"),
-    OFFER_GENERATED: t("candidateWorkflow:offer_generated"),
+     OFFER_GENERATED: t("candidateWorkflow:offer_generated"),
+    APPROVED: t("candidateWorkflow:approved"),
   };
   const [interviewPage, setInterviewPage] = useState(0);
   const [interviewPageSize, setInterviewPageSize] = useState(10);
@@ -433,16 +435,14 @@ export default function CandidateScreening({ selectedJob }) {
 
   const handleDownloadAllCandidateDetails = async () => {
     try {
-      const positionId = selectedPositionId?.[0];
-
-      if (!positionId) {
-        toast.error("Please select a position");
+      if (!selectedPositionId?.length) {
+        toast.error("Please select at least one position");
         return;
       }
 
       const res =
         await committeeManagementService.downloadAllCandidateDetailsExcel(
-          positionId
+          selectedPositionId
         );
 
       const blob = new Blob([res.data], {
@@ -2808,7 +2808,7 @@ export default function CandidateScreening({ selectedJob }) {
                 </button>
               </li>
             ))}
-            {/* {selectedPositionId.length > 0 && selectedRequisitionId && (
+            {selectedPositionId.length > 0 && selectedRequisitionId && (
               <li className="nav-item ms-auto">
                 <button
                   type="button"
@@ -2818,7 +2818,7 @@ export default function CandidateScreening({ selectedJob }) {
                   {t("candidateWorkflow:download_excel")}
                 </button>
               </li>
-            )} */}
+            )}
           </ul>
 
           {/* Download all candidate details moved to the right actions area */}
@@ -3028,7 +3028,7 @@ export default function CandidateScreening({ selectedJob }) {
                   className="btn orange-bg text-white fs-12"
                   onClick={() => setShowDigitalSignatureModal(true)}
                 >
-                  Upload & Download Digital Signature
+                   {t("candidateWorkflow:download_upload_digital_signature")}
                 </button>
 
                 <button
@@ -3043,10 +3043,10 @@ export default function CandidateScreening({ selectedJob }) {
                         className="spinner-border spinner-border-sm me-2"
                         role="status"
                       />
-                      Sending...
+                      {t("candidateWorkflow:sending")}
                     </>
                   ) : (
-                    "Send For Approval"
+                    t("candidateWorkflow:send_offer")
                   )}
                 </button>
               </div>
@@ -3201,7 +3201,7 @@ export default function CandidateScreening({ selectedJob }) {
                         type="text"
                         className="form-control fs-13 py-1"
                         style={{ width: "110px" }}
-                        placeholder="Designation"
+                        placeholder={t("candidateWorkflow:designation")}
                         value={signatoryDesignation}
                         onChange={(e) =>
                           setSignatoryDesignation(e.target.value)
@@ -3225,7 +3225,7 @@ export default function CandidateScreening({ selectedJob }) {
                         disabled={!canGenerateOffer}
                       >
                         {/* <i className="bi bi-file-earmark-plus"></i> */}
-                        Generate Offer
+                        {t("candidateWorkflow:generate_offer")}
                       </button>
 
                       <small className="d-block mt-1 fs-12 invisible">

@@ -19,7 +19,8 @@ const OFFER_STATUS_CLASS_MAP = {
   L2_PENDING: "bg-info",
   L1_REJECTED: "bg-danger",
   L2_REJECTED: "bg-danger",
-  OFFER_GENERATED: "bg-secondary"
+ OFFER_GENERATED: "bg-secondary",
+  APPROVED: "bg-success",
 };
 
 const OFFER_STATUS_LABEL_MAP = {
@@ -31,7 +32,8 @@ const OFFER_STATUS_LABEL_MAP = {
   L2_PENDING: "L2 Pending",
   L1_REJECTED: "L1 Rejected",
   L2_REJECTED: "L2 Rejected",
-  OFFER_GENERATED: "Offer Generated"
+  OFFER_GENERATED: "Offer GeneratedS",
+  APPROVED: "Approved"
 };
 
 const OfferPool = ({
