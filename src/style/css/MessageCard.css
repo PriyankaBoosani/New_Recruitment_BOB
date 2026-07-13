@@ -24,7 +24,6 @@
 
   min-width: 300px;
   flex-wrap: wrap;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
