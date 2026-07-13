@@ -2161,33 +2161,38 @@ const handleDownloadRankList = async () => {
     !formErrors.acceptBeforeDate &&
     !formErrors.joiningDate;
 
-  const handleGenerateRankList = async () => {
-    try {
-      const positionId = selectedPositionId?.[0];
+const handleGenerateRankList = async () => {
+  try {
+    const positionId = selectedPositionId?.[0];
 
-      if (!positionId) {
-        toast.error("Please select a position");
-        return;
-      }
-
-      const res = await candidateWorkflowServices.generateRankList(positionId);
-
-      toast.success(res?.message || "Rank List generated successfully");
-
-      setRankListGenerated(true); // Enable download button
-
-      setOfferRefreshKey((prev) => prev + 1);
-      setOfferSelectedIds([]);
-    } catch (err) {
-      console.error(err);
-
-      toast.error(
-        err?.response?.data?.message || "Failed to generate rank list"
-      );
-
-      setRankListGenerated(false);
+    if (!positionId) {
+      toast.error("Please select a position");
+      return;
     }
-  };
+
+    const res = await candidateWorkflowServices.generateRankList(positionId);
+
+    if (!res?.success) {
+      toast.error(res?.message || "Failed to generate rank list");
+      setRankListGenerated(false);
+      return;
+    }
+
+    toast.success(res?.message || "Rank List generated successfully");
+
+    setRankListGenerated(true);
+    setOfferRefreshKey((prev) => prev + 1);
+    setOfferSelectedIds([]);
+  } catch (err) {
+    console.error(err);
+
+    toast.error(
+      err?.response?.data?.message || "Failed to generate rank list"
+    );
+
+    setRankListGenerated(false);
+  }
+};
 
   useEffect(() => {
     if (activeTab !== "OFFER_POOL") {
