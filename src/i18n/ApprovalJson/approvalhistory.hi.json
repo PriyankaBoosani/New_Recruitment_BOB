@@ -46,5 +46,8 @@
   "city": "शहर",
   "category": "श्रेणी",
   "disability": "दिव्यांगता",
-  "no_position_data": "कोई पद डेटा उपलब्ध नहीं है"
+  "no_position_data": "कोई पद डेटा उपलब्ध नहीं है",
+  "ex_servicemen": "पूर्व सैनिक",
+  "disabled_ex_servicemen": "दिव्यांग पूर्व सैनिक", 
+  "total": "कुल"
 }

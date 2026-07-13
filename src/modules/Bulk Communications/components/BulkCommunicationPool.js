@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect } from "react";
+import Select from "react-select";
 import { toast } from "react-toastify";
 import searchIcon from "../../../assets/search-icon.png";
 import { useTranslation } from "react-i18next";
@@ -111,6 +112,17 @@ export default function BulkCommunicationPool({
   // Dynamically calculate colSpan for placeholder rows to match structural width changes
   const dynamicColSpan = hasLocationData ? 7 : 6;
 
+  const statusOptions = [
+  {
+    value: "",
+    label: t("all_statuses"),
+  },
+  ...CANDIDATE_POOL_STATUSES.map((status) => ({
+    value: status,
+    label: STATUS_LABEL_MAP[status] || formatStatusFallback(status),
+  })),
+];
+
   return (
     <div className="card rounded border-0 mt-4 mb-5">
       
@@ -128,24 +140,41 @@ export default function BulkCommunicationPool({
           </button>
           
           <div className="d-flex align-items-center gap-2 ms-2">
-            <select
-              className="form-select fs-14 py-2"
-              style={{ width: "200px", borderRadius: "6px" }}
-              value={filters?.status[0] || ""}
-              onChange={(e) => {
-                onPageChange(0);
-                setFilters((prev) => ({ ...prev, status: e.target.value ? [e.target.value] : [] }));
-              }}
-            >
-             <option value="">{t("all_statuses")}</option>
-              {CANDIDATE_POOL_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {STATUS_LABEL_MAP[status] || formatStatusFallback(status)}
-                </option>
-              ))}
-            </select>
+          <Select
+  styles={{
+    container: (base) => ({
+      ...base,
+      width: 200,
+    }),
+    control: (base) => ({
+      ...base,
+      minHeight: 40,
+      borderRadius: 6,
+      fontSize: 14,
+    }),
+    menu: (base) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+  }}
+  options={statusOptions}
+  value={
+    statusOptions.find(
+      (o) => o.value === (filters?.status?.[0] || "")
+    ) || statusOptions[0]
+  }
+  onChange={(option) => {
+    onPageChange(0);
+    setFilters((prev) => ({
+      ...prev,
+      status: option?.value ? [option.value] : [],
+    }));
+  }}
+  menuPlacement="bottom"
+  menuPosition="fixed"
+/>
 
-            {hasLocationData && (
+            {/* {hasLocationData && (
               <select
                 className="form-select fs-14 py-2"
                 style={{ width: "160px", borderRadius: "6px" }}
@@ -157,9 +186,9 @@ export default function BulkCommunicationPool({
                   <option key={loc.id} value={loc.id}>{loc.name}</option>
                 ))}
               </select>
-            )}
+            )} */}
 
-            <select
+            {/* <select
               className="form-select fs-14 py-2"
               style={{ width: "180px", borderRadius: "6px" }}
               value={filters.categoryId}
@@ -169,7 +198,7 @@ export default function BulkCommunicationPool({
               {availableCategories?.map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
-            </select>
+            </select> */}
           </div>
         </div>
 

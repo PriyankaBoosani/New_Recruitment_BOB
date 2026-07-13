@@ -178,6 +178,8 @@ const ApprovedInfoStrip = ({
                                                         <th rowSpan="2">{t("approvalHistory:city")}</th>
                                                         <th colSpan="6">{t("approvalHistory:category")}</th>
                                                         <th colSpan="4">{t("approvalHistory:disability")}</th>
+
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                                     </tr>
 
 
@@ -192,6 +194,9 @@ const ApprovedInfoStrip = ({
                                                         <th>OC</th>
                                                         <th>VI</th>
                                                         <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
 
@@ -212,6 +217,9 @@ const ApprovedInfoStrip = ({
                                                             <td>{row.oc}</td>
                                                             <td>{row.vi}</td>
                                                             <td>{row.idd}</td>
+
+                                                            <td>{row.exs}</td>
+                                                            <td>{row.dxs}</td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
@@ -228,12 +236,26 @@ const ApprovedInfoStrip = ({
                                             <table className="approved-reservation-table">
                                                 <thead>
                                                     <tr>
+                                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                                    </tr>
+
+                                                    <tr>
                                                         <th>SC</th>
                                                         <th>ST</th>
                                                         <th>OBC</th>
                                                         <th>EWS</th>
                                                         <th>GEN</th>
                                                         <th>{t("common:total")}</th>
+
+                                                        <th>HI</th>
+                                                        <th>OC</th>
+                                                        <th>VI</th>
+                                                        <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
 
@@ -245,6 +267,14 @@ const ApprovedInfoStrip = ({
                                                         <td>{position?.nationalReservation?.ews ?? 0}</td>
                                                         <td>{position?.nationalReservation?.gen ?? 0}</td>
                                                         <td>{position?.nationalReservation?.total ?? 0}</td>
+
+                                                        <td>{position?.nationalReservation?.hi ?? 0}</td>
+                                                        <td>{position?.nationalReservation?.oc ?? 0}</td>
+                                                        <td>{position?.nationalReservation?.vi ?? 0}</td>
+                                                        <td>{position?.nationalReservation?.idd ?? 0}</td>
+
+                                                        <td>{position?.nationalReservation?.exs ?? 0}</td>
+                                                        <td>{position?.nationalReservation?.dxs ?? 0}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -301,6 +331,7 @@ const ApprovedInfoStrip = ({
                                                         <th rowSpan="2">{t("approvalHistory:city")}</th>
                                                         <th colSpan="6">{t("approvalHistory:category")}</th>
                                                         <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                                     </tr>
 
                                                     <tr>
@@ -314,6 +345,9 @@ const ApprovedInfoStrip = ({
                                                         <th>OC</th>
                                                         <th>VI</th>
                                                         <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
 
@@ -338,6 +372,9 @@ const ApprovedInfoStrip = ({
                                                             <td>{row.oc}</td>
                                                             <td>{row.vi}</td>
                                                             <td>{row.idd}</td>
+
+                                                            <td>{row.exs}</td>
+                                                            <td>{row.dxs}</td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
@@ -348,12 +385,26 @@ const ApprovedInfoStrip = ({
                                             <table className="approved-onboarded-table">
                                                 <thead>
                                                     <tr>
+                                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                                    </tr>
+
+                                                    <tr>
                                                         <th>SC</th>
                                                         <th>ST</th>
                                                         <th>OBC</th>
                                                         <th>EWS</th>
                                                         <th>GEN</th>
                                                         <th>{t("common:total")}</th>
+
+                                                        <th>HI</th>
+                                                        <th>OC</th>
+                                                        <th>VI</th>
+                                                        <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
 
@@ -361,44 +412,80 @@ const ApprovedInfoStrip = ({
                                                     <tr>
                                                         <td>
                                                             {showRemaining[index]
-                                                                ? (position?.nationalReservation?.sc ?? 0) -
-                                                                (position?.nationalOnboarded?.sc ?? 0)
+                                                                ? (position?.nationalReservation?.sc ?? 0) - (position?.nationalOnboarded?.sc ?? 0)
                                                                 : (position?.nationalOnboarded?.sc ?? 0)}
                                                         </td>
 
                                                         <td>
                                                             {showRemaining[index]
-                                                                ? (position?.nationalReservation?.st ?? 0) -
-                                                                (position?.nationalOnboarded?.st ?? 0)
+                                                                ? (position?.nationalReservation?.st ?? 0) - (position?.nationalOnboarded?.st ?? 0)
                                                                 : (position?.nationalOnboarded?.st ?? 0)}
                                                         </td>
 
                                                         <td>
                                                             {showRemaining[index]
-                                                                ? (position?.nationalReservation?.obc ?? 0) -
-                                                                (position?.nationalOnboarded?.obc ?? 0)
+                                                                ? (position?.nationalReservation?.obc ?? 0) - (position?.nationalOnboarded?.obc ?? 0)
                                                                 : (position?.nationalOnboarded?.obc ?? 0)}
                                                         </td>
 
                                                         <td>
                                                             {showRemaining[index]
-                                                                ? (position?.nationalReservation?.ews ?? 0) -
-                                                                (position?.nationalOnboarded?.ews ?? 0)
+                                                                ? (position?.nationalReservation?.ews ?? 0) - (position?.nationalOnboarded?.ews ?? 0)
                                                                 : (position?.nationalOnboarded?.ews ?? 0)}
                                                         </td>
 
                                                         <td>
                                                             {showRemaining[index]
-                                                                ? (position?.nationalReservation?.gen ?? 0) -
-                                                                (position?.nationalOnboarded?.gen ?? 0)
+                                                                ? (position?.nationalReservation?.gen ?? 0) - (position?.nationalOnboarded?.gen ?? 0)
                                                                 : (position?.nationalOnboarded?.gen ?? 0)}
                                                         </td>
 
                                                         <td>
                                                             {showRemaining[index]
-                                                                ? (position?.nationalReservation?.total ?? 0) -
-                                                                (position?.nationalOnboarded?.total ?? 0)
+                                                                ? (position?.nationalReservation?.total ?? 0) - (position?.nationalOnboarded?.total ?? 0)
                                                                 : (position?.nationalOnboarded?.total ?? 0)}
+                                                        </td>
+
+                                                        <td>
+                                                            {showRemaining[index]
+                                                                ? (position?.nationalReservation?.hi ?? 0) -
+                                                                (position?.nationalOnboarded?.hi ?? 0)
+                                                                : (position?.nationalOnboarded?.hi ?? 0)}
+                                                        </td>
+
+                                                        <td>
+                                                            {showRemaining[index]
+                                                                ? (position?.nationalReservation?.oc ?? 0) -
+                                                                (position?.nationalOnboarded?.oc ?? 0)
+                                                                : (position?.nationalOnboarded?.oc ?? 0)}
+                                                        </td>
+
+                                                        <td>
+                                                            {showRemaining[index]
+                                                                ? (position?.nationalReservation?.vi ?? 0) -
+                                                                (position?.nationalOnboarded?.vi ?? 0)
+                                                                : (position?.nationalOnboarded?.vi ?? 0)}
+                                                        </td>
+
+                                                        <td>
+                                                            {showRemaining[index]
+                                                                ? (position?.nationalReservation?.idd ?? 0) -
+                                                                (position?.nationalOnboarded?.idd ?? 0)
+                                                                : (position?.nationalOnboarded?.idd ?? 0)}
+                                                        </td>
+
+                                                        <td>
+                                                            {showRemaining[index]
+                                                                ? (position?.nationalReservation?.exs ?? 0) -
+                                                                (position?.nationalOnboarded?.exs ?? 0)
+                                                                : (position?.nationalOnboarded?.exs ?? 0)}
+                                                        </td>
+
+                                                        <td>
+                                                            {showRemaining[index]
+                                                                ? (position?.nationalReservation?.dxs ?? 0) -
+                                                                (position?.nationalOnboarded?.dxs ?? 0)
+                                                                : (position?.nationalOnboarded?.dxs ?? 0)}
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -422,6 +509,7 @@ const ApprovedInfoStrip = ({
                                                         <th rowSpan="2">{t("approvalHistory:city")}</th>
                                                         <th colSpan="6">{t("approvalHistory:category")}</th>
                                                         <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                                     </tr>
 
                                                     <tr>
@@ -435,6 +523,9 @@ const ApprovedInfoStrip = ({
                                                         <th>OC</th>
                                                         <th>VI</th>
                                                         <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
 
@@ -455,6 +546,9 @@ const ApprovedInfoStrip = ({
                                                             <td>{row.oc}</td>
                                                             <td>{row.vi}</td>
                                                             <td>{row.idd}</td>
+
+                                                            <td>{row.exs}</td>
+                                                            <td>{row.dxs}</td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
@@ -465,12 +559,26 @@ const ApprovedInfoStrip = ({
                                             <table className="approved-onboarded-table">
                                                 <thead>
                                                     <tr>
+                                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                                    </tr>
+
+                                                    <tr>
                                                         <th>SC</th>
                                                         <th>ST</th>
                                                         <th>OBC</th>
                                                         <th>EWS</th>
                                                         <th>GEN</th>
                                                         <th>{t("common:total")}</th>
+
+                                                        <th>HI</th>
+                                                        <th>OC</th>
+                                                        <th>VI</th>
+                                                        <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
 
@@ -482,6 +590,14 @@ const ApprovedInfoStrip = ({
                                                         <td>{position?.nationalOffersSent?.ews ?? 0}</td>
                                                         <td>{position?.nationalOffersSent?.gen ?? 0}</td>
                                                         <td>{position?.nationalOffersSent?.total ?? 0}</td>
+
+                                                        <td>{position?.nationalOffersSent?.hi ?? 0}</td>
+                                                        <td>{position?.nationalOffersSent?.oc ?? 0}</td>
+                                                        <td>{position?.nationalOffersSent?.vi ?? 0}</td>
+                                                        <td>{position?.nationalOffersSent?.idd ?? 0}</td>
+
+                                                        <td>{position?.nationalOffersSent?.exs ?? 0}</td>
+                                                        <td>{position?.nationalOffersSent?.dxs ?? 0}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -503,6 +619,7 @@ const ApprovedInfoStrip = ({
                                                         <th rowSpan="2">{t("approvalHistory:city")}</th>
                                                         <th colSpan="6">{t("approvalHistory:category")}</th>
                                                         <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                                     </tr>
 
                                                     <tr>
@@ -516,6 +633,9 @@ const ApprovedInfoStrip = ({
                                                         <th>OC</th>
                                                         <th>VI</th>
                                                         <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -535,6 +655,9 @@ const ApprovedInfoStrip = ({
                                                             <td>{row.oc}</td>
                                                             <td>{row.vi}</td>
                                                             <td>{row.idd}</td>
+
+                                                            <td>{row.exs}</td>
+                                                            <td>{row.dxs}</td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
@@ -545,12 +668,26 @@ const ApprovedInfoStrip = ({
                                             <table className="approved-onboarded-table">
                                                 <thead>
                                                     <tr>
+                                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                                    </tr>
+
+                                                    <tr>
                                                         <th>SC</th>
                                                         <th>ST</th>
                                                         <th>OBC</th>
                                                         <th>EWS</th>
                                                         <th>GEN</th>
                                                         <th>{t("common:total")}</th>
+
+                                                        <th>HI</th>
+                                                        <th>OC</th>
+                                                        <th>VI</th>
+                                                        <th>ID</th>
+
+                                                        <th>EXS</th>
+                                                        <th>DXS/DDXS</th>
                                                     </tr>
                                                 </thead>
 
@@ -562,6 +699,14 @@ const ApprovedInfoStrip = ({
                                                         <td>{position?.nationalOffersAccepted?.ews ?? 0}</td>
                                                         <td>{position?.nationalOffersAccepted?.gen ?? 0}</td>
                                                         <td>{position?.nationalOffersAccepted?.total ?? 0}</td>
+
+                                                        <td>{position?.nationalOffersAccepted?.hi ?? 0}</td>
+                                                        <td>{position?.nationalOffersAccepted?.oc ?? 0}</td>
+                                                        <td>{position?.nationalOffersAccepted?.vi ?? 0}</td>
+                                                        <td>{position?.nationalOffersAccepted?.idd ?? 0}</td>
+
+                                                        <td>{position?.nationalOffersAccepted?.exs ?? 0}</td>
+                                                        <td>{position?.nationalOffersAccepted?.dxs ?? 0}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

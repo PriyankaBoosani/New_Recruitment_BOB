@@ -2956,35 +2956,37 @@ const handleDownloadRankList = async () => {
                   </button>
                 )}
 
-                <>
-                  <OverlayTrigger
-                    placement="bottom"
-                    overlay={
-                      <Tooltip>{t("candidateWorkflow:download_pdf")}</Tooltip>
-                    }
-                  >
-                    <button
-                      className="btn fs-14 me-3 blue-color blue-border"
-                      onClick={() => handleDownload("pdf")}
-                    >
-                      <img alt="pdf" src={pdfIcon} width={20} />
-                    </button>
-                  </OverlayTrigger>
+              {activeTab !== "OFFER_POOL" && (
+  <>
+    <OverlayTrigger
+      placement="bottom"
+      overlay={
+        <Tooltip>{t("candidateWorkflow:download_pdf")}</Tooltip>
+      }
+    >
+      <button
+        className="btn fs-14 me-3 blue-color blue-border"
+        onClick={() => handleDownload("pdf")}
+      >
+        <img alt="pdf" src={pdfIcon} width={20} />
+      </button>
+    </OverlayTrigger>
 
-                  <OverlayTrigger
-                    placement="bottom"
-                    overlay={
-                      <Tooltip>{t("candidateWorkflow:download_excel")}</Tooltip>
-                    }
-                  >
-                    <button
-                      className="btn fs-14 blue-color blue-border"
-                      onClick={() => handleDownload("xlsx")}
-                    >
-                      <img alt="excel" src={excelIcon} width={20} />
-                    </button>
-                  </OverlayTrigger>
-                </>
+    <OverlayTrigger
+      placement="bottom"
+      overlay={
+        <Tooltip>{t("candidateWorkflow:download_excel")}</Tooltip>
+      }
+    >
+      <button
+        className="btn fs-14 blue-color blue-border"
+        onClick={() => handleDownload("xlsx")}
+      >
+        <img alt="excel" src={excelIcon} width={20} />
+      </button>
+    </OverlayTrigger>
+  </>
+)}
               </div>
             )}
           </div>

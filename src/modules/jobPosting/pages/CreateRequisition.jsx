@@ -96,40 +96,40 @@ const CreateRequisition = () => {
 
   useEffect(() => {
     const fetchMasterPositions = async () => {
-      const res = await masterApiService.getMasterDisplayAll();
+      const [res, exServiceRes] = await Promise.all([
+        masterApiService.getMasterDisplayAll(),
+        masterApiService.getExServiceCategories(),
+      ]);
       setMasterData({
-        reservationCategories: (
-          res.data?.reservationCategories || []
-        ).map((c) => ({
+        reservationCategories: (res.data?.reservationCategories || []).map((c) => ({
           id: String(c.reservationCategoriesId),
           code: c.categoryCode,
         })),
 
-        disabilityCategories: (
-          res.data?.disabilityCategories || []
-        ).map((c) => ({
+        disabilityCategories: (res.data?.disabilityCategories || []).map((c) => ({
           id: String(c.disabilityCategoryId),
           code: c.disabilityCode,
         })),
 
-        employmentTypes: (
-          res.data?.employementTypes || []
-        ).map((e) => ({
+        // ✅ ADD THIS
+        exServiceCategories: (exServiceRes.data || []).map((item) => ({
+          groupId: item.groupId,
+          exsCategoryCode: item.exsCategoryCode,
+          exsCategoryName: item.exsCategoryName,
+        })),
+
+        employmentTypes: (res.data?.employementTypes || []).map((e) => ({
           id: String(e.employementTypeId),
           name: e.typeName,
           code: e.typeCode,
         })),
 
-        departments: (
-          res.data?.departments || []
-        ).map((d) => ({
+        departments: (res.data?.departments || []).map((d) => ({
           id: String(d.departmentId),
           name: d.departmentName,
         })),
 
-        masterPositions: (
-          res.data?.masterPositions || []
-        ).map((p) => ({
+        masterPositions: (res.data?.masterPositions || []).map((p) => ({
           id: String(p.masterPositionsId),
           name: p.positionName,
         })),

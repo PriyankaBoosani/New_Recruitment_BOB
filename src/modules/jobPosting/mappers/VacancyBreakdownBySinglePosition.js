@@ -7,6 +7,17 @@ export const mapVacancyBreakdownByPosition = (
   const reservationMap = {};
   const disabilityMap = {};
 
+  const exServiceMap = {};
+
+  (masterData?.exServiceCategories || []).forEach((item) => {
+    exServiceMap[item.groupId] = item.exsCategoryCode;
+  });
+
+
+  console.log("Master Ex Service Categories", masterData.exServiceCategories);
+
+  console.log("Ex Service Map", exServiceMap);
+
   (masterData?.reservationCategories || []).forEach((item) => {
     reservationMap[item.id] = item.code;
   });
@@ -96,8 +107,13 @@ export const mapVacancyBreakdownByPosition = (
         vi: 0,
         idd: 0,
 
+        exs: 0,
+        dxs: 0,
+
         total: data.totalVacancies || 0,
       };
+
+
 
       (data.nationalBreakdown || []).forEach((cat) => {
 
@@ -109,25 +125,55 @@ export const mapVacancyBreakdownByPosition = (
         //     isDisability: cat.isDisability,
         // });
         if (!cat.isDisability) {
-          const code =
-            reservationMap[cat.reservationCategoryId];
+
+          // Temporary mapping for EXS & DXS until backend provides IDs
+          if (cat.isExServiceman) {
+            const code = exServiceMap[cat.exServicemanGroupId];
+
+            console.log("EX SERVICE DEBUG", {
+              groupId: cat.exServicemanGroupId,
+              code,
+              vacancy: cat.vacancyCount,
+              map: exServiceMap
+            });
+
+            switch (code) {
+              case "EXS":
+                row.exs = cat.vacancyCount || 0;
+                break;
+
+              case "DXS":
+              case "DDXS":
+                row.dxs += cat.vacancyCount || 0;
+                break;
+            }
+
+            return;
+          }
+
+          const code = reservationMap[cat.reservationCategoryId];
 
           switch (code) {
             case "SC":
               row.sc = cat.vacancyCount || 0;
               break;
+
             case "ST":
               row.st = cat.vacancyCount || 0;
               break;
+
             case "OBC":
               row.obc = cat.vacancyCount || 0;
               break;
+
             case "EWS":
               row.ews = cat.vacancyCount || 0;
               break;
+
             case "GEN":
               row.gen = cat.vacancyCount || 0;
               break;
+
             default:
               break;
           }
@@ -181,31 +227,61 @@ export const mapVacancyBreakdownByPosition = (
         vi: 0,
         idd: 0,
 
-        total: data.onboardedCount || 0,
+        exs: 0,
+        dxs: 0,
 
+        total: data.onboardedCount || 0,
       };
+
+
 
       (data.nationalBreakdown || []).forEach((cat) => {
         if (!cat.isDisability) {
-          const code =
-            reservationMap[cat.reservationCategoryId];
+
+          // Temporary mapping for EXS & DXS until backend provides IDs
+          if (cat.isExServiceman) {
+            const code = exServiceMap[cat.exServicemanGroupId];
+
+            switch (code) {
+              case "EXS":
+                row.exs = cat.onboardedCount || 0;
+                break;
+
+              case "DXS":
+              case "DDXS":
+                row.dxs += cat.onboardedCount || 0;
+                break;
+
+              default:
+                break;
+            }
+
+            return;
+          }
+
+          const code = reservationMap[cat.reservationCategoryId];
 
           switch (code) {
             case "SC":
               row.sc = cat.onboardedCount || 0;
               break;
+
             case "ST":
               row.st = cat.onboardedCount || 0;
               break;
+
             case "OBC":
               row.obc = cat.onboardedCount || 0;
               break;
+
             case "EWS":
               row.ews = cat.onboardedCount || 0;
               break;
+
             case "GEN":
               row.gen = cat.onboardedCount || 0;
               break;
+
             default:
               break;
           }
@@ -236,41 +312,112 @@ export const mapVacancyBreakdownByPosition = (
     })(),
 
     stateWiseReservation:
-      data.stateBreakdown?.map((state) => {
-        const categories = {};
+      (data.stateBreakdown || []).map((state) => {
 
-        state.categories?.forEach((cat) => {
-          if (cat.isDisability) {
-            categories[
-              getDisabilityCode(cat.disabilityCategoryId)
-            ] = cat.vacancyCount;
+        const stateMaster = masterData?.states?.find(
+          (s) => String(s.stateId).trim() === String(state.stateId).trim()
+        );
+
+        const cityMaster = masterData?.cities?.find(
+          (c) => String(c.cityId).trim() === String(state.cityId).trim()
+        );
+
+        const row = {
+          stateId: state.stateId,
+          cityId: state.cityId,
+
+          state: stateMaster?.stateName || "-",
+          city: cityMaster?.cityName || "-",
+
+          sc: 0,
+          st: 0,
+          obc: 0,
+          ews: 0,
+          gen: 0,
+
+          hi: 0,
+          oc: 0,
+          vi: 0,
+          idd: 0,
+
+          exs: 0,
+          dxs: 0,
+
+          total: state.totalVacancies || 0,
+        };
+
+
+        (state.categories || []).forEach((cat) => {
+
+          if (!cat.isDisability) {
+
+            // Temporary mapping until backend sends EXS/DXS ids
+            if (cat.isExServiceman) {
+              const code = exServiceMap[cat.exServicemanGroupId];
+
+              switch (code) {
+                case "EXS":
+                  row.exs = cat.vacancyCount || 0;
+                  break;
+
+                case "DXS":
+                case "DDXS":
+                  row.dxs += cat.vacancyCount || 0;
+                  break;
+
+                default:
+                  break;
+              }
+
+              return;
+            }
+
+            const code = reservationMap[cat.reservationCategoryId];
+
+            switch (code) {
+              case "SC":
+                row.sc = cat.vacancyCount || 0;
+                break;
+              case "ST":
+                row.st = cat.vacancyCount || 0;
+                break;
+              case "OBC":
+                row.obc = cat.vacancyCount || 0;
+                break;
+              case "EWS":
+                row.ews = cat.vacancyCount || 0;
+                break;
+              case "GEN":
+                row.gen = cat.vacancyCount || 0;
+                break;
+              default:
+                break;
+            }
+
           } else {
-            categories[
-              getReservationCode(cat.reservationCategoryId)
-            ] = cat.vacancyCount;
+
+            const code = disabilityMap[cat.disabilityCategoryId];
+
+            switch (code) {
+              case "HI":
+                row.hi = cat.vacancyCount || 0;
+                break;
+              case "OC":
+                row.oc = cat.vacancyCount || 0;
+                break;
+              case "VI":
+                row.vi = cat.vacancyCount || 0;
+                break;
+              case "ID":
+                row.idd = cat.vacancyCount || 0;
+                break;
+              default:
+                break;
+            }
           }
         });
 
-        return {
-          stateId: state.stateId,
-          state: getStateName(state.stateId),
-
-          cityId: state.cityId,
-          city: getCityName(state.cityId),
-
-          total: state.totalVacancies,
-
-          sc: categories.SC || 0,
-          st: categories.ST || 0,
-          obc: categories.OBC || 0,
-          ews: categories.EWS || 0,
-          gen: categories.GEN || 0,
-
-          hi: categories.HI || 0,
-          oc: categories.OC || 0,
-          vi: categories.VI || 0,
-          idd: categories.ID || 0,
-        };
+        return row;
       }) || [],
 
     stateWiseOnboarded:
@@ -306,50 +453,86 @@ export const mapVacancyBreakdownByPosition = (
           vi: 0,
           idd: 0,
 
+          exs: 0,
+          dxs: 0,
+
           total: state.onboardedCount || 0,
         };
 
+
+
         (state.categories || []).forEach((cat) => {
           if (!cat.isDisability) {
-            const code =
-              reservationMap[cat.reservationCategoryId];
+
+            // Temporary mapping until backend sends EXS/DXS ids
+            if (cat.isExServiceman) {
+              const code = exServiceMap[cat.exServicemanGroupId];
+
+              switch (code) {
+                case "EXS":
+                  row.exs = cat.onboardedCount || 0;
+                  break;
+
+                case "DXS":
+                case "DDXS":
+                  row.dxs += cat.onboardedCount || 0;
+                  break;
+
+                default:
+                  break;
+              }
+
+              return;
+            }
+
+            const code = reservationMap[cat.reservationCategoryId];
 
             switch (code) {
               case "SC":
                 row.sc = cat.onboardedCount || 0;
                 break;
+
               case "ST":
                 row.st = cat.onboardedCount || 0;
                 break;
+
               case "OBC":
                 row.obc = cat.onboardedCount || 0;
                 break;
+
               case "EWS":
                 row.ews = cat.onboardedCount || 0;
                 break;
+
               case "GEN":
                 row.gen = cat.onboardedCount || 0;
                 break;
+
               default:
                 break;
             }
+
           } else {
-            const code =
-              disabilityMap[cat.disabilityCategoryId];
+
+            const code = disabilityMap[cat.disabilityCategoryId];
 
             switch (code) {
               case "HI":
                 row.hi = cat.onboardedCount || 0;
                 break;
+
               case "OC":
                 row.oc = cat.onboardedCount || 0;
                 break;
+
               case "VI":
                 row.vi = cat.onboardedCount || 0;
                 break;
+
               case "ID":
                 row.idd = cat.onboardedCount || 0;
                 break;
+
               default:
                 break;
             }
@@ -392,20 +575,89 @@ export const mapVacancyBreakdownByPosition = (
           vi: 0,
           idd: 0,
 
+          exs: 0,
+          dxs: 0,
+
           total: state.offersSent || 0,
         };
 
+
         (state.categories || []).forEach((cat) => {
           if (!cat.isDisability) {
+
+            // Temporary mapping until backend sends EXS/DXS ids
+            const value = cat.offersSent || 0;
+
+            if (cat.isExServiceman) {
+              const code = exServiceMap[cat.exServicemanGroupId];
+
+              switch (code) {
+                case "EXS":
+                  row.exs = value;
+                  break;
+
+                case "DXS":
+                case "DDXS":
+                  row.dxs += value;
+                  break;
+
+                default:
+                  break;
+              }
+
+              return;
+            }
+
             const code = reservationMap[cat.reservationCategoryId];
 
             switch (code) {
-              case "SC": row.sc = cat.offersSent || 0; break;
-              case "ST": row.st = cat.offersSent || 0; break;
-              case "OBC": row.obc = cat.offersSent || 0; break;
-              case "EWS": row.ews = cat.offersSent || 0; break;
-              case "GEN": row.gen = cat.offersSent || 0; break;
-              default: break;
+              case "SC":
+                row.sc = cat.offersSent || 0;
+                break;
+
+              case "ST":
+                row.st = cat.offersSent || 0;
+                break;
+
+              case "OBC":
+                row.obc = cat.offersSent || 0;
+                break;
+
+              case "EWS":
+                row.ews = cat.offersSent || 0;
+                break;
+
+              case "GEN":
+                row.gen = cat.offersSent || 0;
+                break;
+
+              default:
+                break;
+            }
+
+          } else {
+
+            const code = disabilityMap[cat.disabilityCategoryId];
+
+            switch (code) {
+              case "HI":
+                row.hi = cat.offersSent || 0;
+                break;
+
+              case "OC":
+                row.oc = cat.offersSent || 0;
+                break;
+
+              case "VI":
+                row.vi = cat.offersSent || 0;
+                break;
+
+              case "ID":
+                row.idd = cat.offersSent || 0;
+                break;
+
+              default:
+                break;
             }
           }
         });
@@ -419,26 +671,116 @@ export const mapVacancyBreakdownByPosition = (
         obc: 0,
         ews: 0,
         gen: 0,
+
         hi: 0,
         oc: 0,
         vi: 0,
         idd: 0,
+
+        exs: 0,
+        dxs: 0,
+
         total: data.offersSent || 0,
       };
 
+
       (data.nationalBreakdown || []).forEach((cat) => {
+
         if (!cat.isDisability) {
+
+          const value = cat.offersSent || 0;
+
+          if (cat.isExServiceman) {
+            const code = exServiceMap[cat.exServicemanGroupId];
+
+            switch (code) {
+              case "EXS":
+                row.exs = value;
+                break;
+
+              case "DXS":
+              case "DDXS":
+                row.dxs += value;
+                break;
+
+              default:
+                break;
+            }
+
+            return;
+          }
+
           const code = reservationMap[cat.reservationCategoryId];
 
           switch (code) {
-            case "SC": row.sc = cat.offersSent || 0; break;
-            case "ST": row.st = cat.offersSent || 0; break;
-            case "OBC": row.obc = cat.offersSent || 0; break;
-            case "EWS": row.ews = cat.offersSent || 0; break;
-            case "GEN": row.gen = cat.offersSent || 0; break;
-            default: break;
+            case "SC":
+              row.sc = value;
+              break;
+            case "ST":
+              row.st = value;
+              break;
+            case "OBC":
+              row.obc = value;
+              break;
+            case "EWS":
+              row.ews = value;
+              break;
+            case "GEN":
+              row.gen = value;
+              break;
+            default:
+              break;
+          }
+
+        } else {
+
+          const code = disabilityMap[cat.disabilityCategoryId];
+
+          switch (code) {
+            case "HI":
+              row.hi = cat.offersSent || 0;
+              break;
+            case "OC":
+              row.oc = cat.offersSent || 0;
+              break;
+            case "VI":
+              row.vi = cat.offersSent || 0;
+              break;
+            case "ID":
+              row.idd = cat.offersSent || 0;
+              break;
+            default:
+              break;
           }
         }
+
+        const code = reservationMap[cat.reservationCategoryId];
+
+        switch (code) {
+          case "SC":
+            row.sc = cat.offersSent || 0;
+            break;
+
+          case "ST":
+            row.st = cat.offersSent || 0;
+            break;
+
+          case "OBC":
+            row.obc = cat.offersSent || 0;
+            break;
+
+          case "EWS":
+            row.ews = cat.offersSent || 0;
+            break;
+
+          case "GEN":
+            row.gen = cat.offersSent || 0;
+            break;
+
+          default:
+            break;
+        }
+
       });
 
       return row;
@@ -451,24 +793,95 @@ export const mapVacancyBreakdownByPosition = (
         obc: 0,
         ews: 0,
         gen: 0,
+
         hi: 0,
         oc: 0,
         vi: 0,
         idd: 0,
+
+        exs: 0,
+        dxs: 0,
+
         total: data.offersAccepted || 0,
       };
 
+
+
       (data.nationalBreakdown || []).forEach((cat) => {
         if (!cat.isDisability) {
+
+          // Temporary mapping for EXS & DXS until backend provides IDs
+          const value = cat.offersAccepted || 0;
+
+          if (cat.isExServiceman) {
+            const code = exServiceMap[cat.exServicemanGroupId];
+
+            switch (code) {
+              case "EXS":
+                row.exs = value;
+                break;
+
+              case "DXS":
+              case "DDXS":
+                row.dxs += value;
+                break;
+
+              default:
+                break;
+            }
+
+            return;
+          }
+
           const code = reservationMap[cat.reservationCategoryId];
 
           switch (code) {
-            case "SC": row.sc = cat.offersAccepted || 0; break;
-            case "ST": row.st = cat.offersAccepted || 0; break;
-            case "OBC": row.obc = cat.offersAccepted || 0; break;
-            case "EWS": row.ews = cat.offersAccepted || 0; break;
-            case "GEN": row.gen = cat.offersAccepted || 0; break;
-            default: break;
+            case "SC":
+              row.sc = cat.offersAccepted || 0;
+              break;
+
+            case "ST":
+              row.st = cat.offersAccepted || 0;
+              break;
+
+            case "OBC":
+              row.obc = cat.offersAccepted || 0;
+              break;
+
+            case "EWS":
+              row.ews = cat.offersAccepted || 0;
+              break;
+
+            case "GEN":
+              row.gen = cat.offersAccepted || 0;
+              break;
+
+            default:
+              break;
+          }
+
+        } else {
+          const code = disabilityMap[cat.disabilityCategoryId];
+
+          switch (code) {
+            case "HI":
+              row.hi = cat.offersAccepted || 0;
+              break;
+
+            case "OC":
+              row.oc = cat.offersAccepted || 0;
+              break;
+
+            case "VI":
+              row.vi = cat.offersAccepted || 0;
+              break;
+
+            case "ID":
+              row.idd = cat.offersAccepted || 0;
+              break;
+
+            default:
+              break;
           }
         }
       });
@@ -509,20 +922,89 @@ export const mapVacancyBreakdownByPosition = (
           vi: 0,
           idd: 0,
 
+          exs: 0,
+          dxs: 0,
+
           total: state.offersAccepted || 0,
         };
 
+
         (state.categories || []).forEach((cat) => {
           if (!cat.isDisability) {
+
+            // Temporary mapping until backend sends EXS/DXS ids
+            const value = cat.offersAccepted || 0;
+
+            if (cat.isExServiceman) {
+              const code = exServiceMap[cat.exServicemanGroupId];
+
+              switch (code) {
+                case "EXS":
+                  row.exs = value;
+                  break;
+
+                case "DXS":
+                case "DDXS":
+                  row.dxs += value;
+                  break;
+
+                default:
+                  break;
+              }
+
+              return;
+            }
+
             const code = reservationMap[cat.reservationCategoryId];
 
             switch (code) {
-              case "SC": row.sc = cat.offersAccepted || 0; break;
-              case "ST": row.st = cat.offersAccepted || 0; break;
-              case "OBC": row.obc = cat.offersAccepted || 0; break;
-              case "EWS": row.ews = cat.offersAccepted || 0; break;
-              case "GEN": row.gen = cat.offersAccepted || 0; break;
-              default: break;
+              case "SC":
+                row.sc = cat.offersAccepted || 0;
+                break;
+
+              case "ST":
+                row.st = cat.offersAccepted || 0;
+                break;
+
+              case "OBC":
+                row.obc = cat.offersAccepted || 0;
+                break;
+
+              case "EWS":
+                row.ews = cat.offersAccepted || 0;
+                break;
+
+              case "GEN":
+                row.gen = cat.offersAccepted || 0;
+                break;
+
+              default:
+                break;
+            }
+
+          } else {
+
+            const code = disabilityMap[cat.disabilityCategoryId];
+
+            switch (code) {
+              case "HI":
+                row.hi = cat.offersAccepted || 0;
+                break;
+
+              case "OC":
+                row.oc = cat.offersAccepted || 0;
+                break;
+
+              case "VI":
+                row.vi = cat.offersAccepted || 0;
+                break;
+
+              case "ID":
+                row.idd = cat.offersAccepted || 0;
+                break;
+
+              default:
+                break;
             }
           }
         });
@@ -562,8 +1044,16 @@ export const mapVacancyBreakdownByPosition = (
           vi: 0,
           idd: 0,
 
-          total: state.remainingTotalVacancies || 0,
+          exs: 0,
+          dxs: 0,
+
+          total:
+            state.remainingTotalVacancies ??
+            ((state.totalVacancies || 0) - (state.onboardedCount || 0)),
         };
+
+
+
 
         (state.categories || []).forEach((cat) => {
           const value =
@@ -571,25 +1061,78 @@ export const mapVacancyBreakdownByPosition = (
             (cat.vacancyCount || 0) - (cat.onboardedCount || 0);
 
           if (!cat.isDisability) {
+
+            // Temporary mapping until backend sends EXS/DXS ids
+            if (cat.isExServiceman) {
+              const code = exServiceMap[cat.exServicemanGroupId];
+
+              switch (code) {
+                case "EXS":
+                  row.exs = value;
+                  break;
+
+                case "DXS":
+                case "DDXS":
+                  row.dxs += value;
+                  break;
+
+                default:
+                  break;
+              }
+
+              return;
+            }
+
             const code = reservationMap[cat.reservationCategoryId];
 
             switch (code) {
-              case "SC": row.sc = value; break;
-              case "ST": row.st = value; break;
-              case "OBC": row.obc = value; break;
-              case "EWS": row.ews = value; break;
-              case "GEN": row.gen = value; break;
-              default: break;
+              case "SC":
+                row.sc = value;
+                break;
+
+              case "ST":
+                row.st = value;
+                break;
+
+              case "OBC":
+                row.obc = value;
+                break;
+
+              case "EWS":
+                row.ews = value;
+                break;
+
+              case "GEN":
+                row.gen = value;
+                break;
+
+              default:
+                break;
             }
+
           } else {
+
             const code = disabilityMap[cat.disabilityCategoryId];
 
             switch (code) {
-              case "HI": row.hi = value; break;
-              case "OC": row.oc = value; break;
-              case "VI": row.vi = value; break;
-              case "ID": row.idd = value; break;
-              default: break;
+              case "HI":
+                row.hi = value;
+                break;
+
+              case "OC":
+                row.oc = value;
+                break;
+
+              case "VI":
+                row.vi = value;
+                break;
+
+              case "ID":
+                row.idd = value;
+                break;
+
+              default:
+                break;
             }
           }
         });

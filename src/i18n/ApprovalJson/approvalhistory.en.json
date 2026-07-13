@@ -46,5 +46,8 @@
   "city": "City",
   "category": "Category",
   "disability": "Disability",
-  "no_position_data": "No Position Data Available"
+  "no_position_data": "No Position Data Available",
+  "ex_servicemen": "Ex Servicemen",
+  "disabled_ex_servicemen": "Disabled Ex Servicemen",
+  "total": "Total"
 }

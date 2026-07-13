@@ -143,6 +143,7 @@ const SinglePositionInfoModal = ({
                                         <th rowSpan="2">{t("approvalHistory:city")}</th>
                                         <th colSpan="6">{t("approvalHistory:category")}</th>
                                         <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                     </tr>
 
                                     <tr>
@@ -156,6 +157,9 @@ const SinglePositionInfoModal = ({
                                         <th>OC</th>
                                         <th>VI</th>
                                         <th>ID</th>
+
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
                                     </tr>
                                 </thead>
 
@@ -176,6 +180,9 @@ const SinglePositionInfoModal = ({
                                             <td>{row.oc}</td>
                                             <td>{row.vi}</td>
                                             <td>{row.idd}</td>
+
+                                            <td>{row.exs}</td>
+                                            <td>{row.dxs}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -192,6 +199,30 @@ const SinglePositionInfoModal = ({
                             <table className="approved-reservation-table">
                                 <thead>
                                     <tr>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>SC</th>
+                                        <th>ST</th>
+                                        <th>OBC</th>
+                                        <th>EWS</th>
+                                        <th>GEN</th>
+                                        <th>{t("common:total")}</th>
+
+                                        <th>HI</th>
+                                        <th>OC</th>
+                                        <th>VI</th>
+                                        <th>ID</th>
+
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
+                                    </tr>
+                                </thead>
+                                {/* <thead>
+                                    <tr>
                                         <th>SC</th>
                                         <th>ST</th>
                                         <th>OBC</th>
@@ -199,7 +230,7 @@ const SinglePositionInfoModal = ({
                                         <th>GEN</th>
                                         <th>{t("common:total")}</th>
                                     </tr>
-                                </thead>
+                                </thead> */}
 
                                 <tbody>
                                     <tr>
@@ -209,6 +240,14 @@ const SinglePositionInfoModal = ({
                                         <td>{position?.nationalReservation?.ews ?? 0}</td>
                                         <td>{position?.nationalReservation?.gen ?? 0}</td>
                                         <td>{position?.nationalReservation?.total ?? 0}</td>
+
+                                        <td>{position?.nationalReservation?.hi ?? 0}</td>
+                                        <td>{position?.nationalReservation?.oc ?? 0}</td>
+                                        <td>{position?.nationalReservation?.vi ?? 0}</td>
+                                        <td>{position?.nationalReservation?.idd ?? 0}</td>
+
+                                        <td>{position?.nationalReservation?.exs ?? 0}</td>
+                                        <td>{position?.nationalReservation?.dxs ?? 0}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -259,6 +298,7 @@ const SinglePositionInfoModal = ({
                                         <th rowSpan="2">{t("approvalHistory:city")}</th>
                                         <th colSpan="6">{t("approvalHistory:category")}</th>
                                         <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                     </tr>
 
                                     <tr>
@@ -272,6 +312,9 @@ const SinglePositionInfoModal = ({
                                         <th>OC</th>
                                         <th>VI</th>
                                         <th>ID</th>
+
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
                                     </tr>
                                 </thead>
 
@@ -296,6 +339,8 @@ const SinglePositionInfoModal = ({
                                             <td>{row.oc}</td>
                                             <td>{row.vi}</td>
                                             <td>{row.idd}</td>
+                                            <td>{row.exs}</td>
+                                            <td>{row.dxs}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -306,12 +351,26 @@ const SinglePositionInfoModal = ({
                             <table className="approved-onboarded-table">
                                 <thead>
                                     <tr>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                    </tr>
+
+                                    <tr>
                                         <th>SC</th>
                                         <th>ST</th>
                                         <th>OBC</th>
                                         <th>EWS</th>
                                         <th>GEN</th>
                                         <th>{t("common:total")}</th>
+
+                                        <th>HI</th>
+                                        <th>OC</th>
+                                        <th>VI</th>
+                                        <th>ID</th>
+
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
                                     </tr>
                                 </thead>
 
@@ -358,6 +417,48 @@ const SinglePositionInfoModal = ({
                                                 (position?.nationalOnboarded?.total ?? 0)
                                                 : (position?.nationalOnboarded?.total ?? 0)}
                                         </td>
+
+                                        <td>
+                                            {showRemaining
+                                                ? (position?.nationalReservation?.hi ?? 0) -
+                                                (position?.nationalOnboarded?.hi ?? 0)
+                                                : (position?.nationalOnboarded?.hi ?? 0)}
+                                        </td>
+
+                                        <td>
+                                            {showRemaining
+                                                ? (position?.nationalReservation?.oc ?? 0) -
+                                                (position?.nationalOnboarded?.oc ?? 0)
+                                                : (position?.nationalOnboarded?.oc ?? 0)}
+                                        </td>
+
+                                        <td>
+                                            {showRemaining
+                                                ? (position?.nationalReservation?.vi ?? 0) -
+                                                (position?.nationalOnboarded?.vi ?? 0)
+                                                : (position?.nationalOnboarded?.vi ?? 0)}
+                                        </td>
+
+                                        <td>
+                                            {showRemaining
+                                                ? (position?.nationalReservation?.idd ?? 0) -
+                                                (position?.nationalOnboarded?.idd ?? 0)
+                                                : (position?.nationalOnboarded?.idd ?? 0)}
+                                        </td>
+
+                                        <td>
+                                            {showRemaining
+                                                ? (position?.nationalReservation?.exs ?? 0) -
+                                                (position?.nationalOnboarded?.exs ?? 0)
+                                                : (position?.nationalOnboarded?.exs ?? 0)}
+                                        </td>
+
+                                        <td>
+                                            {showRemaining
+                                                ? (position?.nationalReservation?.dxs ?? 0) -
+                                                (position?.nationalOnboarded?.dxs ?? 0)
+                                                : (position?.nationalOnboarded?.dxs ?? 0)}
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -365,110 +466,222 @@ const SinglePositionInfoModal = ({
                     )}
                 </div>
 
+                {/* Offers Sent */}
                 <div className="approved-onboarded-card">
                     <div className="approved-onboarded-title mb-3">
                         {t("approvalHistory:offers_sent")}
                     </div>
 
-                    <div className="table-responsive">
-                        <table className="approved-onboarded-table">
-                            <thead>
-                                <tr>
-                                    <th rowSpan="2">{t("approvalHistory:state")}</th>
-                                    <th rowSpan="2">{t("approvalHistory:city")}</th>
-                                    <th colSpan="6">{t("approvalHistory:category")}</th>
-                                    <th colSpan="4">{t("approvalHistory:disability")}</th>
-                                </tr>
-
-                                <tr>
-                                    <th>SC</th>
-                                    <th>ST</th>
-                                    <th>OBC</th>
-                                    <th>EWS</th>
-                                    <th>GEN</th>
-                                    <th>{t("common:total")}</th>
-                                    <th>HI</th>
-                                    <th>OC</th>
-                                    <th>VI</th>
-                                    <th>ID</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {position?.stateWiseOffersSent?.map((row, idx) => (
-                                    <tr key={idx}>
-                                        <td>{row.state}</td>
-                                        <td>{row.city}</td>
-
-                                        <td>{row.sc}</td>
-                                        <td>{row.st}</td>
-                                        <td>{row.obc}</td>
-                                        <td>{row.ews}</td>
-                                        <td>{row.gen}</td>
-                                        <td>{row.total}</td>
-
-                                        <td>{row.hi}</td>
-                                        <td>{row.oc}</td>
-                                        <td>{row.vi}</td>
-                                        <td>{row.idd}</td>
+                    {position?.reservationType === "STATE_WISE" ? (
+                        <div className="table-responsive">
+                            <table className="approved-onboarded-table">
+                                <thead>
+                                    <tr>
+                                        <th rowSpan="2">{t("approvalHistory:state")}</th>
+                                        <th rowSpan="2">{t("approvalHistory:city")}</th>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+
+                                    <tr>
+                                        <th>SC</th>
+                                        <th>ST</th>
+                                        <th>OBC</th>
+                                        <th>EWS</th>
+                                        <th>GEN</th>
+                                        <th>{t("common:total")}</th>
+                                        <th>HI</th>
+                                        <th>OC</th>
+                                        <th>VI</th>
+                                        <th>ID</th>
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {position?.stateWiseOffersSent?.map((row, idx) => (
+                                        <tr key={idx}>
+                                            <td>{row.state}</td>
+                                            <td>{row.city}</td>
+
+                                            <td>{row.sc}</td>
+                                            <td>{row.st}</td>
+                                            <td>{row.obc}</td>
+                                            <td>{row.ews}</td>
+                                            <td>{row.gen}</td>
+                                            <td>{row.total}</td>
+
+                                            <td>{row.hi}</td>
+                                            <td>{row.oc}</td>
+                                            <td>{row.vi}</td>
+                                            <td>{row.idd}</td>
+                                            <td>{row.exs}</td>
+                                            <td>{row.dxs}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="approved-onboarded-table">
+                                <thead>
+                                    <tr>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>SC</th>
+                                        <th>ST</th>
+                                        <th>OBC</th>
+                                        <th>EWS</th>
+                                        <th>GEN</th>
+                                        <th>{t("common:total")}</th>
+
+                                        <th>HI</th>
+                                        <th>OC</th>
+                                        <th>VI</th>
+                                        <th>ID</th>
+
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>{position?.nationalOffersSent?.sc ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.st ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.obc ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.ews ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.gen ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.total ?? 0}</td>
+
+                                        <td>{position?.nationalOffersSent?.hi ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.oc ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.vi ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.idd ?? 0}</td>
+
+                                        <td>{position?.nationalOffersSent?.exs ?? 0}</td>
+                                        <td>{position?.nationalOffersSent?.dxs ?? 0}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
 
+                {/* Offers Accepted */}
                 <div className="approved-onboarded-card">
                     <div className="approved-onboarded-title mb-3">
                         {t("approvalHistory:offers_accepted")}
                     </div>
 
-                    <div className="table-responsive">
-                        <table className="approved-onboarded-table">
-                            <thead>
-                                <tr>
-                                    <th rowSpan="2">{t("approvalHistory:state")}</th>
-                                    <th rowSpan="2">{t("approvalHistory:city")}</th>
-                                    <th colSpan="6">{t("approvalHistory:category")}</th>
-                                    <th colSpan="4">{t("approvalHistory:disability")}</th>
-                                </tr>
-
-                                <tr>
-                                    <th>SC</th>
-                                    <th>ST</th>
-                                    <th>OBC</th>
-                                    <th>EWS</th>
-                                    <th>GEN</th>
-                                    <th>{t("common:total")}</th>
-                                    <th>HI</th>
-                                    <th>OC</th>
-                                    <th>VI</th>
-                                    <th>ID</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {position?.stateWiseOffersAccepted?.map((row, idx) => (
-                                    <tr key={idx}>
-                                        <td>{row.state}</td>
-                                        <td>{row.city}</td>
-
-                                        <td>{row.sc}</td>
-                                        <td>{row.st}</td>
-                                        <td>{row.obc}</td>
-                                        <td>{row.ews}</td>
-                                        <td>{row.gen}</td>
-                                        <td>{row.total}</td>
-
-                                        <td>{row.hi}</td>
-                                        <td>{row.oc}</td>
-                                        <td>{row.vi}</td>
-                                        <td>{row.idd}</td>
+                    {position?.reservationType === "STATE_WISE" ? (
+                        <div className="table-responsive">
+                            <table className="approved-onboarded-table">
+                                <thead>
+                                    <tr>
+                                        <th rowSpan="2">{t("approvalHistory:state")}</th>
+                                        <th rowSpan="2">{t("approvalHistory:city")}</th>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+
+                                    <tr>
+                                        <th>SC</th>
+                                        <th>ST</th>
+                                        <th>OBC</th>
+                                        <th>EWS</th>
+                                        <th>GEN</th>
+                                        <th>{t("common:total")}</th>
+                                        <th>HI</th>
+                                        <th>OC</th>
+                                        <th>VI</th>
+                                        <th>ID</th>
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {position?.stateWiseOffersAccepted?.map((row, idx) => (
+                                        <tr key={idx}>
+                                            <td>{row.state}</td>
+                                            <td>{row.city}</td>
+
+                                            <td>{row.sc}</td>
+                                            <td>{row.st}</td>
+                                            <td>{row.obc}</td>
+                                            <td>{row.ews}</td>
+                                            <td>{row.gen}</td>
+                                            <td>{row.total}</td>
+
+                                            <td>{row.hi}</td>
+                                            <td>{row.oc}</td>
+                                            <td>{row.vi}</td>
+                                            <td>{row.idd}</td>
+                                            <td>{row.exs}</td>
+                                            <td>{row.dxs}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="approved-onboarded-table">
+                                <thead>
+                                    <tr>
+                                        <th colSpan="6">{t("approvalHistory:category")}</th>
+                                        <th colSpan="4">{t("approvalHistory:disability")}</th>
+                                        <th colSpan="2">{t("approvalHistory:ex_servicemen")}</th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>SC</th>
+                                        <th>ST</th>
+                                        <th>OBC</th>
+                                        <th>EWS</th>
+                                        <th>GEN</th>
+                                        <th>{t("common:total")}</th>
+
+                                        <th>HI</th>
+                                        <th>OC</th>
+                                        <th>VI</th>
+                                        <th>ID</th>
+
+                                        <th>EXS</th>
+                                        <th>DXS/DDXS</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td>{position?.nationalOffersAccepted?.sc ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.st ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.obc ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.ews ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.gen ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.total ?? 0}</td>
+
+                                        <td>{position?.nationalOffersAccepted?.hi ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.oc ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.vi ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.idd ?? 0}</td>
+
+                                        <td>{position?.nationalOffersAccepted?.exs ?? 0}</td>
+                                        <td>{position?.nationalOffersAccepted?.dxs ?? 0}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
 
             </Modal.Body>
