@@ -79,6 +79,9 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
 
+
+
+
   const [isMarksUploaded, setIsMarksUploaded] = useState(false);
 
   const CANDIDATE_POOL_STATUSES = [
@@ -1837,41 +1840,50 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
-  const handleDownloadRankList = async () => {
-    try {
-      const positionId = selectedPositionId?.[0];
+const handleDownloadRankList = async () => {
+  try {
+    const positionId = selectedPositionId?.[0];
 
-      if (!positionId) {
-        toast.error("Please select a position");
-        return;
-      }
-
-      const res =
-        await jobPositionApiService.generateRankListdownload(positionId);
-
-      const blob = new Blob([res.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "Rank_List.xlsx";
-
-      document.body.appendChild(link);
-      link.click();
-
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-
-      toast.error(
-        err?.response?.data?.message || "Failed to download rank list"
-      );
+    if (!positionId) {
+      toast.error("Please select a position");
+      return;
     }
-  };
+
+    // Get selected applicationIds
+    const applicationIds = offerData
+      .filter((offer) => offerSelectedIds.includes(offer.id))
+      .map((offer) => offer.applicationId);
+
+    const payload = {
+      positionId,
+      applicationIds,
+    };
+
+    console.log(payload);
+
+    const res = await jobPositionApiService.generateRankListdownload(payload);
+
+    const blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Rank_List.xlsx";
+
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    toast.error(
+      err?.response?.data?.message || "Failed to download rank list"
+    );
+  }
+};
 
   const handleSendToCompensation = async () => {
     if (!submitBeforeDate) {

@@ -315,17 +315,31 @@ sendBulkEmail(formData) {
       },
     }),
 
-  generateRankListdownload: (positionId) => {
-    return api.get(
-      `/recruiter/candidate-offer/download-rank-list/${positionId}`,
-      {
-        responseType: "blob",
-        headers: {
-          "X-Client": "AzureAD",
-        },
-      }
-    );
-  },
+  // generateRankListdownload: (positionId) => {
+  //   return api.post(
+  //     `/recruiter/candidate-offer/download-rank-list/${positionId}`,
+  //     {
+  //       responseType: "blob",
+  //       headers: {
+  //         "X-Client": "AzureAD",
+  //       },
+  //     }
+  //   );
+  // },
+
+
+  generateRankListdownload: (payload) => {
+  return api.post(
+    `/recruiter/candidate-offer/download-rank-list`,
+    payload,
+    {
+      responseType: "blob",
+      headers: {
+        "X-Client": "AzureAD",
+      },
+    }
+  );
+},
 
   getL1Requisitions: ({ year, search, page, size, statuses }) =>
     api.get("/recruiter/job-requisitions/l1-requisitions", {
