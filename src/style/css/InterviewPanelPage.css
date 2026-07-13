@@ -13,9 +13,8 @@
 
 /* Remove any box-shadow from panel-card */
 .interview-panel-container .panel-card * {
-  box-shadow: none !important;
+	box-shadow: none !important;
 }
-
 .interview-panel-container .panel-header h2 {
   color: #162b75;
   font-size: 1.25rem;
@@ -437,6 +436,7 @@
   margin-left: 6px;
   color: #f26522;
   cursor: pointer;
+  background: none;
 }
 
 .interview-panel-container .info-icon:hover {
@@ -491,7 +491,7 @@
   width: 70px;
 }
 
-.header-title {
+.bulkimp .header-title {
   color: #162b75;
   font-size: 1.25rem;
   font-weight: 500;

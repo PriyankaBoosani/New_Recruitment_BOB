@@ -276,9 +276,11 @@ const OfferLetterRequestApproval = () => {
             <tr>
               <th></th>
               <th>{t("offerLetterRequest:candidate_name")}</th>
-              <th>{t("offerLetterRequest:application_number")}</th>
+
               <th>{t("approvalHistory:state")}</th>
               <th>{t("approvalHistory:city")}</th>
+              <th>{t("offerLetterRequest:reporting_alpha")}</th>
+              <th>{t("offerLetterRequest:posting_location")}</th>
               <th>{t("common:score")}</th>
               <th>{t("offerLetterRequest:offer_letter_number")}</th>
               <th>{t("offerLetterRequest:offer_release_date")}</th>
@@ -319,22 +321,32 @@ const OfferLetterRequestApproval = () => {
                   </td>
 
                   <td>
-                    {candidate.name}{" "}
-                    <button
-                      className="btn btn-sm border-0 history-btn"
-                      onClick={() => handleViewHistory(candidate.historyId)}
-                    >
-                      <img
-                        src={history_icon}
-                        alt="History"
-                        width={14}
-                        height={14}
-                      />
-                    </button>
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="fw-medium">{candidate.name}</span>
+
+                      <button
+                        className="btn btn-sm border-0 history-btn p-0"
+                        onClick={() => handleViewHistory(candidate.historyId)}
+                      >
+                        <img
+                          src={history_icon}
+                          alt="History"
+                          width={14}
+                          height={14}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="text-muted fs-12 mt-1">
+                      {t("candidateWorkflow:application_number")}:{" "}
+                      {candidate.applicationNumber}
+                    </div>
                   </td>
-                  <td>{candidate.applicationNumber}</td>
+
                   <td>{candidate.state}</td>
                   <td>{candidate.city}</td>
+                  <td>{candidate.reportingAlpha}</td>
+                  <td>{candidate.postingLocation}</td>
                   <td>{candidate.score}</td>
                   <td>{candidate.letterNumber}</td>
                   <td>{formatDateDDMMYYYY(candidate.offerReleaseDate)}</td>

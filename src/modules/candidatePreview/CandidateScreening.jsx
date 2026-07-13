@@ -2094,7 +2094,7 @@ const handleDownloadRankList = async () => {
 
       await candidateWorkflowServices.sendOfferForApproval(payload);
 
-      toast.success("Offer sent for approval successfully.");
+      toast.success("Offer sent successfully.");
 
       setOfferRefreshKey((prev) => prev + 1);
       setOfferSelectedIds([]);

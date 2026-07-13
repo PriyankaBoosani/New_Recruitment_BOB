@@ -61,5 +61,7 @@ export const mapOfferApprovalCandidate = (item) => {
 
     offerFileUrl: history.offerFileUrl || "",
     letterNumber: item.letterNumber || "-",
+    reportingAlpha: item.reportingAlpha,
+    postingLocation: item.postingLocation
   };
 };

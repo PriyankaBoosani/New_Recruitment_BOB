@@ -3,7 +3,7 @@
   "review_offer_letter_requests": "Review and approve or reject offer letter requests",
   "select_at_least_one_candidate": "Please select at least one candidate",
   "failed_to_preview_file": "Failed to preview file",
-  "candidate_name": "Candidate Name",
+  "candidate_name": "Candidate",
   "application_number": "Application Number",
   "joining_date": "Joining Date",
   "offer_release_date": "Offer Release Date",
@@ -12,5 +12,7 @@
   "no_candidates_found": "No candidates found",
   "no_preview_available": "No preview available",
   "pdf_preview": "PDF Preview",
-  "offer_letter_number": "Offer Letter Number"
+  "offer_letter_number": "Offer Letter No.",
+   "posting_location": "Posting Location",
+   "reporting_alpha": "Reporting Alpha"
 }
