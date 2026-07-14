@@ -317,5 +317,17 @@
   "offer_generated": "ऑफ़र जनरेट किया गया",
   "candidate_report": "उम्मीदवार रिपोर्ट",
   "posting_location": "पोस्टिंग स्थान",
-  "reporting_alpha": "रिपोर्टिंग अल्फ़ा"
+  "reporting_alpha": "रिपोर्टिंग अल्फ़ा",
+   "candidate_analysis": "उम्मीदवार विश्लेषण",
+  "final_score": "अंतिम स्कोर",
+  "score_details": "स्कोर विवरण",
+  "weightage": "वेटेज",
+  "education": "शिक्षा",
+  "experience": "अनुभव",
+  "areas_for_review": "समीक्षा के क्षेत्र",
+  "education_similarity": "शिक्षा समानता",
+  "experience_similarity": "अनुभव समानता",
+  "strong": "मजबूत",
+  "moderate": "मध्यम",
+  "weak": "कमज़ोर"
 }

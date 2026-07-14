@@ -315,6 +315,18 @@
   "send_offer": "Send Offer",
    "candidate_report": "Candidate Report",
    "posting_location": "Posting Location",
-   "reporting_alpha": "Reporting Alpha"
+   "reporting_alpha": "Reporting Alpha",
+     "candidate_analysis": "Candidate Analysis",
+  "final_score": "Final Score",
+  "score_details": "Score Details",
+  "weightage": "Weightage",
+  "education": "Education",
+  "experience": "Experience",
+  "areas_for_review": "Areas for Review",
+  "education_similarity": "Education Similarity",
+  "experience_similarity": "Experience Similarity",
+  "strong": "Strong",
+  "moderate": "Moderate",
+  "weak": "Weak"
 
 }

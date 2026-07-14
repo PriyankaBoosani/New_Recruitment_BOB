@@ -130,81 +130,93 @@ export default function CandidatePool({
   const renderPopover = (c) => {
     const scoreMeta = getLevelFrom100(c.finalScore);
     return (
-      <Popover className="rank-popover">
-        <div className="rank-header">Candidate Analysis - {c.name}</div>
+<Popover className="rank-popover">
+  <div className="rank-header">
+    {t("candidateWorkflow:candidate_analysis")} - {c.name}
+  </div>
 
-        <div className="rank-body">
-          {/* 🔥 FINAL SCORE FIRST */}
-          <div className="final-score">
-            <p className="m-0 p-0 greenfin">Final Score</p>
-            <div className="score">{c.finalScore}%</div>
-            <div className={`score-label ${scoreMeta.color}`}>
-              {scoreMeta.label}
-            </div>
-          </div>
+  <div className="rank-body">
 
-          <hr />
+    <div className="final-score">
+      <p className="m-0 p-0 greenfin">
+        {t("candidateWorkflow:final_score")}
+      </p>
 
-          {/* ✅ SCORE BREAKDOWN */}
-          <div className="section">
-            <div className="section-header">
-              <span>Score Details</span>
-              <span className="weight-header">Weightage</span>
-            </div>
+      <div className="score">{c.finalScore}%</div>
 
-            <div className="item">
-              <span className="dot green"></span>
+      <div className={`score-label ${scoreMeta.color}`}>
+        {t(`candidateWorkflow:${scoreMeta.label.toLowerCase()}`)}
+      </div>
+    </div>
 
-              <span className="label">
-                Education: <strong>{c.educationScore}%</strong>
-              </span>
+    <hr />
 
-              <span className="weight">10%</span>
-            </div>
+    <div className="section">
+      <div className="section-header">
+        <span>{t("candidateWorkflow:score_details")}</span>
+        <span className="weight-header">
+          {t("candidateWorkflow:weightage")}
+        </span>
+      </div>
 
-            <div className="item">
-              <span className="dot green"></span>
+      <div className="item">
+        <span className="dot green"></span>
 
-              <span className="label">
-                Experience: <strong>{c.experienceScore}%</strong>
-              </span>
+        <span className="label">
+          {t("candidateWorkflow:education")}:{" "}
+          <strong>{c.educationScore}%</strong>
+        </span>
 
-              <span className="weight">10%</span>
-            </div>
-          </div>
+        <span className="weight">10%</span>
+      </div>
 
-          <hr />
+      <div className="item">
+        <span className="dot green"></span>
 
-          {/* ⚠️ RISK SECTION */}
-          <div className="section">
-            <div className="section-header">
-              <span>Areas for Review</span>
-              <span className="weight-header">Weightage</span>
-            </div>
+        <span className="label">
+          {t("candidateWorkflow:experience")}:{" "}
+          <strong>{c.experienceScore}%</strong>
+        </span>
 
-            <div className="item">
-              <span className="dot yellow"></span>
+        <span className="weight">10%</span>
+      </div>
+    </div>
 
-              <span className="label">
-                Education Similarity: <strong>{c.educationSimilarity}%</strong>
-              </span>
+    <hr />
 
-              <span className="weight">20%</span>
-            </div>
+    <div className="section">
+      <div className="section-header">
+        <span>{t("candidateWorkflow:areas_for_review")}</span>
+        <span className="weight-header">
+          {t("candidateWorkflow:weightage")}
+        </span>
+      </div>
 
-            <div className="item">
-              <span className="dot yellow"></span>
+      <div className="item">
+        <span className="dot yellow"></span>
 
-              <span className="label">
-                Experience Similarity:{" "}
-                <strong>{c.experienceSimilarity}%</strong>
-              </span>
+        <span className="label">
+          {t("candidateWorkflow:education_similarity")}:{" "}
+          <strong>{c.educationSimilarity}%</strong>
+        </span>
 
-              <span className="weight">60%</span>
-            </div>
-          </div>
-        </div>
-      </Popover>
+        <span className="weight">20%</span>
+      </div>
+
+      <div className="item">
+        <span className="dot yellow"></span>
+
+        <span className="label">
+          {t("candidateWorkflow:experience_similarity")}:{" "}
+          <strong>{c.experienceSimilarity}%</strong>
+        </span>
+
+        <span className="weight">60%</span>
+      </div>
+    </div>
+
+  </div>
+</Popover>
     );
   };
   return (
