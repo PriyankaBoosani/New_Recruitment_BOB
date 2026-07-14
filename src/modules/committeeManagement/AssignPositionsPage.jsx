@@ -576,7 +576,7 @@ const AssignPositionsPage = ({ refreshPanels }) => {
         size="lg"
         centered
       >
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className="bulkimp">
           <Modal.Title className="header-title">
             {t("interviewPanelCommittee:bulk_import_position_assignments")}
           </Modal.Title>
