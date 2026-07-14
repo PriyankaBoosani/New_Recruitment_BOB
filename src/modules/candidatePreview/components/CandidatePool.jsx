@@ -159,7 +159,7 @@ export default function CandidatePool({
                 Education: <strong>{c.educationScore}%</strong>
               </span>
 
-              <span className="weight">25%</span>
+              <span className="weight">10%</span>
             </div>
 
             <div className="item">
@@ -169,7 +169,7 @@ export default function CandidatePool({
                 Experience: <strong>{c.experienceScore}%</strong>
               </span>
 
-              <span className="weight">25%</span>
+              <span className="weight">10%</span>
             </div>
           </div>
 
@@ -189,7 +189,7 @@ export default function CandidatePool({
                 Education Similarity: <strong>{c.educationSimilarity}%</strong>
               </span>
 
-              <span className="weight">25%</span>
+              <span className="weight">20%</span>
             </div>
 
             <div className="item">
@@ -200,7 +200,7 @@ export default function CandidatePool({
                 <strong>{c.experienceSimilarity}%</strong>
               </span>
 
-              <span className="weight">25%</span>
+              <span className="weight">60%</span>
             </div>
           </div>
         </div>
