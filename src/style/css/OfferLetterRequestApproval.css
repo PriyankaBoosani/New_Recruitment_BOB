@@ -799,13 +799,13 @@
 	font-weight: 500;
 	white-space: nowrap;
 	vertical-align: middle;
-	padding: 8px;
+	padding: 7px;
 }
 
 .offer-request-table tbody td {
 	vertical-align: middle;
 	font-size: 0.875rem;
-	padding: 8px;
+	padding: 7px;
 }
 
 .offer-request-table .form-check-input {

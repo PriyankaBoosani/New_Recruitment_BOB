@@ -323,18 +323,6 @@ const OfferLetterRequestApproval = () => {
                   <td>
                     <div className="d-flex align-items-center gap-2">
                       <span className="fw-medium">{candidate.name}</span>
-
-                      <button
-                        className="btn btn-sm border-0 history-btn p-0"
-                        onClick={() => handleViewHistory(candidate.historyId)}
-                      >
-                        <img
-                          src={history_icon}
-                          alt="History"
-                          width={14}
-                          height={14}
-                        />
-                      </button>
                     </div>
 
                     <div className="text-muted fs-12 mt-1">
@@ -345,7 +333,7 @@ const OfferLetterRequestApproval = () => {
 
                   <td>{candidate.state}</td>
                   <td>{candidate.city}</td>
-                  <td>{candidate.reportingAlpha}</td>
+                  <td>{candidate.alpha}</td>
                   <td>{candidate.postingLocation}</td>
                   <td>{candidate.score}</td>
                   <td>{candidate.letterNumber}</td>
@@ -384,6 +372,28 @@ const OfferLetterRequestApproval = () => {
                             />
                           </button>
                         </span>
+                      </OverlayTrigger>
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip
+                            id={`history-tooltip-${candidate.historyId}`}
+                          >
+                            View History
+                          </Tooltip>
+                        }
+                      >
+                        <button
+                          className="btn btn-sm border-0 history-btn p-0"
+                          onClick={() => handleViewHistory(candidate.historyId)}
+                        >
+                          <img
+                            src={history_icon}
+                            alt="History"
+                            width={16}
+                            height={16}
+                          />
+                        </button>
                       </OverlayTrigger>
                     </div>
                   </td>
