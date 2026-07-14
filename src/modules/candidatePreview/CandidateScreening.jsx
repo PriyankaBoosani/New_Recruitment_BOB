@@ -3314,16 +3314,27 @@ const handleGenerateRankList = async () => {
                   </button>
 
                   {/* Download */}
-                  <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-                      !rankListGenerated ? "disabled_button" : ""
-                    }`}
-                    style={{ minHeight: "39px" }}
-                    onClick={handleDownloadRankList}
-                    disabled={!rankListGenerated}
-                  >
-                    <i className="bi bi-download"></i>
-                  </button>
+              <OverlayTrigger
+  placement="bottom"
+  overlay={
+    <Tooltip id="download-rank-tooltip">
+      {t("candidateWorkflow:download_excel")}
+    </Tooltip>
+  }
+>
+  <span className="d-inline-block">
+    <button
+      className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+        !rankListGenerated ? "disabled_button" : ""
+      }`}
+      style={{ minHeight: "39px" }}
+      onClick={handleDownloadRankList}
+      disabled={!rankListGenerated}
+    >
+      <i className="bi bi-download"></i>
+    </button>
+  </span>
+</OverlayTrigger>
                 </div>
               </div>
             </div>
