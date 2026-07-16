@@ -2694,8 +2694,8 @@ export default function CandidateScreening({ selectedJob }) {
               <li className="nav-item" key={tab.key}>
                 <button
                   className={`nav-link fs-14 ${activeTab === tab.key
-                      ? "orange-color orange-bottom-border"
-                      : "text-muted"
+                    ? "orange-color orange-bottom-border"
+                    : "text-muted"
                     }`}
                   onClick={() => {
                     setActiveTab(tab.key);
@@ -2824,17 +2824,19 @@ export default function CandidateScreening({ selectedJob }) {
                 </button>
               </li>
             ))}
-            {selectedPositionId.length > 0 && selectedRequisitionId && (
-              <li className="nav-item ms-auto">
-                <button
-                  type="button"
-                  className="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
-                  onClick={handleDownloadAllCandidateDetails}
-                >
-                  {t("candidateWorkflow:candidate_report")}
-                </button>
-              </li>
-            )}
+            {selectedPositionId.length > 0 &&
+              selectedRequisitionId &&
+              !isCommitteeMember && (
+                <li className="nav-item ms-auto">
+                  <button
+                    type="button"
+                    className="btn btn-outline-success btn-sm d-flex align-items-center gap-2"
+                    onClick={handleDownloadAllCandidateDetails}
+                  >
+                    {t("candidateWorkflow:candidate_report")}
+                  </button>
+                </li>
+              )}
           </ul>
 
           {/* Download all candidate details moved to the right actions area */}
@@ -2939,10 +2941,10 @@ export default function CandidateScreening({ selectedJob }) {
             {selectedPositionId.length > 0 && selectedRequisitionId && (
               <div
                 className={`col-12 text-md-end mt-2 mt-md-0 ${activeTab === "CANDIDATE_POOL" && hasLocationData
-                    ? "col-md-4"
-                    : activeTab === "CANDIDATE_POOL"
-                      ? "col-md-6"
-                      : "col-md-4"
+                  ? "col-md-4"
+                  : activeTab === "CANDIDATE_POOL"
+                    ? "col-md-6"
+                    : "col-md-4"
                   }`}
               >
                 {activeTab === "CANDIDATE_POOL" && (
@@ -3157,8 +3159,8 @@ export default function CandidateScreening({ selectedJob }) {
                       />
                       <small
                         className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate
-                            ? "text-danger"
-                            : "invisible"
+                          ? "text-danger"
+                          : "invisible"
                           }`}
                       >
                         {formErrors.acceptBeforeDate || "placeholder"}
