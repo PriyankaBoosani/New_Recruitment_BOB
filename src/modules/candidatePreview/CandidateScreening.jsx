@@ -181,7 +181,7 @@ export default function CandidateScreening({ selectedJob }) {
     "L2_PENDING",
     "L1_REJECTED",
     "L2_REJECTED",
-     "OFFER_GENERATED",
+    "OFFER_GENERATED",
     "APPROVED"
   ];
   const SCHEDULE_POOL_STATUSES = ["L1_PENDING", "PENDING", "REJECTED"];
@@ -194,7 +194,7 @@ export default function CandidateScreening({ selectedJob }) {
     L1_REJECTED: t("candidateWorkflow:l1_rejected"),
     L2_PENDING: t("candidateWorkflow:l2_pending"),
     L2_REJECTED: t("candidateWorkflow:l2_rejected"),
-     OFFER_GENERATED: t("candidateWorkflow:offer_generated"),
+    OFFER_GENERATED: t("candidateWorkflow:offer_generated"),
     APPROVED: t("candidateWorkflow:approved"),
   };
   const [interviewPage, setInterviewPage] = useState(0);
@@ -1163,8 +1163,8 @@ export default function CandidateScreening({ selectedJob }) {
           time:
             start && end
               ? `${start.split("T")[1].slice(0, 5)} - ${end
-                  .split("T")[1]
-                  .slice(0, 5)}`
+                .split("T")[1]
+                .slice(0, 5)}`
               : "-",
 
           zone: c?.interviewCentres?.displayName || "-",
@@ -1416,12 +1416,12 @@ export default function CandidateScreening({ selectedJob }) {
   );
   const normalizedRequisition = selectedRequisition
     ? {
-        requisition_id: selectedRequisition.id,
-        requisition_code: selectedRequisition.requisitionCode,
-        requisition_title: selectedRequisition.requisitionTitle,
-        registration_start_date: selectedRequisition.startDate,
-        registration_end_date: selectedRequisition.endDate,
-      }
+      requisition_id: selectedRequisition.id,
+      requisition_code: selectedRequisition.requisitionCode,
+      requisition_title: selectedRequisition.requisitionTitle,
+      registration_start_date: selectedRequisition.startDate,
+      registration_end_date: selectedRequisition.endDate,
+    }
     : null;
 
   const selectedPosition = positions
@@ -1517,10 +1517,10 @@ export default function CandidateScreening({ selectedJob }) {
 
       time:
         c?.interviewSchedules?.interviewStartAt &&
-        c?.interviewSchedules?.interviewEndAt
+          c?.interviewSchedules?.interviewEndAt
           ? `${c.interviewSchedules.interviewStartAt
-              .split("T")[1]
-              .slice(0, 5)} - ${c.interviewSchedules.interviewEndAt
+            .split("T")[1]
+            .slice(0, 5)} - ${c.interviewSchedules.interviewEndAt
               .split("T")[1]
               .slice(0, 5)}`
           : "-",
@@ -1840,50 +1840,50 @@ export default function CandidateScreening({ selectedJob }) {
     }
   };
 
-const handleDownloadRankList = async () => {
-  try {
-    const positionId = selectedPositionId?.[0];
+  const handleDownloadRankList = async () => {
+    try {
+      const positionId = selectedPositionId?.[0];
 
-    if (!positionId) {
-      toast.error("Please select a position");
-      return;
+      if (!positionId) {
+        toast.error("Please select a position");
+        return;
+      }
+
+      // Get selected applicationIds
+      const applicationIds = offerData
+        .filter((offer) => offerSelectedIds.includes(offer.id))
+        .map((offer) => offer.applicationId);
+
+      const payload = {
+        positionId,
+        applicationIds,
+      };
+
+      console.log(payload);
+
+      const res = await jobPositionApiService.generateRankListdownload(payload);
+
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "Rank_List.xlsx";
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Failed to download rank list"
+      );
     }
-
-    // Get selected applicationIds
-    const applicationIds = offerData
-      .filter((offer) => offerSelectedIds.includes(offer.id))
-      .map((offer) => offer.applicationId);
-
-    const payload = {
-      positionId,
-      applicationIds,
-    };
-
-    console.log(payload);
-
-    const res = await jobPositionApiService.generateRankListdownload(payload);
-
-    const blob = new Blob([res.data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "Rank_List.xlsx";
-
-    document.body.appendChild(link);
-    link.click();
-
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    toast.error(
-      err?.response?.data?.message || "Failed to download rank list"
-    );
-  }
-};
+  };
 
   const handleSendToCompensation = async () => {
     if (!submitBeforeDate) {
@@ -2006,7 +2006,7 @@ const handleDownloadRankList = async () => {
       console.error(err);
       toast.error(
         err?.response?.data?.message ||
-          t("candidateWorkflow:failed_to_send_offer_pool")
+        t("candidateWorkflow:failed_to_send_offer_pool")
       );
     }
   };
@@ -2048,7 +2048,7 @@ const handleDownloadRankList = async () => {
       if (response?.data?.success === false) {
         toast.error(
           response?.data?.message ||
-            t("candidateWorkflow:failed_send_offer_approval")
+          t("candidateWorkflow:failed_send_offer_approval")
         );
         return;
       }
@@ -2161,38 +2161,38 @@ const handleDownloadRankList = async () => {
     !formErrors.acceptBeforeDate &&
     !formErrors.joiningDate;
 
-const handleGenerateRankList = async () => {
-  try {
-    const positionId = selectedPositionId?.[0];
+  const handleGenerateRankList = async () => {
+    try {
+      const positionId = selectedPositionId?.[0];
 
-    if (!positionId) {
-      toast.error("Please select a position");
-      return;
-    }
+      if (!positionId) {
+        toast.error("Please select a position");
+        return;
+      }
 
-    const res = await candidateWorkflowServices.generateRankList(positionId);
+      const res = await candidateWorkflowServices.generateRankList(positionId);
 
-    if (!res?.success) {
-      toast.error(res?.message || "Failed to generate rank list");
+      if (!res?.success) {
+        toast.error(res?.message || "Failed to generate rank list");
+        setRankListGenerated(false);
+        return;
+      }
+
+      toast.success(res?.message || "Rank List generated successfully");
+
+      setRankListGenerated(true);
+      setOfferRefreshKey((prev) => prev + 1);
+      setOfferSelectedIds([]);
+    } catch (err) {
+      console.error(err);
+
+      toast.error(
+        err?.response?.data?.message || "Failed to generate rank list"
+      );
+
       setRankListGenerated(false);
-      return;
     }
-
-    toast.success(res?.message || "Rank List generated successfully");
-
-    setRankListGenerated(true);
-    setOfferRefreshKey((prev) => prev + 1);
-    setOfferSelectedIds([]);
-  } catch (err) {
-    console.error(err);
-
-    toast.error(
-      err?.response?.data?.message || "Failed to generate rank list"
-    );
-
-    setRankListGenerated(false);
-  }
-};
+  };
 
   useEffect(() => {
     if (activeTab !== "OFFER_POOL") {
@@ -2312,8 +2312,8 @@ const handleGenerateRankList = async () => {
 
       toast.error(
         errorResponse?.data ||
-          errorResponse?.message ||
-          "Failed to load summary"
+        errorResponse?.message ||
+        "Failed to load summary"
       );
     }
   };
@@ -2437,8 +2437,8 @@ const handleGenerateRankList = async () => {
       // toast.error(err?.response?.data?.message || "Failed to generate offers");
       toast.error(
         err?.response?.data?.data ||
-          err?.response?.data?.message ||
-          "Failed to generate offers"
+        err?.response?.data?.message ||
+        "Failed to generate offers"
       );
     } finally {
       setGeneratingOffer(false);
@@ -2589,8 +2589,8 @@ const handleGenerateRankList = async () => {
         <div className="card-body p-0">
           <div className="row g-2 align-items-end border-bottom pb-4 px-3 py-3">
             {activeTab === "CANDIDATE_POOL" ||
-            activeTab === "INTERVIEW_POOL" ||
-            activeTab === "SCHEDULE_POOL" ? (
+              activeTab === "INTERVIEW_POOL" ||
+              activeTab === "SCHEDULE_POOL" ? (
               <DropdownStripMultipleposition
                 requisitions={requisitions}
                 positions={positions}
@@ -2653,8 +2653,8 @@ const handleGenerateRankList = async () => {
           </div>
 
           {activeTab === "CANDIDATE_POOL" ||
-          activeTab === "INTERVIEW_POOL" ||
-          activeTab === "SCHEDULE_POOL" ? (
+            activeTab === "INTERVIEW_POOL" ||
+            activeTab === "SCHEDULE_POOL" ? (
             <div className="mt-2 pt-1 pb-3">
               {normalizedRequisition && selectedPosition?.length > 0 && (
                 <RequisitionStripformultiplepositions
@@ -2693,11 +2693,10 @@ const handleGenerateRankList = async () => {
             {accessibleTabs.map((tab) => (
               <li className="nav-item" key={tab.key}>
                 <button
-                  className={`nav-link fs-14 ${
-                    activeTab === tab.key
+                  className={`nav-link fs-14 ${activeTab === tab.key
                       ? "orange-color orange-bottom-border"
                       : "text-muted"
-                  }`}
+                    }`}
                   onClick={() => {
                     setActiveTab(tab.key);
 
@@ -2934,18 +2933,17 @@ const handleGenerateRankList = async () => {
               activeTab === "COMPENSATION_POOL" ||
               activeTab === "SCHEDULE_POOL" ||
               activeTab === "OFFER_POOL") && (
-              <div className="col-md-4 d-none d-md-block" />
-            )}
+                <div className="col-md-4 d-none d-md-block" />
+              )}
 
             {selectedPositionId.length > 0 && selectedRequisitionId && (
               <div
-                className={`col-12 text-md-end mt-2 mt-md-0 ${
-                  activeTab === "CANDIDATE_POOL" && hasLocationData
+                className={`col-12 text-md-end mt-2 mt-md-0 ${activeTab === "CANDIDATE_POOL" && hasLocationData
                     ? "col-md-4"
                     : activeTab === "CANDIDATE_POOL"
                       ? "col-md-6"
                       : "col-md-4"
-                }`}
+                  }`}
               >
                 {activeTab === "CANDIDATE_POOL" && (
                   <button
@@ -2961,37 +2959,37 @@ const handleGenerateRankList = async () => {
                   </button>
                 )}
 
-              {activeTab !== "OFFER_POOL" && (
-  <>
-    <OverlayTrigger
-      placement="bottom"
-      overlay={
-        <Tooltip>{t("candidateWorkflow:download_pdf")}</Tooltip>
-      }
-    >
-      <button
-        className="btn fs-14 me-3 blue-color blue-border"
-        onClick={() => handleDownload("pdf")}
-      >
-        <img alt="pdf" src={pdfIcon} width={20} />
-      </button>
-    </OverlayTrigger>
+                {activeTab !== "OFFER_POOL" && !isCommitteeMember && (
+                  <>
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip>{t("candidateWorkflow:download_pdf")}</Tooltip>
+                      }
+                    >
+                      <button
+                        className="btn fs-14 me-3 blue-color blue-border"
+                        onClick={() => handleDownload("pdf")}
+                      >
+                        <img alt="pdf" src={pdfIcon} width={20} />
+                      </button>
+                    </OverlayTrigger>
 
-    <OverlayTrigger
-      placement="bottom"
-      overlay={
-        <Tooltip>{t("candidateWorkflow:download_excel")}</Tooltip>
-      }
-    >
-      <button
-        className="btn fs-14 blue-color blue-border"
-        onClick={() => handleDownload("xlsx")}
-      >
-        <img alt="excel" src={excelIcon} width={20} />
-      </button>
-    </OverlayTrigger>
-  </>
-)}
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip>{t("candidateWorkflow:download_excel")}</Tooltip>
+                      }
+                    >
+                      <button
+                        className="btn fs-14 blue-color blue-border"
+                        onClick={() => handleDownload("xlsx")}
+                      >
+                        <img alt="excel" src={excelIcon} width={20} />
+                      </button>
+                    </OverlayTrigger>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -3047,7 +3045,7 @@ const handleGenerateRankList = async () => {
                   className="btn orange-bg text-white fs-12"
                   onClick={() => setShowDigitalSignatureModal(true)}
                 >
-                   {t("candidateWorkflow:download_upload_digital_signature")}
+                  {t("candidateWorkflow:download_upload_digital_signature")}
                 </button>
 
                 <button
@@ -3158,11 +3156,10 @@ const handleGenerateRankList = async () => {
                         }
                       />
                       <small
-                        className={`d-block mt-1 fs-12 ${
-                          formErrors.acceptBeforeDate
+                        className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate
                             ? "text-danger"
                             : "invisible"
-                        }`}
+                          }`}
                       >
                         {formErrors.acceptBeforeDate || "placeholder"}
                       </small>
@@ -3184,9 +3181,8 @@ const handleGenerateRankList = async () => {
                         }
                       />
                       <small
-                        className={`d-block mt-1 fs-12 ${
-                          formErrors.joiningDate ? "text-danger" : "invisible"
-                        }`}
+                        className={`d-block mt-1 fs-12 ${formErrors.joiningDate ? "text-danger" : "invisible"
+                          }`}
                       >
                         {formErrors.joiningDate || "placeholder"}
                       </small>
@@ -3296,9 +3292,8 @@ const handleGenerateRankList = async () => {
 
                   {/* Assign Locations */}
                   <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-                      !rankListGenerated ? "disabled_button" : ""
-                    }`}
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""
+                      }`}
                     style={{ minHeight: "39px" }}
                     onClick={() => setShowRankListModal(true)}
                     disabled={!rankListGenerated}
@@ -3314,27 +3309,26 @@ const handleGenerateRankList = async () => {
                   </button>
 
                   {/* Download */}
-              <OverlayTrigger
-  placement="bottom"
-  overlay={
-    <Tooltip id="download-rank-tooltip">
-      {t("candidateWorkflow:download_excel")}
-    </Tooltip>
-  }
->
-  <span className="d-inline-block">
-    <button
-      className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-        !rankListGenerated ? "disabled_button" : ""
-      }`}
-      style={{ minHeight: "39px" }}
-      onClick={handleDownloadRankList}
-      disabled={!rankListGenerated}
-    >
-      <i className="bi bi-download"></i>
-    </button>
-  </span>
-</OverlayTrigger>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={
+                      <Tooltip id="download-rank-tooltip">
+                        {t("candidateWorkflow:download_excel")}
+                      </Tooltip>
+                    }
+                  >
+                    <span className="d-inline-block">
+                      <button
+                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""
+                          }`}
+                        style={{ minHeight: "39px" }}
+                        onClick={handleDownloadRankList}
+                        disabled={!rankListGenerated}
+                      >
+                        <i className="bi bi-download"></i>
+                      </button>
+                    </span>
+                  </OverlayTrigger>
                 </div>
               </div>
             </div>
@@ -3441,7 +3435,7 @@ const handleGenerateRankList = async () => {
                           <button
                             className="btn orange-bg text-white fs-14"
                             onClick={handleSendToCompensation}
-                            // disabled={!submitBeforeDate} // 🔥 important
+                          // disabled={!submitBeforeDate} // 🔥 important
                           >
                             {t("candidateWorkflow:Compensation_Request")}
                           </button>
