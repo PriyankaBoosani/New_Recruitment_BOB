@@ -2,18 +2,21 @@ import React, { useState, useMemo, useEffect } from "react";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { OverlayTrigger, Tooltip, Modal } from "react-bootstrap";
 import masterApiService from "../../master/services/masterApiService";
-import { Modal } from "react-bootstrap";
+
 import { FaExternalLinkAlt } from "react-icons/fa";
 import ApprovalHistoryModal from "../../Approvals/components/ApprovalHistoryModal";
 import history_icon from "../../../assets/history_icon.png";
+import ExtendOfferModal from "./ExtendOfferModal";
 import useOfferApproval from "../../Approvals/hooks/useOfferApproval";
 
 const OFFER_STATUS_CLASS_MAP = {
   OFFER_AWAITED: "bg-warning",
   OFFER_SENT: "bg-primary",
+  OFFER_EXTENDED: "bg-info", 
   OFFER_REJECTED: "bg-danger",
+  OFFER_CANCELED: "bg-danger",
   OFFER_ACCEPTED: "bg-success",
   L1_PENDING: "bg-info",
   L2_PENDING: "bg-info",
@@ -23,18 +26,20 @@ const OFFER_STATUS_CLASS_MAP = {
   APPROVED: "bg-success",
 };
 
-const OFFER_STATUS_LABEL_MAP = {
-  OFFER_AWAITED: "Offer Awaited",
-  OFFER_SENT: "Offer Sent",
-  OFFER_REJECTED: "Offer Rejected",
-  OFFER_ACCEPTED: "Offer Accepted",
-  L1_PENDING: "L1 Pending",
-  L2_PENDING: "L2 Pending",
-  L1_REJECTED: "L1 Rejected",
-  L2_REJECTED: "L2 Rejected",
-  OFFER_GENERATED: "Offer Generated",
-  APPROVED: "Approved",
-};
+// const OFFER_STATUS_LABEL_MAP = {
+//   OFFER_AWAITED: "Offer Awaited",
+//   OFFER_SENT: "Offer Sent",
+//   OFFER_EXTENDED: "Offer Extended",
+//   OFFER_REJECTED: "Offer Rejected",
+//   OFFER_CANCELLED: "Offer Cancelled",
+//   OFFER_ACCEPTED: "Offer Accepted",
+//   L1_PENDING: "L1 Pending",
+//   L2_PENDING: "L2 Pending",
+//   L1_REJECTED: "L1 Rejected",
+//   L2_REJECTED: "L2 Rejected",
+//   OFFER_GENERATED: "Offer Generated",
+//   APPROVED: "Approved",
+// };
 
 const OfferPool = ({
   selectedPositionId,
@@ -48,18 +53,53 @@ const OfferPool = ({
   acceptBeforeDate,
   joiningDate,
   offerApprovalId,
+  allOffersForFilters,
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
-  const [offers, setOffers] = useState([]);
-  const [hasExamConfiguration, setHasExamConfiguration] = useState(false);
+
+
+  const OFFER_STATUS_LABEL_MAP = useMemo(() => ({
+    OFFER_AWAITED: t("candidateWorkflow:offer_awaited") || "Offer Awaited",
+    OFFER_SENT: t("candidateWorkflow:offer_sent") || "Offer Sent",
+    OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended",
+    OFFER_REJECTED: t("candidateWorkflow:offer_rejected") || "Offer Rejected",
+    OFFER_CANCELLED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled",
+    OFFER_CANCELED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", // 👈 Fixes single 'L' API variant
+    OFFER_ACCEPTED: t("candidateWorkflow:offer_accepted") || "Offer Accepted",
+    L1_PENDING: t("candidateWorkflow:l1_pending") || "L1 Pending",
+    L2_PENDING: t("candidateWorkflow:l2_pending") || "L2 Pending",
+    L1_REJECTED: t("candidateWorkflow:l1_rejected") || "L1 Rejected",
+    L2_REJECTED: t("candidateWorkflow:l2_rejected") || "L2 Rejected",
+    OFFER_GENERATED: t("candidateWorkflow:offer_generated") || "Offer Generated",
+    APPROVED: t("candidateWorkflow:approved") || "Approved",
+  }), [t]);
+const [offers, setOffers] = useState([]);
+const [totalElements, setTotalElements] = useState(0); // 👈 ADD THIS LINE
+const [hasExamConfiguration, setHasExamConfiguration] = useState(false);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [showPreview, setShowPreview] = useState(false);
-
+const SELECTABLE_STATUSES = [
+  "OFFER_AWAITED",
+  "L1_REJECTED",
+  "L2_REJECTED",
+  "OFFER_GENERATED",
+  "APPROVED",
+  "OFFER_SENT",
+  "OFFER_EXTENDED",
+];
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
+
+  const [singleExtendCandidate, setSingleExtendCandidate] = useState(null);
+  const [showSingleExtendModal, setShowSingleExtendModal] = useState(false);
+
+  const handleOpenSingleExtend = (candidate) => {
+    setSingleExtendCandidate(candidate);
+    setShowSingleExtendModal(true);
+  };
 
   const fetchExamConfiguration = async () => {
     try {
@@ -95,6 +135,7 @@ const OfferPool = ({
 
     return `${day}-${month}-${year}`;
   };
+
   const { users, fetchUsers, getWorkflowHistory } = useOfferApproval();
   const userMap = useMemo(() => {
     return users.reduce((acc, user) => {
@@ -102,6 +143,7 @@ const OfferPool = ({
       return acc;
     }, {});
   }, [users]);
+
   const handleClose = () => {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
@@ -120,7 +162,6 @@ const OfferPool = ({
       const file = new Blob([res.data], { type: "application/pdf" });
       const fileURL = URL.createObjectURL(file);
 
-      // Option 2 (better): show in modal
       setPreviewUrl(fileURL);
       setShowPreview(true);
     } catch (err) {
@@ -140,13 +181,74 @@ const OfferPool = ({
       const fileUrl = res;
 
       if (fileUrl) {
-        setPreviewUrl(fileUrl); // ✅ set URL
-        setShowPreview(true); // ✅ open modal
+        setPreviewUrl(fileUrl);
+        setShowPreview(true);
       }
     } catch (err) {
       console.error(err);
 
       toast.error(t("candidateWorkflow:wentwrong"));
+    }
+  };
+
+// ➕ Add this logic to determine select-all state and behavior for the current page
+const formatStatus = (status = "") =>
+    status
+      .toLowerCase()
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+// Extract IDs safely from allOffersForFilters or fall back to the currently loaded offers array
+// Filter only IDs for candidates whose status actually permits selection
+const selectableCandidateIds = useMemo(() => {
+  if (allOffersForFilters && allOffersForFilters.length > 0) {
+    // If a status filter is selected and it is NOT a selectable status (e.g. OFFER_CANCELED)
+    if (
+      filters?.status?.length &&
+      !filters.status.some((s) => SELECTABLE_STATUSES.includes(s))
+    ) {
+      return [];
+    }
+
+    return allOffersForFilters
+      .map((c) => (typeof c === "object" ? c.id : c))
+      .filter(Boolean);
+  }
+
+  // Fallback to currently loaded page offers
+  return offers
+    .filter((c) => SELECTABLE_STATUSES.includes(c.status))
+    .map((c) => c.id)
+    .filter(Boolean);
+}, [allOffersForFilters, offers, filters?.status]);
+
+const allSelected =
+  selectableCandidateIds.length > 0 &&
+  selectableCandidateIds.every((id) => selectedIds.includes(id));
+
+const toggleSelectAll = () => {
+    if (!filters?.status?.length) {
+      toast.error(
+        t("candidateWorkflow:select_status_filter_first") ||
+          "Please select the status filter first"
+      );
+      return;
+    }
+
+    if (selectableCandidateIds.length === 0) {
+      return;
+    }
+
+    if (allSelected) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(selectableCandidateIds);
+      toast.success(
+        `${selectableCandidateIds.length} ${formatStatus(
+          filters?.status?.[0]
+        )} candidate${selectableCandidateIds.length !== 1 ? "s" : ""} selected`
+      );
     }
   };
 
@@ -164,13 +266,25 @@ const OfferPool = ({
 
     try {
       setLoading(true);
-      const res =
-        await jobPositionApiService.getOffersByPosition(selectedPositionId);
-      console.log("Offer API Response:", res.data);
+      
+      // Constructing the payload for the POST request
+      const payload = {
+        positionId: selectedPositionId,
+        offerStatusList: filters?.status && filters.status.length > 0 ? filters.status : [],
+        page: page,
+        size: pageSize,
+      };
 
-      const rawList = res?.data || [];
+      const res =
+    
+        await jobPositionApiService.getOffersByPosition(payload);
+
+      const apiData = res?.data; // 👈 Define apiData here
+      
+      // Support both a paged response object (apiData.content) or a flat array list (apiData)
+      const rawList = apiData?.content || (Array.isArray(apiData) ? apiData : []);
       const mapped = rawList.map((item) => {
-        const offer = item.candidateOffersDTO;
+        const offer = item.candidateOffersDTO || {};
 
         return {
           id: offer.candidateOfferId,
@@ -182,7 +296,6 @@ const OfferPool = ({
 
           name: item.candidateFullName,
           categoryName: item.reservationCategory,
-          // NEW FIELDS
           dateOfBirth: item.candidateDob ? formatDate(item.candidateDob) : "-",
 
           age: item.age || "-",
@@ -207,7 +320,6 @@ const OfferPool = ({
               : "-",
 
           score: item.finalScore,
-          // qnq: offer.qualified === true ? "Q" : "NQ",
           status: offer.status,
           selectList: offer.selectList,
           waitList: offer.waitList,
@@ -217,7 +329,14 @@ const OfferPool = ({
           offerReleaseDate: formatDate(offer.offerReleaseDate),
           acceptBeforeDate: formatDate(offer.acceptBeforeDate),
           joiningDate: formatDate(offer.joiningDate),
-          historyId: item.offerApprovalId, // add this|
+          extendedOfferDate: formatDate(offer.extendedOfferDate),
+          
+          // Raw ISO strings for validation comparison
+          extensionDate: formatDate(offer.extensionDate),
+          rawAcceptBeforeDate: offer.acceptBeforeDate ? offer.acceptBeforeDate.split("T")[0] : "",
+          rawExtendedOfferDate: offer.extendedOfferDate ? offer.extendedOfferDate.split("T")[0] : "",
+
+          historyId: item.offerApprovalId,
           cutOffDate: "-",
           shortlisted: "-",
           postingLocation: offer.postingLocation,
@@ -225,16 +344,21 @@ const OfferPool = ({
         };
       });
 
-      setOffers(mapped);
-      if (typeof onOffersLoaded === "function") {
-        onOffersLoaded(mapped);
-      }
-    } catch (err) {
+     setOffers(mapped);
+    // 👈 ADD THIS LINE to track total counts coming from backend pagination metadata
+    setTotalElements(apiData?.page?.totalElements || mapped.length);
+
+    if (typeof onOffersLoaded === "function") {
+      onOffersLoaded(mapped);
+    }
+  } catch (err) {
+      console.error(err);
       toast.error("Failed to load offers");
     } finally {
       setLoading(false);
     }
   };
+
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
 
@@ -245,31 +369,15 @@ const OfferPool = ({
     setShowHistoryModal(true);
   };
 
-  // FETCH OFFERS DIRECTLY HERE
-  useEffect(() => {
-    console.log("OfferPool render, refreshKey =", refreshKey);
-    fetchOffers();
-    fetchUsers();
-    fetchExamConfiguration();
-  }, [selectedPositionId, refreshKey, fetchUsers]);
+// 👈 UPDATE useEffect dependencies to re-fetch when page, pageSize, or status changes
+useEffect(() => {
+  fetchOffers();
+  fetchUsers();
+  fetchExamConfiguration();
+}, [selectedPositionId, refreshKey, page, pageSize, filters?.status]);
 
-  // APPLY STATUS FILTER LOCALLY
-  const filteredOffers = useMemo(() => {
-    if (!filters.status || filters.status.length === 0) {
-      return offers;
-    }
-
-    return offers.filter((o) => filters.status.includes(o.status));
-  }, [offers, filters.status]);
-
-  const totalElements = filteredOffers.length;
-
-  const paginatedOffers = useMemo(() => {
-    const start = page * pageSize;
-    return filteredOffers.slice(start, start + pageSize);
-  }, [filteredOffers, page, pageSize]);
-
-  /* ---------- Selection logic ---------- */
+// ❌ REMOVED filteredOffers, paginatedOffers, and local totalElements calculation 
+// because the server handles filtering and pagination now.
 
   const InfoField = ({ label, value }) => (
     <div className="col-12 col-md-4 mb-3">
@@ -284,16 +392,18 @@ const OfferPool = ({
     setPage(0);
   }, [pageSize]);
 
-  useEffect(() => {
-    setPage(0);
-  }, [filters.status]);
+useEffect(() => {
+  setPage(0);
+  setSelectedIds([]); // clear selected candidate checkboxes on status filter change
+}, [filters?.status]);
 
+  // Ensure page index doesn't exceed total server pages if page size or items drop
   useEffect(() => {
-    const totalPages = Math.ceil(filteredOffers.length / pageSize);
+    const totalPages = Math.ceil(totalElements / pageSize);
     if (page >= totalPages && totalPages > 0) {
       setPage(totalPages - 1);
     }
-  }, [filteredOffers, pageSize, page]);
+  }, [totalElements, pageSize, page]);
 
   return (
     <div className="card-body p-0 d-none d-md-block">
@@ -302,16 +412,23 @@ const OfferPool = ({
           className="table table-hover mb-0"
           style={{ minWidth: "1600px", whiteSpace: "nowrap" }}
         >
-          <thead className="bg-light">
+         <thead className="bg-light">
             <tr className="align-content-center">
-              <th
+            <th
                 className="sticky-col-checkbox border-top"
                 style={{
                   width: "50px",
                   minWidth: "50px",
                   paddingLeft: "1.5rem",
                 }}
-              ></th>
+              >
+               <input
+  type="checkbox"
+  checked={allSelected}
+  onChange={toggleSelectAll}
+  disabled={!selectedPositionId || selectableCandidateIds.length === 0}
+/>
+              </th>
               <th
                 className="fs-14 fw-normal py-3 border-top sticky-col-1"
                 scope="col"
@@ -391,7 +508,7 @@ const OfferPool = ({
               >
                 {t("candidateWorkflow:city")}
               </th>
-               <th
+              <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
                 style={{ paddingLeft: "1.25rem" }}
@@ -427,6 +544,15 @@ const OfferPool = ({
               >
                 {t("candidateWorkflow:accept_before_date")}
               </th>
+
+              {/* ➕ ADD NEW EXTENDED OFFER DATE HEADER HERE */}
+<th
+  className="fs-14 fw-normal py-3 border-top"
+  scope="col"
+  style={{ paddingLeft: "1.25rem" }}
+>
+  {t("candidateWorkflow:offer_extended_date") || "Extended Offer Date"}
+</th>
               <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
@@ -445,20 +571,20 @@ const OfferPool = ({
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="15" className="text-center py-4">
-                  {t("loading_candidates")}
-                </td>
-              </tr>
-            ) : paginatedOffers.length === 0 ? (
-              <tr>
-                <td colSpan="15" className="text-center py-4">
-                  {t("no_candidates_found")}
-                </td>
-              </tr>
-            ) : (
-              paginatedOffers.map((c) => (
+           {loading ? (
+            <tr>
+              <td colSpan="18" className="text-center py-4">
+                {t("loading_candidates")}
+              </td>
+            </tr>
+          ) : offers.length === 0 ? (  // 👈 Change paginatedOffers to offers
+            <tr>
+              <td colSpan="18" className="text-center py-4">
+                {t("no_candidates_found")}
+              </td>
+            </tr>
+          ) : (
+            offers.map((c) => (         // 👈 Change paginatedOffers to offers
                 <tr key={c.id}>
                   <td
                     className="sticky-col-checkbox"
@@ -468,22 +594,14 @@ const OfferPool = ({
                       paddingLeft: "1.5rem",
                     }}
                   >
-                    <input
-                      type="checkbox"
-                      style={{ marginTop: "0.75rem" }}
-                      checked={selectedIds.includes(c.id)}
-                      onChange={() => toggleRow(c.id)}
-                      //  disabled={c.status !== "OFFER_AWAITED"}
-                      disabled={
-                        ![
-                          "OFFER_AWAITED",
-                          "L1_REJECTED",
-                          "L2_REJECTED",
-                          "OFFER_GENERATED",
-                          "APPROVED",
-                        ].includes(c.status)
-                      }
-                    />
+                    {/* ✅ UPDATED: Added OFFER_SENT and OFFER_EXTENDED to allowed selection statuses */}
+                   <input
+  type="checkbox"
+  style={{ marginTop: "0.75rem" }}
+  checked={selectedIds.includes(c.id)}
+  onChange={() => toggleRow(c.id)}
+  disabled={!SELECTABLE_STATUSES.includes(c.status)}
+/>
                   </td>
                   <td
                     className="align-content-center sticky-col-1"
@@ -594,7 +712,7 @@ const OfferPool = ({
                       {c.location || "-"}
                     </p>
                   </td>
-                    <td
+                  <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}
                   >
@@ -610,7 +728,6 @@ const OfferPool = ({
                       {c.postingLocation || "-"}
                     </p>
                   </td>
-                  
 
                   <td
                     className="align-content-center"
@@ -637,6 +754,15 @@ const OfferPool = ({
                       {c.acceptBeforeDate}
                     </p>
                   </td>
+
+                  <td
+  className="align-content-center"
+  style={{ paddingLeft: "1.25rem" }}
+>
+  <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+    {c.extensionDate || "-"}
+  </p>
+</td>
                   <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}
@@ -650,7 +776,6 @@ const OfferPool = ({
                     className="align-content-center sticky-col-action"
                     style={{ paddingLeft: "1.5rem" }}
                   >
-                    {/* File Button Tooltip */}
                     <OverlayTrigger
                       placement="bottom"
                       overlay={
@@ -685,7 +810,6 @@ const OfferPool = ({
                       </button>
                     </OverlayTrigger>
 
-                    {/* Eye Button Tooltip */}
                     <OverlayTrigger
                       placement="bottom"
                       overlay={
@@ -695,7 +819,7 @@ const OfferPool = ({
                       }
                     >
                       <button
-                        className="btn btn-sm btn-outline-secondary border-0"
+                        className="btn btn-sm btn-outline-secondary border-0 me-2"
                         onClick={() => {
                           setSelectedOffer(c);
                           setShowModal(true);
@@ -705,6 +829,22 @@ const OfferPool = ({
                         <i className="bi bi-eye" style={{ color: "black" }}></i>
                       </button>
                     </OverlayTrigger>
+
+                    {/* ✅ UPDATED: Action icon enabled for OFFER_SENT & OFFER_EXTENDED candidates */}
+                    {/* {["OFFER_SENT", "OFFER_EXTENDED"].includes(c.status) && (
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={<Tooltip>Extend / Reject Offer</Tooltip>}
+                      >
+                        <button
+                          className="btn btn-sm btn-outline-warning border-0"
+                          onClick={() => handleOpenSingleExtend(c)}
+                          style={{ backgroundColor: "#fff7ed" }}
+                        >
+                          <i className="bi bi-calendar-event text-warning"></i>
+                        </button>
+                      </OverlayTrigger>
+                    )} */}
                   </td>
                 </tr>
               ))
@@ -712,6 +852,7 @@ const OfferPool = ({
           </tbody>
         </table>
       </div>
+
       <div className="d-flex justify-content-between align-items-center px-3 py-2 border-top">
         <div>
           <select
@@ -749,12 +890,12 @@ const OfferPool = ({
           </button>
         </div>
       </div>
+
       {showModal && selectedOffer && (
         <>
           <div className="modal fade show d-block" tabIndex="-1">
             <div className="modal-dialog modal-xl modal-dialog-centered">
               <div className="modal-content rounded-4 border-0">
-                {/* Header */}
                 <div className="modal-header border-0 pb-0">
                   <p className="modal-title fs-16 fw-500 mb-0 blue-color py-2">
                     {t("candidateWorkflow:candidate_rank_details")}
@@ -766,7 +907,6 @@ const OfferPool = ({
                   />
                 </div>
 
-                {/* Body */}
                 <div className="modal-body pt-2">
                   <div
                     className="container-fluid rounded p-4 shadow-sm"
@@ -864,22 +1004,33 @@ const OfferPool = ({
             </div>
           </div>
 
-          {/* Backdrop */}
           <div
             className="modal-backdrop fade show"
             onClick={() => setShowModal(false)}
           />
         </>
       )}
+
+      {/* ✅ Individual Extend Modal */}
+      <ExtendOfferModal
+        show={showSingleExtendModal}
+        onHide={() => {
+          setShowSingleExtendModal(false);
+          setSingleExtendCandidate(null);
+        }}
+        selectedCandidates={singleExtendCandidate ? [singleExtendCandidate] : []}
+        isSingleMode={true}
+        onExtendSuccess={() => fetchOffers()}
+        onRejectSuccess={() => fetchOffers()}
+      />
+
       <Modal show={showPreview} onHide={handleClose} size="xl" centered>
-        {/* HEADER */}
         <Modal.Header closeButton className="border-0 pb-2">
           <div className="w-100 d-flex justify-content-between align-items-center">
             <div>
               <h6 className="mb-0 fw-semibold">{"Preview Offer"}</h6>
             </div>
 
-            {/* ACTION BUTTONS */}
             <div
               className="d-flex gap-4 align-items-center"
               style={{
@@ -893,7 +1044,6 @@ const OfferPool = ({
                   rel="noopener noreferrer"
                   className="btn btn-sm btn-outline-primary"
                 >
-                  {" "}
                   <FaExternalLinkAlt />
                 </a>
               )}
@@ -901,7 +1051,6 @@ const OfferPool = ({
           </div>
         </Modal.Header>
 
-        {/* BODY */}
         <Modal.Body
           style={{
             height: "85vh",
@@ -929,6 +1078,7 @@ const OfferPool = ({
           )}
         </Modal.Body>
       </Modal>
+
       <ApprovalHistoryModal
         show={showHistoryModal}
         onClose={() => setShowHistoryModal(false)}

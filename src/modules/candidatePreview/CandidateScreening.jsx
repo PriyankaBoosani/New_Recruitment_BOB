@@ -40,6 +40,7 @@ import DropdownStrip from "./components/DropdownStrip";
 // import CandidatePreviewPage from "./candidatePreviewPage";
 import { useDispatch } from "react-redux";
 import { setRankEnabled, clearRankState } from "../../app/providers/rankSlice";
+import ExtendOfferModal from "./components/ExtendOfferModal";
 
 import { Modal, Button } from "react-bootstrap";
 
@@ -175,6 +176,9 @@ export default function CandidateScreening({ selectedJob }) {
   const OFFER_POOL_STATUSES = [
     "OFFER_AWAITED",
     "OFFER_SENT",
+    "OFFER_EXTENDED",
+    
+    "OFFER_CANCELED",
     "OFFER_REJECTED",
     "OFFER_ACCEPTED",
     "L1_PENDING",
@@ -188,6 +192,9 @@ export default function CandidateScreening({ selectedJob }) {
   const OFFER_STATUS_LABEL_MAP = {
     OFFER_AWAITED: t("candidateWorkflow:offer_awaited"),
     OFFER_SENT: t("candidateWorkflow:offer_sent"),
+    OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended", 
+  
+    OFFER_CANCELED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", // 👈 ADD THIS LINE
     OFFER_REJECTED: t("candidateWorkflow:offer_rejected"),
     OFFER_ACCEPTED: t("candidateWorkflow:offer_accepted"),
     L1_PENDING: t("candidateWorkflow:l1_pending"),
@@ -509,6 +516,8 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   const searchTimeoutRef = useRef(null);
+
+  const [allOffersForFilters, setAllOffersForFilters] = useState([]);
   const {
     interviewCandidates,
     totalElements: interviewTotalElements,
@@ -547,6 +556,68 @@ export default function CandidateScreening({ selectedJob }) {
     OFFER_POOL: "Offer Pool",
     // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
   };
+
+
+
+const fetchAllOffersForFilters = async () => {
+    if (!selectedPositionId || !selectedPositionId.length) {
+      setAllOffersForFilters([]);
+      return;
+    }
+
+    try {
+      const posId = Array.isArray(selectedPositionId)
+        ? selectedPositionId[0]
+        : selectedPositionId;
+
+      // 1. Fetch small batch to get page metadata (total elements)
+      const firstPayload = {
+        positionId: posId,
+        offerStatusList: filters?.status?.length ? filters.status : [],
+        page: 0,
+        size: 10,
+      };
+      const firstRes = await jobPositionApiService.getOffersByPosition(firstPayload);
+      const apiData = firstRes?.data;
+      const totalCount =
+        apiData?.page?.totalElements ||
+        (Array.isArray(apiData?.content) ? apiData.content.length : 0);
+
+      if (!totalCount) {
+        setAllOffersForFilters([]);
+        return;
+      }
+
+      // 2. Fetch all IDs using totalCount as batch size
+      const fullPayload = {
+        positionId: posId,
+        offerStatusList: filters?.status?.length ? filters.status : [],
+        page: 0,
+        size: totalCount,
+      };
+      const res = await jobPositionApiService.getOffersByPosition(fullPayload);
+      const rawList = res?.data?.content || res?.data || [];
+
+      const mappedIds = rawList
+        .map((item) => {
+          const offer = item.candidateOffersDTO || item;
+          return offer?.candidateOfferId || item?.candidateOfferId || item?.id;
+        })
+        .filter(Boolean)
+        .map((id) => ({ id }));
+
+      setAllOffersForFilters(mappedIds);
+    } catch (err) {
+      console.error("Failed to fetch all offers for filters", err);
+      setAllOffersForFilters([]);
+    }
+  };
+
+useEffect(() => {
+  if (activeTab === "OFFER_POOL") {
+    fetchAllOffersForFilters();
+  }
+}, [selectedPositionId, filters?.status, activeTab]);
 
   const tabs = [
     {
@@ -2109,11 +2180,66 @@ export default function CandidateScreening({ selectedJob }) {
   const selectedOffers = offerData.filter((offer) =>
     offerSelectedIds.includes(offer.id)
   );
-
-  const selectedOfferObjects = useMemo(() => {
+const selectedOfferObjects = useMemo(() => {
     return offerData.filter((o) => offerSelectedIds.includes(o.id));
   }, [offerData, offerSelectedIds]);
 
+  // 1. Checks if all selected candidates have status OFFER_SENT or OFFER_EXTENDED
+  const isAllOfferSentOrExtended = useMemo(() => {
+    if (selectedOfferObjects.length === 0) return false;
+    return selectedOfferObjects.every((o) =>
+      ["OFFER_SENT", "OFFER_EXTENDED"].includes(o.status)
+    );
+  }, [selectedOfferObjects]);
+
+  // 2. Checks if acceptance/extension date is expired AND joining date is not passed
+  const isAllDatesValidForExtension = useMemo(() => {
+    if (selectedOfferObjects.length === 0) return false;
+    const today = todayString();
+
+    return selectedOfferObjects.every((o) => {
+      const activeExpiryDate =
+        o.status === "OFFER_SENT"
+          ? o.rawAcceptBeforeDate
+          : o.rawExtensionDate || o.rawExtendedOfferDate;
+
+      const isExpired = activeExpiryDate && activeExpiryDate <= today;
+      const isJoiningPending = !o.rawJoiningDate || o.rawJoiningDate > today;
+
+      return isExpired && isJoiningPending;
+    });
+  }, [selectedOfferObjects]);
+
+  const [showExtendModal, setShowExtendModal] = useState(false);
+
+  // ⚡ Click Handler: Button remains clickable and explains WHY action is blocked via toast
+  const handleBulkExtendClick = () => {
+    if (selectedOfferObjects.length === 0) {
+      toast.error(
+        t("candidateWorkflow:select_at_least_one_candidate") ||
+          "Please select at least one candidate"
+      );
+      return;
+    }
+
+    if (!isAllOfferSentOrExtended) {
+      toast.error(
+        t("candidateWorkflow:invalid_status_for_extend") ||
+          "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
+      );
+      return;
+    }
+
+    if (!isAllDatesValidForExtension) {
+      toast.error(
+        t("candidateWorkflow:accept_before_date_not_expired") ||
+          "Cannot extend: Acceptance date has not expired yet or Joining Date has passed for selected candidates."
+      );
+      return;
+    }
+
+    setShowExtendModal(true);
+  };
   const canGenerateOffer =
     selectedOfferObjects.length > 0 &&
     selectedOfferObjects.every(
@@ -3281,36 +3407,48 @@ export default function CandidateScreening({ selectedJob }) {
               </div>
 
               {/* RIGHT SECTION */}
-              <div className="col-md-4 col-12">
-                <div className="d-flex justify-content-end align-items-end gap-3">
-                  {/* Merit List */}
-                  <button
-                    className="btn blue-border blue-color fs-13 px-3 py-1"
-                    style={{ minHeight: "39px" }}
-                    onClick={handleGenerateRankList}
-                  >
-                    {t("candidateWorkflow:rank_list")}
-                  </button>
+            {/* RIGHT SECTION IN OFFER POOL */}
+<div className="col-md-4 col-12">
+  <div className="d-flex justify-content-end align-items-end gap-2 flex-wrap">
+   {/* NEW: Extend Offer Date Button */}
+ {/* Bulk Extend Offer Date Button - Always clickable when tab is active */}
+<button
+  className="btn fs-13 px-3 py-1 blue-border blue-color"
+  style={{ minHeight: "39px" }}
+  onClick={handleBulkExtendClick}
+>
+  <i className="bi bi-calendar-plus me-1"></i>
+  {t("candidateWorkflow:extend_offer_date") || "Extend Offer Date"}
+</button>
 
-                  {/* Assign Locations */}
-                  <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""
-                      }`}
-                    style={{ minHeight: "39px" }}
-                    onClick={() => setShowRankListModal(true)}
-                    disabled={!rankListGenerated}
-                  >
-                    <img
-                      className="me-2"
-                      src={locationIcon}
-                      alt="location"
-                      width={16}
-                      style={{ filter: "brightness(0) invert(1)" }}
-                    />
-                    {t("candidateWorkflow:assign_locations")}
-                  </button>
+    {/* Rank List Button */}
+    <button
+      className="btn blue-border blue-color fs-13 px-3 py-1"
+      style={{ minHeight: "39px" }}
+      onClick={handleGenerateRankList}
+    >
+      {t("candidateWorkflow:rank_list")}
+    </button>
 
-                  {/* Download */}
+    {/* Assign Locations */}
+    <button
+      className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+        !rankListGenerated ? "disabled_button" : ""
+      }`}
+      style={{ minHeight: "39px" }}
+      onClick={() => setShowRankListModal(true)}
+      disabled={!rankListGenerated}
+    >
+      <img
+        className="me-2"
+        src={locationIcon}
+        alt="location"
+        width={16}
+        style={{ filter: "brightness(0) invert(1)" }}
+      />
+      {t("candidateWorkflow:assign_locations")}
+    </button>
+   {/* Download */}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={
@@ -3330,9 +3468,8 @@ export default function CandidateScreening({ selectedJob }) {
                         <i className="bi bi-download"></i>
                       </button>
                     </span>
-                  </OverlayTrigger>
-                </div>
-              </div>
+                  </OverlayTrigger>  </div>
+</div>
             </div>
           )}
 
@@ -3622,7 +3759,10 @@ export default function CandidateScreening({ selectedJob }) {
           </div>
         )}
 
-        {activeTab === "OFFER_POOL" && (
+
+        
+
+      {activeTab === "OFFER_POOL" && (
           <OfferPool
             selectedPositionId={selectedPositionId[0]}
             selectedRequisitionId={selectedRequisitionId}
@@ -3634,8 +3774,19 @@ export default function CandidateScreening({ selectedJob }) {
             offerTemplateId={offerTemplateId}
             acceptBeforeDate={acceptBeforeDate}
             joiningDate={joiningDate}
+            allOffersForFilters={allOffersForFilters}
           />
         )}
+
+
+     <ExtendOfferModal
+  show={showExtendModal}
+  onHide={() => setShowExtendModal(false)}
+  selectedCandidates={selectedOfferObjects}
+  isSingleMode={false}
+  onExtendSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
+  onRejectSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
+/>
 
         {/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
         <ScheduleInterviewModal

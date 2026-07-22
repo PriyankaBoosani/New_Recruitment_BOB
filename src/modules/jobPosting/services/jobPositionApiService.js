@@ -405,13 +405,23 @@ sendBulkEmail(formData) {
     );
   },
 
-  getOffersByPosition(positionId) {
-    return api.get(`/recruiter/candidate-offer/get-offers/${positionId}`, {
-      headers: {
-        "X-Client": "AzureAD",
-      },
-    });
-  },
+// jobPositionApiService.js (or wherever getOffersByPosition is defined)
+// Change this:
+getOffersByPosition(positionId) {
+  return api.get(`/recruiter/candidate-offer/get-offers/${positionId}`, {
+    headers: { "X-Client": "AzureAD" },
+  });
+},
+
+// To this (accepting a payload object with positionId, offerStatusList, page, and size):
+getOffersByPosition(payload) {
+  return api.post('/recruiter/candidate-offer/get-offers', payload, {
+    headers: {
+      "X-Client": "AzureAD",
+      "Content-Type": "application/json",
+    },
+  });
+},
 
   downloadAssignLocationExcel: (positionId) => {
     return api.get(
@@ -499,6 +509,38 @@ sendBulkEmail(formData) {
         },
       }
     ),
+
+
+    // Add inside jobPositionApiService object in jobPositionApiService.js
+
+extendOfferAcceptDate(payload) {
+  return api
+    .post(
+      "/recruiter/candidate-offer/extend-accept-date",
+      payload,
+      {
+        headers: {
+          "X-Client": "AzureAD",
+        },
+      }
+    )
+    .catch((error) => error.response); // Return the 400 response instead of throwing
+},
+
+// Add inside jobPositionApiService object in jobPositionApiService.js
+cancelOffers(offerIds) {
+  return api
+    .post(
+      "/recruiter/candidate-offer/cancel-offers",
+      offerIds,
+      {
+        headers: {
+          "X-Client": "AzureAD",
+        },
+      }
+    )
+    .catch((error) => error.response.data); // Return backend response
+},
 
   getVacancyBreakdownByPosition: (positionId) =>
     api.get(

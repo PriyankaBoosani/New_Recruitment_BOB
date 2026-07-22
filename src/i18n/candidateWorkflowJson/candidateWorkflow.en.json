@@ -17,7 +17,52 @@
   "preferred_experience": "Preferred Experience",
   "key_responsibilities": "Key Responsibilities",
   "failed_load_position_details": "Failed to load position details",
+  
+
+
+
+
+
+
+
+
+
+
+  "manage_offer_validity": "Manage Offer Validity",
+  "managing_offer_for": "Managing offer for",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   "category_wise_reservation": "Category Wise Reservation",
+  "comments": "Comments",
+    "comments_required_for_rejection": "Comments are mandatory for rejection",
+    "remarks_reason": "Remarks / Reason",
+"enter_remarks": "Enter remarks (mandatory for rejection)",
+"enter_remarks_optional": "Enter remarks (optional)",
+"remarks_required_for_rejection": "Remarks / Reason are mandatory for rejection",
+    "enter_comments": "Enter comments (mandatory for rejection)",
   "category": "Category",
   "disability": "Disability",
   "gen": "GEN",
@@ -66,6 +111,23 @@
   "qnq": "Q/NQ",
   "select_list": "Select List",
   "wait_list": "Wait List",
+  "extend_offer_date": "Extend Offer Date",
+  "extend_or_reject_offer": "Extend / Reject Offer",
+  "bulk_extend_offer_date": "Bulk Extend Offer Date",
+  "extending_offer_validity": "Extending offer validity for",
+  "new_extended_offer_date": "New Extended Offer Date",
+  "remarks_reason": "Comments",
+  "enter_remarks_optional": "Enter remarks (optional)",
+  "rejecting_offer_for": "Reject offer for",
+  "reject_offer": "Reject Offer",
+  "extend_date": "Extend Date",
+  "select_extended_offer_date": "Please select an extended offer date",
+  "extended_date_greater_than_today": "Extended date must be greater than today",
+  "failed_extend_offer_date": "Failed to extend offer date",
+  "offer_date_extended_success": "Offer date extended successfully",
+  "failed_reject_offer": "Failed to reject offer",
+  "offer_rejected_success": "Offer rejected successfully",
+  "offer_extended_date": "Extended Offer Date",
   "state": "State",
   "city": "City",
   "offer_release_date": "Offer Release Date",
@@ -179,6 +241,8 @@
   "zonal_absent": "Zonal Absent",
   "interview_absent": "Interview Absent",
   "offer_awaited": "Offer Awaited",
+  "offer_cancelled": "Offer Cancelled",
+  "offer_cancelled": "Offer Cancelled",
   "offer_sent": "Offer Sent",
   "offer_rejected": "Offer Rejected",
   "offer_accepted": "Offer Accepted",
@@ -248,6 +312,7 @@
   "no_remarks_available": "No remarks available",
   "close": "Close",
   "accept_before_dte": "Accept Before Date",
+  "offer_extended_date": "Offer Extended Date",
   "Submit Before": "Submit Before",
   "rankPositionsSummary": "Rank Positions Summary",
   "viewAndManagePositionRankings": "View and manage position rankings",
@@ -328,6 +393,13 @@
   "strong": "Strong",
   "moderate": "Moderate",
   "weak": "Weak",
-  "download_excel": "Download Excel"
+  "download_excel": "Download Excel",
+  "accept_before_date_not_expired": "Cannot extend: Accept Before Date has not expired yet.",
+  "extended_date_not_expired": "Cannot extend: Extended Offer Date has not expired yet.",
+  "joining_date_already_passed": "Cannot extend: Joining Date has already passed.",
+  "cannot_reject_before_accept_expired": "Cannot reject: Accept Before Date has not expired yet.",
+  "cannot_reject_before_extension_expired": "Cannot reject: Extended Offer Date has not expired yet.",
+  "invalid_status_for_extend": "Extension is only permitted for candidates with Offer Sent or Offer Extended status.",
+  "invalid_status_for_reject": "Rejection is only permitted for candidates with Offer Sent or Offer Extended status."
 
 }
