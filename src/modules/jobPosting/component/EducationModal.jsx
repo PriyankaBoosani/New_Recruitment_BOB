@@ -14,8 +14,8 @@ import Select from "react-select";
 const createRow = () => ({
   educationTypeId: "",
   educationQualificationsId: "",
-  specializationId: "",
-   group: "",   
+  specialization: [],
+  group: "",
   duration: "",
   percentage: "",
 });
@@ -50,8 +50,8 @@ export default function EducationModal({
   const [errors, setErrors] = useState({});
   const [groups, setGroups] = useState([createGroup()]);
   const [certGroups, setCertGroups] = useState([createCertGroup()]);
-   const [educationGroups, setEducationGroups] = useState([]);
-
+  const [educationGroups, setEducationGroups] = useState([]);
+  const [equivalentQualification, setEquivalentQualification] = useState(false);
 
   useEffect(() => {
     if (!show) return;
@@ -68,6 +68,7 @@ export default function EducationModal({
         ? JSON.parse(JSON.stringify(initialData.certGroups))
         : [createCertGroup()]
     );
+    setEquivalentQualification(initialData?.equivalentQualification || false);
   }, [show, initialData, mode]);
   useEffect(() => {
     console.log(
@@ -76,113 +77,140 @@ export default function EducationModal({
     );
   }, [isIntermediateRequired]);
 
-  
   useEffect(() => {
-  const fetchEducationGroups = async () => {
-    try {
-      const res = await masterApiService.getEducationGroupes();
+    const fetchEducationGroups = async () => {
+      try {
+        const res = await masterApiService.getEducationGroupes();
 
-      setEducationGroups(
-        (res.data || []).map((g) => ({
-          id: g.educationGroupId,
-          label: g.groupName,
-        }))
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+        setEducationGroups(
+          (res.data || []).map((g) => ({
+            id: g.educationGroupId,
+            label: g.groupName,
+          }))
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-  fetchEducationGroups();
-}, []);
+    fetchEducationGroups();
+  }, []);
 
   const getLabel = (list, id, key = "label") =>
     list.find((i) => i.id === id)?.[key] || "";
 
-const getSpecializationsForDegree = (degreeId) => {
-  if (!degreeId) return [];
+  const getSpecializationsForDegree = (degreeId) => {
+    if (!degreeId) return [];
 
-  const degree = qualifications.find(
-    (q) => String(q.id) === String(degreeId)
-  );
-
-  const degreeName = degree?.name?.trim().toLowerCase();
-
-  // Use Education Groups API for Any Graduation / Any Post-Graduation
-  if (
-    degreeName === "any graduation" ||
-    degreeName === "any post-graduation"
-  ) {
-    return educationGroups;
-  }
-
-  // Existing logic
-  return specializations
-    .filter(
-      (s) =>
-        s.educationQualificationsId === degreeId &&
-        s.label?.toLowerCase() !== "others"
-    )
-    .sort((a, b) =>
-      a.label.localeCompare(b.label, undefined, {
-        sensitivity: "base",
-      })
+    const degree = qualifications.find(
+      (q) => String(q.id) === String(degreeId)
     );
-};
 
-const degreeText = groups
-  .map((group) => {
-    if (!group || !Array.isArray(group.educations)) return null;
+    const degreeName = degree?.name?.trim().toLowerCase();
 
-    const groupText = group.educations
-      .filter((r) => r.educationTypeId && r.educationQualificationsId)
-      .map((r) => {
-        const type = getLabel(educationTypes, r.educationTypeId);
-        const degree = getLabel(
-          qualifications,
-          r.educationQualificationsId,
-          "name"
-        );
+    // Use Education Groups API for Any Graduation / Any Post-Graduation
+    if (
+      degreeName === "any graduation" ||
+      degreeName === "any post-graduation"
+    ) {
+      return educationGroups;
+    }
 
-        const degreeObj = qualifications.find(
-          (q) => String(q.id) === String(r.educationQualificationsId)
-        );
+    // Existing logic
+    return specializations
+      .filter(
+        (s) =>
+          s.educationQualificationsId === degreeId &&
+          s.label?.toLowerCase() !== "others"
+      )
+      .sort((a, b) =>
+        a.label.localeCompare(b.label, undefined, {
+          sensitivity: "base",
+        })
+      );
+  };
 
-        const degreeName = degreeObj?.name?.trim().toLowerCase();
+  const degreeText = groups
+    .map((group) => {
+      if (!group || !Array.isArray(group.educations)) return null;
 
-        const isAnyDegree =
-          degreeName === "any graduation" ||
-          degreeName === "any post-graduation";
+      const groupText = group.educations
+        // .filter((r) => r.educationTypeId && r.educationQualificationsId)
+        .filter((r) => r.educationQualificationsId)
+        .map((r) => {
+          const type = getLabel(educationTypes, r.educationTypeId);
+          const degree = getLabel(
+            qualifications,
+            r.educationQualificationsId,
+            "name"
+          );
 
-        const validSpecs = getSpecializationsForDegree(
-          r.educationQualificationsId
-        );
+          const degreeObj = qualifications.find(
+            (q) => String(q.id) === String(r.educationQualificationsId)
+          );
 
-        const spec = isAnyDegree
-          ? validSpecs.find((s) => String(s.id) === String(r.group))?.label || ""
-          : validSpecs.find(
-              (s) => String(s.id) === String(r.specializationId)
-            )?.label || "";
+          const degreeName = degreeObj?.name?.trim().toLowerCase();
 
+          const isAnyDegree =
+            degreeName === "any graduation" ||
+            degreeName === "any post-graduation";
 
+          const validSpecs = getSpecializationsForDegree(
+            r.educationQualificationsId
+          );
 
- 
+          // const spec = isAnyDegree
+          //   ? validSpecs.find((s) => String(s.id) === String(r.group))?.label ||
+          //     ""
+          //   : validSpecs.find(
+          //       (s) => String(s.id) === String(r.specializationId)
+          //     )?.label || "";
 
-        let extra = [];
+          // let extra = [];
 
-        if (r.duration) extra.push(`Duration: ${r.duration} Year(s)`);
-        if (r.percentage) extra.push(`Percentage: ${r.percentage}%`);
+          // if (r.duration) extra.push(`Duration: ${r.duration} Year(s)`);
+          // if (r.percentage) extra.push(`Percentage: ${r.percentage}%`);
 
-        const extraText = extra.length ? ` - ${extra.join(", ")}` : "";
+          // const extraText = extra.length ? ` - ${extra.join(", ")}` : "";
 
-        return `${type} ${degree}${spec ? ` in ${spec}` : ""}${extraText}`;
-      })
-      .join(" AND ");
+          // return `${type} ${degree}${spec ? ` in ${spec}` : ""}${extraText}`;
+          let extra = [];
 
-    return groupText || null;
-  })
-  .filter(Boolean)
-  .join("\nOR\n");
+          if (r.duration) extra.push(`Duration: ${r.duration} Year(s)`);
+          if (r.percentage) extra.push(`Percentage: ${r.percentage}%`);
+
+          const extraText = extra.length ? ` - ${extra.join(", ")}` : "";
+
+          if (isAnyDegree) {
+            const spec =
+              validSpecs.find((s) => String(s.id) === String(r.group))?.label ||
+              "";
+
+            return `${type ? `${type} ` : ""}${degree}${spec ? ` in ${spec}` : ""}${extraText}`;
+          }
+
+          // Multiple Specializations
+          const selectedSpecs = validSpecs.filter((s) =>
+            (r.specialization || []).includes(String(s.id))
+          );
+
+          if (selectedSpecs.length === 0) {
+            return `${type ? `${type} ` : ""}${degree}${extraText}`;
+          }
+
+          return selectedSpecs
+            .map(
+              (spec) =>
+                `${type ? `${type} ` : ""}${degree} in ${spec.label}${extraText}`
+            )
+            .join("\n OR\n");
+        })
+        .join(" AND ");
+
+      return groupText || null;
+    })
+    .filter(Boolean)
+    .join("\n OR\n");
 
   // const addRow = () => {
   //     setRows([...rows, createRow(false)]);
@@ -202,7 +230,8 @@ const degreeText = groups
     copy[gIdx].educations[rIdx][field] = value;
 
     if (field === "educationQualificationsId") {
-      copy[gIdx].educations[rIdx].specializationId = "";
+      copy[gIdx].educations[rIdx].specialization = [];
+      copy[gIdx].educations[rIdx].group = "";
     }
 
     setGroups(copy);
@@ -361,12 +390,18 @@ const degreeText = groups
       return groupText ? groupText : null;
     })
     .filter(Boolean)
-    .join("\nOR\n");
+    .join("\n OR\n");
+
+  let finalDegreeText = degreeText;
+
+  if (equivalentQualification) {
+    finalDegreeText += `${finalDegreeText ? "\n OR\n" : ""}Equivalent Qualification`;
+  }
 
   let finalText = "";
 
-  if (degreeText) {
-    finalText += `Education Requirements: \n${degreeText}\n`;
+  if (finalDegreeText) {
+    finalText += `Education Requirements: \n${finalDegreeText}\n`;
     finalText += `Certifications: ${certText || "None"}`;
   } else if (certText) {
     finalText += `Certifications: ${certText}`;
@@ -418,10 +453,6 @@ const degreeText = groups
     onHide();
   };
 
-
-
-  
-
   const validateModalData = () => {
     const allRows = groups.flatMap((g) => g.educations);
 
@@ -435,7 +466,10 @@ const degreeText = groups
       return false;
     }
 
-    const filledRows = allRows.filter((r) => r.educationTypeId && r.educationQualificationsId);
+    // const filledRows = allRows.filter(
+    //   (r) => r.educationTypeId && r.educationQualificationsId
+    // );
+    const filledRows = allRows.filter((r) => r.educationQualificationsId);
 
     if (mode === "mandatory" && filledRows.length === 0) {
       setErrors({
@@ -447,45 +481,62 @@ const degreeText = groups
     return true;
   };
   const buildEducations = (group) => {
-    const hasValid = group.educations.some((r) => r.educationTypeId && r.educationQualificationsId);
+    // const hasValid = group.educations.some(
+    //   (r) => r.educationTypeId && r.educationQualificationsId
+    // );
+
+    const hasValid = group.educations.some((r) => r.educationQualificationsId);
 
     if (!hasValid) return [createRow()];
 
-    return group.educations
-      .filter((r) => r.educationTypeId && r.educationQualificationsId)
-.map((r) => {
-  const validSpecs = getSpecializationsForDegree(r.educationQualificationsId);
+    return (
+      group.educations
+        // .filter((r) => r.educationTypeId && r.educationQualificationsId)
+        .filter((r) => r.educationQualificationsId)
+        .map((r) => {
+          const validSpecs = getSpecializationsForDegree(
+            r.educationQualificationsId
+          );
 
-  const degree = qualifications.find(
-    (q) => String(q.id) === String(r.educationQualificationsId)
-  );
+          const degree = qualifications.find(
+            (q) => String(q.id) === String(r.educationQualificationsId)
+          );
 
-  const degreeName = degree?.name?.trim().toLowerCase();
+          const degreeName = degree?.name?.trim().toLowerCase();
 
-  const isAnyDegree =
-    degreeName === "any graduation" ||
-    degreeName === "any post-graduation";
+          const isAnyDegree =
+            degreeName === "any graduation" ||
+            degreeName === "any post-graduation";
 
-  return {
-    educationTypeId: r.educationTypeId,
-    educationQualificationsId: r.educationQualificationsId,
+          return {
+            educationTypeId: r.educationTypeId,
+            educationQualificationsId: r.educationQualificationsId,
 
-    specializationId: isAnyDegree
-      ? ""
-      : (validSpecs.some((s) => s.id === r.specializationId)
-          ? r.specializationId
-          : null),
+            // specializationId: isAnyDegree
+            //   ? ""
+            //   : validSpecs.some((s) => s.id === r.specializationId)
+            //     ? r.specializationId
+            //     : null,
+            // group: isAnyDegree ? r.group || "" : "",
 
-    group: isAnyDegree ? (r.group || "") : "",
+            specialization: isAnyDegree
+              ? []
+              : (r.specialization || []).filter((id) =>
+                  validSpecs.some((s) => String(s.id) === String(id))
+                ),
 
-    duration: r.duration,
-    percentage: r.percentage,
-  };
-});
-      
+            group: isAnyDegree ? r.group || "" : "",
+
+            duration: r.duration,
+            percentage: r.percentage,
+          };
+        })
+    );
   };
   const buildCertifications = (group) => {
-    const hasValid = (group.certifications || []).some((c) => c.certificationId);
+    const hasValid = (group.certifications || []).some(
+      (c) => c.certificationId
+    );
 
     if (!hasValid) return [createCertRow()];
 
@@ -497,7 +548,7 @@ const degreeText = groups
   };
   const buildFinalText = () => {
     return [
-      degreeText ? `Education Requirements: ${degreeText}` : "",
+      finalDegreeText ? `Education Requirements: ${finalDegreeText}` : "",
       certText ? `Certifications: ${certText}` : "",
     ]
       .filter(Boolean)
@@ -514,15 +565,6 @@ const degreeText = groups
       text: buildFinalText(),
     };
   };
-
-
-
-
-
-
-
-
-
 
   const isValidPercentage = (value) => {
     if (typeof value !== "string" || value.length > 6) return false; // DoS protection
@@ -586,11 +628,20 @@ const degreeText = groups
                           : 0),
                       0
                     ) + rIdx;
+                const degree = qualifications.find(
+                  (q) => String(q.id) === String(row.educationQualificationsId)
+                );
+
+                const degreeName = degree?.name?.trim().toLowerCase();
+
+                const isAnyDegree =
+                  degreeName === "any graduation" ||
+                  degreeName === "any post-graduation";
 
                 return (
                   <Row key={rIdx} className="mb-3 align-items-center">
                     {/* ✅ Education Type */}
-                    <Col md={2}>
+                    {/* <Col md={2}>
                       <Select
                         classNamePrefix="react-select"
                         value={
@@ -628,6 +679,27 @@ const degreeText = groups
                             t(errors.rows[flatIndex].educationTypeId)}
                         </ErrorMessage>
                       </div>
+                    </Col> */}
+                    <Col md={2} className="d-flex align-items-center checkfull">
+                      <Form.Check
+                        type="switch"
+                        className="f14"
+                        id={`full-time-${gIdx}-${rIdx}`}
+                        label="Full Time Only"
+                        checked={!!row.educationTypeId}
+                        onChange={(e) => {
+                          const fullTime = educationTypes.find(
+                            (x) => x.label?.toLowerCase() === "full time"
+                          );
+
+                          updateRow(
+                            gIdx,
+                            rIdx,
+                            "educationTypeId",
+                            e.target.checked ? fullTime?.id || "" : ""
+                          );
+                        }}
+                      />
                     </Col>
 
                     {/* ✅ Qualification */}
@@ -679,105 +751,139 @@ const degreeText = groups
                       </div>
                     </Col>
 
+                    {/* ✅ Specialization */}
+                    <Col md={3}>
+                      <Select
+                        classNamePrefix="react-select"
+                        isMulti={!isAnyDegree}
+                        key={row.educationQualificationsId}
+                        value={(() => {
+                          const degree = qualifications.find(
+                            (q) =>
+                              String(q.id) ===
+                              String(row.educationQualificationsId)
+                          );
 
-                      {/* ✅ Specialization */}
-                      <Col md={3}>
-                        <Select
-                          classNamePrefix="react-select"
-                          key={row.educationQualificationsId}
-                     value={(() => {
-  const degree = qualifications.find(
-    (q) => String(q.id) === String(row.educationQualificationsId)
-  );
+                          const degreeName = degree?.name?.trim().toLowerCase();
 
-  const degreeName = degree?.name?.trim().toLowerCase();
+                          const isAnyDegree =
+                            degreeName === "any graduation" ||
+                            degreeName === "any post-graduation";
 
-  const isAnyDegree =
-    degreeName === "any graduation" ||
-    degreeName === "any post-graduation";
+                          if (isAnyDegree) {
+                            return (
+                              [
+                                {
+                                  value: "",
+                                  label: t("addPosition:select_group"),
+                                },
+                                ...getSpecializationsForDegree(
+                                  row.educationQualificationsId
+                                ).map((s) => ({
+                                  value: s.id,
+                                  label: s.label,
+                                })),
+                              ].find(
+                                (opt) => String(opt.value) === String(row.group)
+                              ) || null
+                            );
+                          }
 
-  const selectedValue = isAnyDegree
-    ? row.group
-    : row.specializationId;
+                          return getSpecializationsForDegree(
+                            row.educationQualificationsId
+                          )
+                            .filter((s) =>
+                              (row.specialization || []).includes(String(s.id))
+                            )
+                            .map((s) => ({
+                              value: s.id,
+                              label: s.label,
+                            }));
+                        })()}
+                        // onChange={(selected) =>
+                        //   updateRow(gIdx, rIdx, "specializationId", selected?.value ?? "")
+                        // }
+                        onChange={(selected) => {
+                          const degree = qualifications.find(
+                            (q) =>
+                              String(q.id) ===
+                              String(row.educationQualificationsId)
+                          );
 
-  return (
-    [
-    {
-  value: "",
-  label: isAnyDegree
-    ? t("addPosition:select_group")
-    : t("addPosition:select_specialization"),
-},
-      ...getSpecializationsForDegree(row.educationQualificationsId).map((s) => ({
-        value: s.id,
-        label: s.label,
-      })),
-    ].find((opt) => String(opt.value) === String(selectedValue)) || null
-  );
-})()}
-                          // onChange={(selected) =>
-                          //   updateRow(gIdx, rIdx, "specializationId", selected?.value ?? "")
-                          // }
-                          onChange={(selected) => {
-  const degree = qualifications.find(
-    (q) => String(q.id) === String(row.educationQualificationsId)
-  );
+                          const degreeName = degree?.name?.trim().toLowerCase();
 
-  const degreeName = degree?.name?.trim().toLowerCase();
+                          const isAnyDegree =
+                            degreeName === "any graduation" ||
+                            degreeName === "any post-graduation";
 
-  const isAnyDegree =
-    degreeName === "any graduation" ||
-    degreeName === "any post-graduation";
+                          if (isAnyDegree) {
+                            updateRow(
+                              gIdx,
+                              rIdx,
+                              "group",
+                              selected?.value ?? ""
+                            );
 
-  if (isAnyDegree) {
-    updateRow(gIdx, rIdx, "group", selected?.value ?? "");
-    updateRow(gIdx, rIdx, "specializationId", "");
-  } else {
-    updateRow(gIdx, rIdx, "specializationId", selected?.value ?? "");
-    updateRow(gIdx, rIdx, "group", "");
-  }
-}}
-                     options={[
-  {
-    value: "",
-    label:
-      (() => {
-        const degree = qualifications.find(
-          (q) => String(q.id) === String(row.educationQualificationsId)
-        );
+                            updateRow(gIdx, rIdx, "specialization", []);
+                          } else {
+                            updateRow(
+                              gIdx,
+                              rIdx,
+                              "specialization",
+                              selected
+                                ? selected.map((item) => String(item.value))
+                                : []
+                            );
 
-        const degreeName = degree?.name?.trim().toLowerCase();
+                            updateRow(gIdx, rIdx, "group", "");
+                          }
+                        }}
+                        options={[
+                          {
+                            value: "",
+                            label: (() => {
+                              const degree = qualifications.find(
+                                (q) =>
+                                  String(q.id) ===
+                                  String(row.educationQualificationsId)
+                              );
 
-        return degreeName === "any graduation" ||
-          degreeName === "any post-graduation"
-          ? t("addPosition:select_group")
-          : t("addPosition:select_specialization");
-      })(),
-  },
-  ...getSpecializationsForDegree(row.educationQualificationsId).map((s) => ({
-    value: s.id,
-    label: s.label,
-  })),
-]}
-                        placeholder={
-  (() => {
-    const degree = qualifications.find(
-      (q) => String(q.id) === String(row.educationQualificationsId)
-    );
+                              const degreeName = degree?.name
+                                ?.trim()
+                                .toLowerCase();
 
-    const degreeName = degree?.name?.trim().toLowerCase();
+                              return degreeName === "any graduation" ||
+                                degreeName === "any post-graduation"
+                                ? t("addPosition:select_group")
+                                : t("addPosition:select_specialization");
+                            })(),
+                          },
+                          ...getSpecializationsForDegree(
+                            row.educationQualificationsId
+                          ).map((s) => ({
+                            value: s.id,
+                            label: s.label,
+                          })),
+                        ]}
+                        placeholder={(() => {
+                          const degree = qualifications.find(
+                            (q) =>
+                              String(q.id) ===
+                              String(row.educationQualificationsId)
+                          );
 
-    return degreeName === "any graduation" ||
-      degreeName === "any post-graduation"
-      ? t("addPosition:select_group")
-      : t("addPosition:select_specialization");
-  })()
-}
-       />
+                          const degreeName = degree?.name?.trim().toLowerCase();
+
+                          return degreeName === "any graduation" ||
+                            degreeName === "any post-graduation"
+                            ? t("addPosition:select_group")
+                            : t("addPosition:select_specialization");
+                        })()}
+                      />
                       <div className="error-space">
                         <ErrorMessage>
-                          {errors.rows?.[flatIndex]?.specializationId &&
-                            t(errors.rows[flatIndex].specializationId)}
+                          {errors.rows?.[flatIndex]?.specialization &&
+                            t(errors.rows[flatIndex].specialization)}
                         </ErrorMessage>
                       </div>
                     </Col>
@@ -883,11 +989,20 @@ const degreeText = groups
           {" "}
           {t("addPosition:add_group")}
         </Button>
+
         {errors.rows?._error && (
           <div className="mt-2">
             <ErrorMessage>{t(errors.rows._error)}</ErrorMessage>
           </div>
         )}
+        <Form.Check
+          type="checkbox"
+          id="equivalentQualification"
+          className="mt-2"
+          label="Equivalent Qualification"
+          checked={equivalentQualification}
+          onChange={(e) => setEquivalentQualification(e.target.checked)}
+        />
 
         {/* <Button variant="none" onClick={addRow} className="edu-btn">
                     {t("addPosition:add_degree")}
@@ -1052,7 +1167,8 @@ const degreeText = groups
             }
             const filledRows = groups
               .flatMap((g) => g.educations)
-              .filter((r) => r.educationTypeId && r.educationQualificationsId);
+              // .filter((r) => r.educationTypeId && r.educationQualificationsId);
+              .filter((r) => r.educationQualificationsId);
 
             // 🚨 Only enforce required rule in mandatory mode
             if (mode === "mandatory" && filledRows.length === 0) {
@@ -1065,49 +1181,56 @@ const degreeText = groups
             setErrors({});
 
             const cleanText = [
-              degreeText ? `Education Requirements: ${degreeText}` : "",
+              finalDegreeText
+                ? `Education Requirements: ${finalDegreeText}`
+                : "",
               certText ? `Certifications: ${certText}` : "",
             ]
               .filter(Boolean)
               .join("\n");
 
-            const payload = {
-              groups: groups.map((group) => ({
-                educations: group.educations.some(
-                  (r) => r.educationTypeId || r.educationQualificationsId
-                )
-                  ? group.educations
-                      .filter(
-                        (r) => r.educationTypeId && r.educationQualificationsId
-                      )
-                      .map((r) => {
-                         const validSpecs = getSpecializationsForDegree(r.educationQualificationsId);
-                        const isValidSpec = validSpecs.some((s) => s.id === r.specializationId);
-const degree = qualifications.find(
-  (q) => String(q.id) === String(r.educationQualificationsId)
-);
+            const educationGroups = groups.map((group) => ({
+              educations: group.educations.some(
+                (r) => r.educationTypeId || r.educationQualificationsId
+              )
+                ? group.educations
+                    .filter((r) => r.educationQualificationsId)
+                    .map((r) => {
+                      const validSpecs = getSpecializationsForDegree(
+                        r.educationQualificationsId
+                      );
 
-const degreeName = degree?.name?.trim().toLowerCase();
+                      const validSpecialization = (
+                        r.specialization || []
+                      ).filter((id) =>
+                        validSpecs.some((s) => String(s.id) === String(id))
+                      );
 
-const isAnyDegree =
-  degreeName === "any graduation" ||
-  degreeName === "any post-graduation";
+                      const degree = qualifications.find(
+                        (q) =>
+                          String(q.id) === String(r.educationQualificationsId)
+                      );
+
+                      const degreeName = degree?.name?.trim().toLowerCase();
+
+                      const isAnyDegree =
+                        degreeName === "any graduation" ||
+                        degreeName === "any post-graduation";
+
                       return {
-  educationTypeId: r.educationTypeId,
-  educationQualificationsId: r.educationQualificationsId,
+                        educationTypeId: r.educationTypeId,
+                        educationQualificationsId: r.educationQualificationsId,
+                        specialization: isAnyDegree ? [] : validSpecialization,
+                        group: isAnyDegree ? r.group || "" : "",
+                        duration: r.duration,
+                        percentage: r.percentage,
+                      };
+                    })
+                : [createRow()],
+            }));
 
-  specializationId: isAnyDegree
-    ? ""
-    : (isValidSpec ? r.specializationId : null),
-
-  group: isAnyDegree ? (r.group || "") : "",
-
-  duration: r.duration,
-  percentage: r.percentage,
-};
-                      })
-                  : [createRow()], // 👈 THIS LINE FIXES YOUR ISSUE
-              })),
+            const payload = {
+              groups: educationGroups,
               certGroups: certGroups.map((certGroup) => ({
                 certifications: (certGroup.certifications || []).some(
                   (cr) => cr.certificationId
@@ -1121,9 +1244,13 @@ const isAnyDegree =
               })),
 
               text: cleanText,
+              equivalentQualification,
             };
-
-            onSave(payload);
+            console.log("Education Payload", JSON.stringify(payload, null, 2));
+            onSave({
+              ...payload,
+              equivalentQualification,
+            });
             onHide();
           }}
         >

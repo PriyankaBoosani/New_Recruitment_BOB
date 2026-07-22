@@ -26,14 +26,30 @@ export const mapAddPositionToCreateDto = ({
   /* ================= SAFE NORMALIZATION ================= */
 
   const buildEduRulesJson = (edu, mode) => {
+    const hasEquivalentQualification =
+      Boolean(edu?.equivalentQualification) ||
+      (edu?.groups || []).some((group) =>
+        (group?.educations || []).some((item) =>
+          Boolean(item?.equivalentQualification)
+        )
+      );
+
     if (!edu) {
       return mode === "mandatory"
         ? {
-            mandatoryEducations: { operator: "OR", groups: [] },
+            mandatoryEducations: {
+              operator: "OR",
+              equivalentQualification: false,
+              groups: [],
+            },
             mandatoryCertifications: { operator: "OR", groups: [] },
           }
         : {
-            preferredEducations: { operator: "OR", groups: [] },
+            preferredEducations: {
+              operator: "OR",
+              equivalentQualification: false,
+              groups: [],
+            },
             preferredCertifications: { operator: "OR", groups: [] },
           };
     }
@@ -46,11 +62,19 @@ export const mapAddPositionToCreateDto = ({
 
         if (group.educations && Array.isArray(group.educations)) {
           group.educations.forEach((edu) => {
-            if (edu.educationTypeId && edu.educationQualificationsId) {
+            // Equivalent Qualification
+            if (edu.equivalentQualification) {
+              conditions.push({
+                equivalentQualification: true,
+              });
+              return;
+            }
+
+            if (edu.educationQualificationsId) {
               conditions.push({
                 educationType: edu.educationTypeId,
                 qualification: edu.educationQualificationsId,
-                specialization: edu.group ? "" : edu.specializationId || "",
+                specialization: edu.group ? [] : edu.specialization || [],
                 group: edu.group || "",
                 duration: edu.duration || "",
                 percentage: edu.percentage || "",
@@ -98,6 +122,7 @@ export const mapAddPositionToCreateDto = ({
       ? {
           mandatoryEducations: {
             operator: "OR",
+            equivalentQualification: hasEquivalentQualification,
             groups: educationGroups,
           },
           mandatoryCertifications: {
@@ -108,6 +133,7 @@ export const mapAddPositionToCreateDto = ({
       : {
           preferredEducations: {
             operator: "OR",
+            equivalentQualification: hasEquivalentQualification,
             groups: educationGroups,
           },
           preferredCertifications: {
@@ -232,7 +258,7 @@ export const mapAddPositionToCreateDto = ({
             reservationCategories,
             disabilityCategories,
             isProficientInLocalLanguage,
-            nationalExServicemen
+            nationalExServicemen,
           })
         )
       : [],
@@ -283,21 +309,21 @@ const mapStateDistribution = ({
   });
 
   Object.entries(currentState.exServicemen || {}).forEach(
-  ([groupId, value]) => {
-    const count = Number(value || 0);
+    ([groupId, value]) => {
+      const count = Number(value || 0);
 
-    if (count > 0) {
-      distributions.push({
-        reservationCategoryId: null,
-        disabilityCategoryId: null,
-        vacancyCount: count,
-        isDisability: false,
-        exServicemanGroupId: groupId,
-        isExServiceman: true,
-      });
+      if (count > 0) {
+        distributions.push({
+          reservationCategoryId: null,
+          disabilityCategoryId: null,
+          vacancyCount: count,
+          isDisability: false,
+          exServicemanGroupId: groupId,
+          isExServiceman: true,
+        });
+      }
     }
-  }
-);
+  );
   return {
     stateId: currentState.state,
     cityId: currentState.city,

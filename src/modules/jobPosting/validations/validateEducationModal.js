@@ -13,17 +13,23 @@ export const validateEducationModal = ({ groups, mode }) => {
 
       const hasType = !!row.educationTypeId;
       const hasDegree = !!row.educationQualificationsId;
-      const isPartiallyFilled = hasType || hasDegree;
+      // const isPartiallyFilled = hasType || hasDegree;
+      const isPartiallyFilled = hasDegree;
 
       // ✅ Create education key
+      // const educationKey = [
+      //   row.educationTypeId,
+      //   row.educationQualificationsId,
+      //   row.specializationId || "",
+      // ].join("_");
       const educationKey = [
-        row.educationTypeId,
+        row.educationTypeId || "",
         row.educationQualificationsId,
-        row.specializationId || "",
+        ...(row.specialization || []),
       ].join("_");
 
       // ✅ Duplicate inside SAME GROUP
-      if (hasType && hasDegree) {
+      if (hasType) {
         if (seenEducations.has(educationKey)) {
           rowErrors.educationQualificationsId =
             "validation:duplicate_education";
@@ -51,22 +57,32 @@ export const validateEducationModal = ({ groups, mode }) => {
       }
 
       // ✅ Mandatory Mode Validation
-      if (mode === "mandatory") {
-        if (!hasType) {
-          rowErrors.educationTypeId = "validation:required";
-        }
+      // if (mode === "mandatory") {
+      //   if (!hasType) {
+      //     rowErrors.educationTypeId = "validation:required";
+      //   }
 
+      //   if (!hasDegree) {
+      //     rowErrors.educationQualificationsId = "validation:required";
+      //   }
+      // }
+      if (mode === "mandatory") {
         if (!hasDegree) {
           rowErrors.educationQualificationsId = "validation:required";
         }
       }
-
       // ✅ Preferred Mode Validation
-      if (mode === "preferred" && isPartiallyFilled) {
-        if (!hasType) {
-          rowErrors.educationTypeId = "validation:required";
-        }
+      // if (mode === "preferred" && isPartiallyFilled) {
+      //   if (!hasType) {
+      //     rowErrors.educationTypeId = "validation:required";
+      //   }
 
+      //   if (!hasDegree) {
+      //     rowErrors.educationQualificationsId = "validation:required";
+      //   }
+      // }
+
+      if (mode === "preferred" && isPartiallyFilled) {
         if (!hasDegree) {
           rowErrors.educationQualificationsId = "validation:required";
         }

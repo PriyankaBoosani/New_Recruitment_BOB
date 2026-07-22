@@ -261,3 +261,13 @@
 .tglswt input {
   width: 40px !important;
 }
+.checkfull{
+  margin-top: -11px !important;
+}
+.checkfull input{
+	padding: 0px !important;
+}
+.checkfull label {
+  font-size: 0.875rem !important;
+  font-weight: 400 !important;
+}

@@ -87,14 +87,30 @@ const buildCategoryDistributionsForUpdate = (
 };
 
 const buildEduRulesJson = (edu, mode) => {
+  const hasEquivalentQualification =
+    Boolean(edu?.equivalentQualification) ||
+    (edu?.groups || []).some((group) =>
+      (group?.educations || []).some((item) =>
+        Boolean(item?.equivalentQualification)
+      )
+    );
+
   if (!edu) {
     return mode === "mandatory"
       ? {
-          mandatoryEducations: { operator: "OR", groups: [] },
+          mandatoryEducations: {
+            operator: "OR",
+            equivalentQualification: false,
+            groups: [],
+          },
           mandatoryCertifications: { operator: "OR", groups: [] },
         }
       : {
-          preferredEducations: { operator: "OR", groups: [] },
+          preferredEducations: {
+            operator: "OR",
+            equivalentQualification: false,
+            groups: [],
+          },
           preferredCertifications: { operator: "OR", groups: [] },
         };
   }
@@ -107,11 +123,18 @@ const buildEduRulesJson = (edu, mode) => {
 
       if (group.educations && Array.isArray(group.educations)) {
         group.educations.forEach((edu) => {
-          if (edu.educationTypeId && edu.educationQualificationsId) {
+          if (edu.equivalentQualification) {
+            conditions.push({
+              equivalentQualification: true,
+            });
+            return;
+          }
+
+          if (edu.educationQualificationsId) {
             conditions.push({
               educationType: edu.educationTypeId,
               qualification: edu.educationQualificationsId,
-              specialization: edu.group ? "" : edu.specializationId || "",
+              specialization: edu.group ? [] : edu.specialization || [],
               group: edu.group || "",
               duration: edu.duration || "",
               percentage: edu.percentage || "",
@@ -156,6 +179,7 @@ const buildEduRulesJson = (edu, mode) => {
     ? {
         mandatoryEducations: {
           operator: "OR",
+          equivalentQualification: hasEquivalentQualification,
           groups: educationGroups,
         },
         mandatoryCertifications: {
@@ -166,6 +190,7 @@ const buildEduRulesJson = (edu, mode) => {
     : {
         preferredEducations: {
           operator: "OR",
+          equivalentQualification: hasEquivalentQualification,
           groups: educationGroups,
         },
         preferredCertifications: {
@@ -290,7 +315,7 @@ export const mapAddPositionToUpdateDto = ({
     positionCategoryNationalDistributions: [],
     positionStateDistributions: [],
     jobPositionExclusion,
-    nationalExServicemen
+    nationalExServicemen,
   };
 
   // NATIONAL

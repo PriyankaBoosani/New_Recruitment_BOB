@@ -45,7 +45,6 @@ const AddPosition = () => {
   const isInEditMode = location.state?.isInEditMode === false;
   const [exclusions, setExclusions] = useState([]);
 
-  console.log("Exclusions@@@@@@@@@@@@@@@@@@:", exclusions);
   const [selectedExclusions, setSelectedExclusions] = useState([]);
 
   const isViewMode = !!positionId && mode === "view";
@@ -378,7 +377,9 @@ const AddPosition = () => {
       specializations,
       certifications
     );
+    console.log("Mapped Mandatory:", JSON.stringify(mandatory, null, 2));
 
+    console.log("Mapped Preferred:", JSON.stringify(preferred, null, 2));
     setEducationData({
       mandatory: {
         ...mandatory,
@@ -1079,6 +1080,10 @@ const AddPosition = () => {
               onPositionSelect={onPositionSelect}
               educationData={educationData}
               onEducationClick={(m) => {
+                 console.log(
+    "Opening Modal Data:",
+    JSON.stringify(educationData[m], null, 2)
+  );
                 if (isViewMode) return;
 
                 setEduMode(m);
@@ -1184,16 +1189,16 @@ const AddPosition = () => {
         specializations={specializations}
         certifications={certifications}
         onHide={() => setShowEduModal(false)}
-        onSave={({ groups, certGroups, text }) => {
+        onSave={({ groups, certGroups, text, equivalentQualification }) => {
           setEducationData((prev) => ({
             ...prev,
-            [eduMode]: { groups, certGroups, text },
+            [eduMode]: {
+              groups,
+              certGroups,
+              text,
+              equivalentQualification,
+            },
           }));
-          setErrors((prev) => {
-            const upd = { ...prev };
-            delete upd[`${eduMode}Education`];
-            return upd;
-          });
         }}
       />
       <ConfirmUsePositionModal

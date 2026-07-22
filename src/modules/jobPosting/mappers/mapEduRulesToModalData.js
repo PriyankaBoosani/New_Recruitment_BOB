@@ -30,13 +30,15 @@ export function mapEduRulesToModalData(
     }
 
     // Each group represents an OR condition, so pass groups directly
-    return groups.map((group) => ({
+   return groups.map((group) => ({
       educations: (group.conditions || []).map((condition) => ({
         educationTypeId: condition.educationType || "",
         educationQualificationsId: condition.qualification || "",
-        specializationId: condition.specialization || "",
+        specialization:
+          condition.specialization ||
+          (condition.specialization ? [condition.specialization] : []),
         duration: condition.duration || "",
- group: condition.group || "", 
+        group: condition.group || "",
         percentage: condition.percentage || "",
       })),
     }));
@@ -55,12 +57,19 @@ export function mapEduRulesToModalData(
       })),
     }));
   };
-
+  console.log(
+  "mandatoryEduRulesJson:",
+  JSON.stringify(eduRulesJson, null, 2)
+);
   // Mandatory
   if (
     eduRulesJson.mandatoryEducations &&
     eduRulesJson.mandatoryEducations.groups
   ) {
+  
+   const hasEquivalentQualification =
+  !!eduRulesJson.mandatoryEducations.equivalentQualification;
+
     const result = {
       groups: createGroupsFromEducations(
         eduRulesJson.mandatoryEducations.groups
@@ -68,6 +77,7 @@ export function mapEduRulesToModalData(
       certGroups: createCertGroupsFromIds(
         eduRulesJson.mandatoryCertifications?.groups || []
       ),
+      equivalentQualification: hasEquivalentQualification,
     };
 
     return result;
@@ -78,6 +88,9 @@ export function mapEduRulesToModalData(
     eduRulesJson.preferredEducations &&
     eduRulesJson.preferredEducations.groups
   ) {
+   const hasEquivalentQualification =
+  !!eduRulesJson.preferredEducations.equivalentQualification;
+
     const result = {
       groups: createGroupsFromEducations(
         eduRulesJson.preferredEducations.groups
@@ -85,11 +98,17 @@ export function mapEduRulesToModalData(
       certGroups: createCertGroupsFromIds(
         eduRulesJson.preferredCertificationIds?.groups || []
       ),
+      equivalentQualification: hasEquivalentQualification,
     };
 
     return result;
   }
 
-  const result = { groups: [], certGroups: [] };
+  const result = {
+    groups: [],
+    certGroups: [],
+    equivalentQualification: false,
+  };
+
   return result;
 }
