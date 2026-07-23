@@ -271,3 +271,10 @@
   font-size: 0.875rem !important;
   font-weight: 400 !important;
 }
+.eqiva label {
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+}
+.eqiva input{
+  padding: 7px !important;
+}

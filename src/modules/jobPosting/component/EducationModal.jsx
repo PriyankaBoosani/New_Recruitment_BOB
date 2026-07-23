@@ -998,7 +998,7 @@ export default function EducationModal({
         <Form.Check
           type="checkbox"
           id="equivalentQualification"
-          className="mt-2"
+          className="mt-3 eqiva"
           label="Equivalent Qualification"
           checked={equivalentQualification}
           onChange={(e) => setEquivalentQualification(e.target.checked)}
