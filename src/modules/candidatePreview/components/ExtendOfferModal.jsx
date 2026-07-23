@@ -50,45 +50,45 @@ export default function ExtendOfferModal({
   const extendValidation = useMemo(() => {
     if (!isSingleMode) return { canProceed: true, reason: "" };
 
-    if (status === "OFFER_SENT") {
-      if (!isAcceptBeforeExpired) {
-        return {
-          canProceed: false,
-          reason:
-            t("candidateWorkflow:accept_before_date_not_expired") ||
-            "Cannot extend: Accept Before Date has not expired yet.",
-        };
-      }
-      if (isJoiningDateExpired) {
-        return {
-          canProceed: false,
-          reason:
-            t("candidateWorkflow:joining_date_already_passed") ||
-            "Cannot extend: Joining Date has already passed.",
-        };
-      }
-      return { canProceed: true, reason: "" };
-    }
+    // if (status === "OFFER_SENT") {
+    //   if (!isAcceptBeforeExpired) {
+    //     return {
+    //       canProceed: false,
+    //       reason:
+    //         t("candidateWorkflow:accept_before_date_not_expired") ||
+    //         "Cannot extend: Accept Before Date has not expired yet.",
+    //     };
+    //   }
+    //   if (isJoiningDateExpired) {
+    //     return {
+    //       canProceed: false,
+    //       reason:
+    //         t("candidateWorkflow:joining_date_already_passed") ||
+    //         "Cannot extend: Joining Date has already passed.",
+    //     };
+    //   }
+    //   return { canProceed: true, reason: "" };
+    // }
 
-    if (status === "OFFER_EXTENDED") {
-      if (!isExtendedDateExpired) {
-        return {
-          canProceed: false,
-          reason:
-            t("candidateWorkflow:extended_date_not_expired") ||
-            "Cannot extend: Extended Offer Date has not expired yet.",
-        };
-      }
-      if (isJoiningDateExpired) {
-        return {
-          canProceed: false,
-          reason:
-            t("candidateWorkflow:joining_date_already_passed") ||
-            "Cannot extend: Joining Date has already passed.",
-        };
-      }
-      return { canProceed: true, reason: "" };
-    }
+    // if (status === "OFFER_EXTENDED") {
+    //   if (!isExtendedDateExpired) {
+    //     return {
+    //       canProceed: false,
+    //       reason:
+    //         t("candidateWorkflow:extended_date_not_expired") ||
+    //         "Cannot extend: Extended Offer Date has not expired yet.",
+    //     };
+    //   }
+    //   if (isJoiningDateExpired) {
+    //     return {
+    //       canProceed: false,
+    //       reason:
+    //         t("candidateWorkflow:joining_date_already_passed") ||
+    //         "Cannot extend: Joining Date has already passed.",
+    //     };
+    //   }
+    //   return { canProceed: true, reason: "" };
+    // }
 
     return {
       canProceed: false,

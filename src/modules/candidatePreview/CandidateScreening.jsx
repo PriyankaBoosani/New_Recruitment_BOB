@@ -2230,13 +2230,13 @@ const selectedOfferObjects = useMemo(() => {
       return;
     }
 
-    if (!isAllDatesValidForExtension) {
-      toast.error(
-        t("candidateWorkflow:accept_before_date_not_expired") ||
-          "Cannot extend: Acceptance date has not expired yet or Joining Date has passed for selected candidates."
-      );
-      return;
-    }
+    // if (!isAllDatesValidForExtension) {
+    //   toast.error(
+    //     t("candidateWorkflow:accept_before_date_not_expired") ||
+    //       "Cannot extend: Acceptance date has not expired yet or Joining Date has passed for selected candidates."
+    //   );
+    //   return;
+    // }
 
     setShowExtendModal(true);
   };
