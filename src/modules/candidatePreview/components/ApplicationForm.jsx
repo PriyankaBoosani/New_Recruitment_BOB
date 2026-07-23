@@ -65,7 +65,7 @@ const ApplicationForm = ({
   dynamicFormData,
   dynamicFields,
 }) => {
-   console.log("test55 1", dynamicFormData, dynamicFields);
+  console.log("test55 1", dynamicFormData, dynamicFields);
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
@@ -76,7 +76,7 @@ const ApplicationForm = ({
     "3",
     "4",
   ]);
-   const [exServicemen, setExServicemen] = useState([]);
+  const [exServicemen, setExServicemen] = useState([]);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [isEligible, setIsEligible] = useState(false);
   const [otherDocuments, setOtherDocuments] = useState([]);
@@ -95,7 +95,11 @@ const ApplicationForm = ({
   const [lptType, setLptType] = useState("");
 
   const isFirstLoad = useRef(true);
+  const hasOtherRelatedFields =
+    previewData?.additionalDetails?.hasOtherRelatedFields;
 
+  const hasEquivalentQualification =
+    previewData?.additionalDetails?.hasEquivalentQualification;
   useEffect(() => {
     if (!isZonalHr) return;
 
@@ -149,18 +153,18 @@ const ApplicationForm = ({
     }
   }, [candidate]);
   useEffect(() => {
-  const fetchMasterData = async () => {
-    try {
-      const exServiceRes = await masterApiService.getExServiceCategories();
-      console.log("exServiceRes", exServiceRes.data);
-      setExServicemen(exServiceRes.data || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    const fetchMasterData = async () => {
+      try {
+        const exServiceRes = await masterApiService.getExServiceCategories();
+        console.log("exServiceRes", exServiceRes.data);
+        setExServicemen(exServiceRes.data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-  fetchMasterData();
-}, []);
+    fetchMasterData();
+  }, []);
 
   const [screeningForm, setScreeningForm] = useState({
     applicationId,
@@ -434,7 +438,6 @@ const ApplicationForm = ({
     }
   };
   const data = previewData || {
-    
     personalDetails: {},
     experienceSummary: {},
     documents: {},
@@ -443,12 +446,11 @@ const ApplicationForm = ({
   };
 
   console.log("previewData", previewData);
-console.log("personalDetails", previewData?.personalDetails);
-console.log(
-  "Application No in ApplicationForm:",
-  previewData?.personalDetails?.applicationNo
-);
-
+  console.log("personalDetails", previewData?.personalDetails);
+  console.log(
+    "Application No in ApplicationForm:",
+    previewData?.personalDetails?.applicationNo
+  );
 
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
@@ -580,9 +582,9 @@ console.log(
   const exServiceName =
     exServicemen.find(
       (item) =>
-        item.exServicemanCategoryId === previewData?.personalDetails?.exService,
+        item.exServicemanCategoryId === previewData?.personalDetails?.exService
     )?.exsCategoryName || "Not Applicable";
-    console.log("exServiceName", exServiceName);
+  console.log("exServiceName", exServiceName);
 
   const refreshDocStatuses = async () => {
     try {
@@ -1599,17 +1601,17 @@ console.log(
                     </td>
                   </tr>
 
-            <tr>
-              <td className="fw-med">{t("registration_no")}</td>
-              <td className="fw-medd" colSpan={2}>
-                {data.personalDetails.registrationNo || "-"}
-              </td>
+                  <tr>
+                    <td className="fw-med">{t("registration_no")}</td>
+                    <td className="fw-medd" colSpan={2}>
+                      {data.personalDetails.registrationNo || "-"}
+                    </td>
 
-              <td className="fw-med">{t("application_no")}</td>
-              <td className="fw-medd" colSpan={2}>
-                {data.personalDetails.applicationNo || "-"}
-              </td>
-            </tr>
+                    <td className="fw-med">{t("application_no")}</td>
+                    <td className="fw-medd" colSpan={2}>
+                      {data.personalDetails.applicationNo || "-"}
+                    </td>
+                  </tr>
 
                   <tr>
                     <td className="fw-med">{t("gender")}</td>
@@ -1782,6 +1784,16 @@ console.log(
                       {data.personalDetails.disciplinaryAction || "No"}
                     </td>
                   </tr>
+                  {(hasOtherRelatedFields || hasEquivalentQualification) && (
+                    <tr>
+                      <td className="fw-med">Eligibility Criteria Met Through</td>
+                      <td className="fw-reg" colSpan={5}>
+                        {hasOtherRelatedFields
+                          ? "Other Related Fields"
+                          : "Equivalent Qualification"}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

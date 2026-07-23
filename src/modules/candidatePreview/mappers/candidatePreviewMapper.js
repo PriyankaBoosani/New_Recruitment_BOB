@@ -35,8 +35,7 @@ const getInterviewCentreName = (masters, id) =>
 ================================ */
 
 export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
-
-    console.log("========== API DATA ==========");
+  console.log("========== API DATA ==========");
   console.log(apiData);
   console.log("applicationNo:", apiData?.applicationNo);
   const profile = apiData?.basicDetails?.candidateProfile || {};
@@ -104,7 +103,9 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
   ]
     .filter(Boolean)
     .join(", ");
-
+  const candidateApplication = apiData?.candidateApplications || {};
+  const applicationAdditionalDetails =
+    candidateApplication?.additionalDetails || {};
   const educations = apiData?.educationDetails || [];
   const experiences = apiData?.experienceDetails || [];
   const documents = apiData?.documentDetails || [];
@@ -178,8 +179,8 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
       mobile: profile.contactNo || "-",
       email: profile.email || "-",
       motherName: profile.motherName || "-",
-       registrationNo: profile?.registrationNo || "-",
-applicationNo: apiData?.applicationNo || "-",
+      registrationNo: profile?.registrationNo || "-",
+      applicationNo: apiData?.applicationNo || "-",
       fatherName: profile.fatherName || "-",
       spouseName: profile.spouseName || "-",
       dob: formatDateDDMMYYYY(profile.dateOfBirth) || "-",
@@ -280,6 +281,12 @@ applicationNo: apiData?.applicationNo || "-",
     },
     additionalDetails: {
       dynamicFormData: locationprefApiData?.dynamicFormData || {},
+
+      hasOtherRelatedFields:
+        applicationAdditionalDetails?.hasOtherRelatedFields || false,
+
+      hasEquivalentQualification:
+        applicationAdditionalDetails?.hasEquivalentQualification || false,
     },
     /* ================= DOCUMENTS ================= */
     documents: {
