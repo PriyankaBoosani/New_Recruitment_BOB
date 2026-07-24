@@ -135,7 +135,7 @@ export default function ExtendOfferModal({
     return { canProceed: true, reason: "" };
   }, [isSingleMode, status, isAcceptBeforeExpired, isExtendedDateExpired, t]);
 
-  const handleExtend = async () => {
+const handleExtend = async () => {
     if (!extendedDate) {
       setDateError(true);
       toast.error(
@@ -164,9 +164,11 @@ export default function ExtendOfferModal({
     try {
       setLoading(true);
 
+      // UPDATED PAYLOAD HERE
       const payload = selectedCandidates.map((c) => ({
         offerId: c.candidateOfferId || c.id,
         extensionDate: extendedDate,
+        extensionComments: remarks || "", // Added extensionComments field
       }));
 
       const res = await jobPositionApiService.extendOfferAcceptDate(payload);
@@ -335,42 +337,36 @@ export default function ExtendOfferModal({
         </Form.Group>
       </Modal.Body>
 
-      <Modal.Footer className="d-flex justify-content-between">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={onHide}
-          disabled={loading}
-        >
-          {t("common:cancel") || "Cancel"}
-        </Button>
+     <Modal.Footer className="d-flex justify-content-end">
+  {/* Both Reject and Extend buttons rendered side-by-side */}
+  <div className="d-flex gap-2 align-items-center">
+    <Button
+      variant="danger"
+      size="sm"
+      className="border-0 fw-bold rounded-3 px-3 py-2 d-flex align-items-center justify-content-center"
+      style={{ minWidth: "125px" }}
+      disabled={loading}
+      onClick={handleReject}
+    >
+      {loading
+        ? t("common:processing") || "Processing..."
+        : t("candidateWorkflow:reject_offer") || "Reject Offer"}
+    </Button>
 
-        {/* Both Reject and Extend buttons rendered side-by-side */}
-        <div className="d-flex gap-2">
-          <Button
-            variant="danger"
-            size="sm"
-            disabled={loading}
-            onClick={handleReject}
-          >
-            {loading
-              ? t("common:processing") || "Processing..."
-              : t("candidateWorkflow:reject_offer") || "Reject Offer"}
-          </Button>
-
-          <Button
-            variant="primary"
-            size="sm"
-            className="orange-bg border-0"
-            onClick={handleExtend}
-            disabled={loading}
-          >
-            {loading
-              ? t("common:processing") || "Processing..."
-              : t("candidateWorkflow:extend_date") || "Extend Date"}
-          </Button>
-        </div>
-      </Modal.Footer>
+    <Button
+      variant="primary"
+      size="sm"
+      className="orange-bg border-0 fw-bold rounded-3 px-3 py-2 d-flex align-items-center justify-content-center"
+      style={{ minWidth: "125px" }}
+      onClick={handleExtend}
+      disabled={loading}
+    >
+      {loading
+        ? t("common:processing") || "Processing..."
+        : t("candidateWorkflow:extend_date") || "Extend Date"}
+    </Button>
+  </div>
+</Modal.Footer>
     </Modal>
   );
 }

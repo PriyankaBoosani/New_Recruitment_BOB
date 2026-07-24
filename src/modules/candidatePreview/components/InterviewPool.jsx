@@ -53,24 +53,27 @@ export default function InterviewPool({
     allCandidatesForFilters?.length > 0 &&
     allCandidatesForFilters.every((c) => selectedIds.includes(String(c.id)));
 
-  const toggleSelectAll = () => {
+const toggleSelectAll = () => {
+    // 1. Always allow clearing selections if all are selected
+    if (allSelected) {
+      setSelectedIds([]);
+      toast.info("Selection cleared");
+      return;
+    }
+
+    // 2. Validate status filter only when attempting to select all
     if (!filters?.status?.length) {
       toast.error("Please select the status filter first");
       return;
     }
 
+    // 3. Perform select all
     const allIds = allCandidatesForFilters.map((c) => String(c.id));
-    if (allSelected) {
-      setSelectedIds([]);
+    setSelectedIds(allIds);
 
-      toast.info("Selection cleared");
-    } else {
-      setSelectedIds(allIds);
-
-      toast.success(
-        `${allIds.length} ${filters?.status?.[0]} candidates selected`
-      );
-    }
+    toast.success(
+      `${allIds.length} ${filters?.status?.[0]} candidates selected`
+    );
   };
 
   const toggleRow = (id) => {

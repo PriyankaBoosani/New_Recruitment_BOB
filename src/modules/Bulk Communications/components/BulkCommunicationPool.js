@@ -86,21 +86,25 @@ export default function BulkCommunicationPool({
   }, [allCandidatesForFilters]);
 
   const allSelected = allCandidatesForFilters?.length > 0 && allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
+const toggleSelectAll = () => {
+    // 1. If already selected, ALWAYS allow clearing selections
+    if (allSelected) {
+      setSelectedIds([]);
+      return;
+    }
 
-  const toggleSelectAll = () => {
+    // 2. Validate status filter ONLY when selecting all candidates
     if (!filters?.status?.length) {
       toast.error(t("please_select_status_filter"));
       return;
     }
+
+    // 3. Perform select all
     const allIds = allCandidatesForFilters.map((c) => c.id);
-    if (allSelected) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(allIds);
-     toast.success(
-  t("candidates_added_to_scope", { count: allIds.length })
-);
-    }
+    setSelectedIds(allIds);
+    toast.success(
+      t("candidates_added_to_scope", { count: allIds.length })
+    );
   };
 
   const toggleRow = (id) => {

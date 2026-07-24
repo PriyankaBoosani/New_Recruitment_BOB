@@ -61,7 +61,8 @@ const OfferPool = ({
   const OFFER_STATUS_LABEL_MAP = useMemo(() => ({
     OFFER_AWAITED: t("candidateWorkflow:offer_awaited") || "Offer Awaited",
     OFFER_SENT: t("candidateWorkflow:offer_sent") || "Offer Sent",
-    OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended",
+    // OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended",
+    OFFER_EXTENDED: t("candidateWorkflow:offer_extended") || "Offer Extended",
     OFFER_REJECTED: t("candidateWorkflow:offer_rejected") || "Offer Rejected",
     OFFER_CANCELLED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled",
     OFFER_CANCELED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", // 👈 Fixes single 'L' API variant
@@ -228,6 +229,17 @@ const allSelected =
   selectableCandidateIds.every((id) => selectedIds.includes(id));
 
 const toggleSelectAll = () => {
+    if (selectableCandidateIds.length === 0) {
+      return;
+    }
+
+    // 1. If everything is selected, ALWAYS allow clearing selections
+    if (allSelected) {
+      setSelectedIds([]);
+      return;
+    }
+
+    // 2. Require status filter ONLY when performing a fresh "Select All"
     if (!filters?.status?.length) {
       toast.error(
         t("candidateWorkflow:select_status_filter_first") ||
@@ -236,20 +248,13 @@ const toggleSelectAll = () => {
       return;
     }
 
-    if (selectableCandidateIds.length === 0) {
-      return;
-    }
-
-    if (allSelected) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(selectableCandidateIds);
-      toast.success(
-        `${selectableCandidateIds.length} ${formatStatus(
-          filters?.status?.[0]
-        )} candidate${selectableCandidateIds.length !== 1 ? "s" : ""} selected`
-      );
-    }
+    // 3. Select all eligible candidates
+    setSelectedIds(selectableCandidateIds);
+    toast.success(
+      `${selectableCandidateIds.length} ${formatStatus(
+        filters?.status?.[0]
+      )} candidate${selectableCandidateIds.length !== 1 ? "s" : ""} selected`
+    );
   };
 
   const toggleRow = (id) => {

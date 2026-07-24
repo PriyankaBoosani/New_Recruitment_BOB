@@ -58,23 +58,27 @@ export default function CandidatePool({
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  const toggleSelectAll = () => {
+const toggleSelectAll = () => {
+    // 1. If everything is already selected, ALWAYS allow clearing selections
+    if (allSelected) {
+      setSelectedIds([]);
+      return;
+    }
+
+    // 2. Require status filter ONLY when performing a fresh "Select All"
     if (!filters?.status?.length) {
       toast.error("Please select the status filter first");
       return;
     }
 
+    // 3. Select all candidates matching current filters
     const allIds = allCandidatesForFilters.map((c) => c.id);
 
-    if (allSelected) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(allIds);
+    setSelectedIds(allIds);
 
-      toast.success(
-        `${allIds.length} ${formatStatus(filters?.status?.[0])} candidate${allIds.length > 1 ? "s" : ""} selected`
-      );
-    }
+    toast.success(
+      `${allIds.length} ${formatStatus(filters?.status?.[0])} candidate${allIds.length > 1 ? "s" : ""} selected`
+    );
   };
 
   const toggleRow = (id) => {

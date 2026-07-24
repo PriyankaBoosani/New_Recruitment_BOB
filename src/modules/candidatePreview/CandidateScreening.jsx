@@ -73,7 +73,7 @@ export default function CandidateScreening({ selectedJob }) {
   const user = useSelector((state) => state.user.user);
 
   const role = user?.role?.toLowerCase();
-
+  const [movingCandidate, setMovingCandidate] = useState(false);
   const isRecruiter = role === "recruiter";
 
   const isAdmin = role === "admin";
@@ -124,6 +124,10 @@ export default function CandidateScreening({ selectedJob }) {
 
   const sendOfferRef = useRef(false);
   const [sendingOffer, setSendingOffer] = useState(false);
+
+
+
+  const [generatingRankList, setGeneratingRankList] = useState(false);
 
   const handleRemovePosition = (removeId) => {
     const updatedIds = selectedPositionId.filter((id) => id !== removeId);
@@ -177,7 +181,7 @@ export default function CandidateScreening({ selectedJob }) {
     "OFFER_AWAITED",
     "OFFER_SENT",
     "OFFER_EXTENDED",
-    
+
     "OFFER_CANCELED",
     "OFFER_REJECTED",
     "OFFER_ACCEPTED",
@@ -192,9 +196,10 @@ export default function CandidateScreening({ selectedJob }) {
   const OFFER_STATUS_LABEL_MAP = {
     OFFER_AWAITED: t("candidateWorkflow:offer_awaited"),
     OFFER_SENT: t("candidateWorkflow:offer_sent"),
-    OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended", 
-  
-    OFFER_CANCELED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", // 👈 ADD THIS LINE
+    // OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended", 
+    OFFER_EXTENDED: t("candidateWorkflow:offer_extended") || "Offer Extended",
+
+    OFFER_CANCELED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", //  ADD THIS LINE
     OFFER_REJECTED: t("candidateWorkflow:offer_rejected"),
     OFFER_ACCEPTED: t("candidateWorkflow:offer_accepted"),
     L1_PENDING: t("candidateWorkflow:l1_pending"),
@@ -559,7 +564,7 @@ export default function CandidateScreening({ selectedJob }) {
 
 
 
-const fetchAllOffersForFilters = async () => {
+  const fetchAllOffersForFilters = async () => {
     if (!selectedPositionId || !selectedPositionId.length) {
       setAllOffersForFilters([]);
       return;
@@ -613,11 +618,11 @@ const fetchAllOffersForFilters = async () => {
     }
   };
 
-useEffect(() => {
-  if (activeTab === "OFFER_POOL") {
-    fetchAllOffersForFilters();
-  }
-}, [selectedPositionId, filters?.status, activeTab]);
+  useEffect(() => {
+    if (activeTab === "OFFER_POOL") {
+      fetchAllOffersForFilters();
+    }
+  }, [selectedPositionId, filters?.status, activeTab]);
 
   const tabs = [
     {
@@ -1984,6 +1989,9 @@ useEffect(() => {
     }
 
     try {
+      // Start Full-Screen Loader
+      setMovingCandidate(true);
+
       const payload = {
         interviewSchedules: selectedInterviewCandidates.map((c) => ({
           applicationId: c?.application?.id,
@@ -2029,6 +2037,9 @@ useEffect(() => {
     } catch (err) {
       console.error(err);
       toast.error("Failed to send to Compensation Pool");
+    } finally {
+      //  Stop Full-Screen Loader
+      setMovingCandidate(false);
     }
   };
 
@@ -2036,17 +2047,16 @@ useEffect(() => {
     try {
       let payloadIds = [];
 
-      //  INTERVIEW POOL (NO CHANGE)
+      // INTERVIEW POOL
       if (activeTab === "INTERVIEW_POOL") {
         if (qualifiedInterviewIds.length === 0) {
           toast.error(t("candidateWorkflow:select_qualified_candidate"));
           return;
         }
-
         payloadIds = qualifiedInterviewIds;
       }
 
-      //  COMPENSATION POOL (NEW LOGIC)
+      // COMPENSATION POOL
       if (activeTab === "COMPENSATION_POOL") {
         const approvedCandidates = selectedCompensationCandidates.filter(
           (c) => c.status === "APPROVED"
@@ -2060,16 +2070,19 @@ useEffect(() => {
         payloadIds = approvedCandidates.map((c) => c.interviewScheduleId);
       }
 
-      //  FINAL API CALL
+      //  Start Loader
+      setMovingCandidate(true);
+
+      // FINAL API CALL
       await jobPositionApiService.sendToOfferPool(payloadIds);
 
       toast.success(t("candidateWorkflow:candidates_moved_to_offer_pool"));
 
-      //  Clear selections
+      // Clear selections
       setSelectedInterviewCandidateIds([]);
       setSelectedCompensationIds([]);
 
-      //  Refresh
+      // Refresh
       setInterviewPage(0);
       await refetchInterviewPool();
       await refetchCompensation();
@@ -2079,6 +2092,9 @@ useEffect(() => {
         err?.response?.data?.message ||
         t("candidateWorkflow:failed_to_send_offer_pool")
       );
+    } finally {
+      //  Stop Loader
+      setMovingCandidate(false);
     }
   };
 
@@ -2180,7 +2196,7 @@ useEffect(() => {
   const selectedOffers = offerData.filter((offer) =>
     offerSelectedIds.includes(offer.id)
   );
-const selectedOfferObjects = useMemo(() => {
+  const selectedOfferObjects = useMemo(() => {
     return offerData.filter((o) => offerSelectedIds.includes(o.id));
   }, [offerData, offerSelectedIds]);
 
@@ -2217,7 +2233,7 @@ const selectedOfferObjects = useMemo(() => {
     if (selectedOfferObjects.length === 0) {
       toast.error(
         t("candidateWorkflow:select_at_least_one_candidate") ||
-          "Please select at least one candidate"
+        "Please select at least one candidate"
       );
       return;
     }
@@ -2225,7 +2241,7 @@ const selectedOfferObjects = useMemo(() => {
     if (!isAllOfferSentOrExtended) {
       toast.error(
         t("candidateWorkflow:invalid_status_for_extend") ||
-          "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
+        "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
       );
       return;
     }
@@ -2296,6 +2312,9 @@ const selectedOfferObjects = useMemo(() => {
         return;
       }
 
+      //  Start Full-Screen Loader
+      setGeneratingRankList(true);
+
       const res = await candidateWorkflowServices.generateRankList(positionId);
 
       if (!res?.success) {
@@ -2317,6 +2336,9 @@ const selectedOfferObjects = useMemo(() => {
       );
 
       setRankListGenerated(false);
+    } finally {
+      //  Stop Full-Screen Loader
+      setGeneratingRankList(false);
     }
   };
 
@@ -3168,6 +3190,16 @@ const selectedOfferObjects = useMemo(() => {
             <div className="row g-2 mt-1 px-3 py-2 align-items-center">
               {/* Digital Signature */}
               <div className="d-flex justify-content-end align-items-center gap-2">
+                {/* ADDED HERE */}
+                <button
+                  type="button"
+                  className="btn orange-bg text-white fs-12"
+                  style={{ minHeight: "39px" }}
+                  onClick={handleBulkExtendClick}
+                >
+                  <i className="bi bi-calendar-plus me-1"></i>
+                  {t("candidateWorkflow:Manager_offer") || "Manager offer"}
+                </button>
                 <button
                   type="button"
                   className="btn orange-bg text-white fs-12"
@@ -3407,48 +3439,49 @@ const selectedOfferObjects = useMemo(() => {
               </div>
 
               {/* RIGHT SECTION */}
-            {/* RIGHT SECTION IN OFFER POOL */}
-<div className="col-md-4 col-12">
-  <div className="d-flex justify-content-end align-items-end gap-2 flex-wrap">
-   {/* NEW: Extend Offer Date Button */}
- {/* Bulk Extend Offer Date Button - Always clickable when tab is active */}
-<button
+              {/* RIGHT SECTION IN OFFER POOL */}
+              <div className="col-md-4 col-12">
+                <div className="d-flex justify-content-end align-items-end gap-2 flex-wrap">
+                  {/* NEW: Extend Offer Date Button */}
+                  {/* Bulk Extend Offer Date Button - Always clickable when tab is active */}
+                  {/* <button
   className="btn fs-13 px-3 py-1 blue-border blue-color"
   style={{ minHeight: "39px" }}
   onClick={handleBulkExtendClick}
 >
   <i className="bi bi-calendar-plus me-1"></i>
-  {t("candidateWorkflow:extend_offer_date") || "Extend Offer Date"}
-</button>
+  {t("candidateWorkflow:Manager_offer") || "Manager offer"}
+</button> */}
 
-    {/* Rank List Button */}
-    <button
-      className="btn blue-border blue-color fs-13 px-3 py-1"
-      style={{ minHeight: "39px" }}
-      onClick={handleGenerateRankList}
-    >
-      {t("candidateWorkflow:rank_list")}
-    </button>
+                  {/* Rank List Button */}
+                  {/* Rank List Button */}
+                  <button
+                    className="btn blue-border blue-color fs-13 px-3 py-1"
+                    style={{ minHeight: "39px" }}
+                    onClick={handleGenerateRankList}
+                    disabled={generatingRankList}
+                  >
+                    {t("candidateWorkflow:rank_list")}
+                  </button>
 
-    {/* Assign Locations */}
-    <button
-      className={`btn fs-13 px-3 py-1 orange-bg text-white ${
-        !rankListGenerated ? "disabled_button" : ""
-      }`}
-      style={{ minHeight: "39px" }}
-      onClick={() => setShowRankListModal(true)}
-      disabled={!rankListGenerated}
-    >
-      <img
-        className="me-2"
-        src={locationIcon}
-        alt="location"
-        width={16}
-        style={{ filter: "brightness(0) invert(1)" }}
-      />
-      {t("candidateWorkflow:assign_locations")}
-    </button>
-   {/* Download */}
+                  {/* Assign Locations */}
+                  <button
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""
+                      }`}
+                    style={{ minHeight: "39px" }}
+                    onClick={() => setShowRankListModal(true)}
+                    disabled={!rankListGenerated}
+                  >
+                    <img
+                      className="me-2"
+                      src={locationIcon}
+                      alt="location"
+                      width={16}
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    />
+                    {t("candidateWorkflow:assign_locations")}
+                  </button>
+                  {/* Download */}
                   <OverlayTrigger
                     placement="bottom"
                     overlay={
@@ -3469,7 +3502,7 @@ const selectedOfferObjects = useMemo(() => {
                       </button>
                     </span>
                   </OverlayTrigger>  </div>
-</div>
+              </div>
             </div>
           )}
 
@@ -3760,9 +3793,9 @@ const selectedOfferObjects = useMemo(() => {
         )}
 
 
-        
 
-      {activeTab === "OFFER_POOL" && (
+
+        {activeTab === "OFFER_POOL" && (
           <OfferPool
             selectedPositionId={selectedPositionId[0]}
             selectedRequisitionId={selectedRequisitionId}
@@ -3779,14 +3812,14 @@ const selectedOfferObjects = useMemo(() => {
         )}
 
 
-     <ExtendOfferModal
-  show={showExtendModal}
-  onHide={() => setShowExtendModal(false)}
-  selectedCandidates={selectedOfferObjects}
-  isSingleMode={false}
-  onExtendSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
-  onRejectSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
-/>
+        <ExtendOfferModal
+          show={showExtendModal}
+          onHide={() => setShowExtendModal(false)}
+          selectedCandidates={selectedOfferObjects}
+          isSingleMode={false}
+          onExtendSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
+          onRejectSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
+        />
 
         {/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
         <ScheduleInterviewModal
@@ -3970,7 +4003,9 @@ const selectedOfferObjects = useMemo(() => {
         reservationCategories={reservationCategories}
         examConfigMap={examConfigMap}
       />
-      {generatingOffer && <Loader />}
+      {/* Render Loader when generating Offer OR Rank List */}
+      {/* Render Loader when generating Offer, Rank List, or Moving Candidates */}
+      {(generatingOffer || generatingRankList || movingCandidate) && <Loader />}
     </div>
   );
 }
