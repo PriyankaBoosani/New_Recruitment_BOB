@@ -114,5 +114,6 @@
   "is_intermediate_required": "Is Intermediate / ICSE (+2) / CBSE (+2) / Diploma Required?",
   "additional_details": "Additional Details",
   "configure": "Configure",
-  "ex_servicemen": "Ex Servicemen"
+  "ex_servicemen": "Ex Servicemen",
+  "equivalentQualification": "Equivalent Qualification"
 }

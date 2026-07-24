@@ -999,7 +999,7 @@ export default function EducationModal({
           type="checkbox"
           id="equivalentQualification"
           className="mt-3 eqiva"
-          label="Equivalent Qualification"
+          label= {t("addPosition:equivalentQualification")}
           checked={equivalentQualification}
           onChange={(e) => setEquivalentQualification(e.target.checked)}
         />

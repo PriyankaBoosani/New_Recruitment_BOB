@@ -1786,7 +1786,7 @@ const ApplicationForm = ({
                   </tr>
                   {(hasOtherRelatedFields || hasEquivalentQualification) && (
                     <tr>
-                      <td className="fw-med">Eligibility Criteria Met Through</td>
+                      <td className="fw-med">{t("eligibilityCriteriaMetThrough")}</td>
                       <td className="fw-reg" colSpan={5}>
                         {hasOtherRelatedFields
                           ? "Other Related Fields"

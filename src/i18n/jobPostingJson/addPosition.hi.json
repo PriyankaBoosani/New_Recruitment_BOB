@@ -115,5 +115,6 @@
   "is_intermediate_required": "क्या इंटरमीडिएट / आईसीएसई (+2) / सीबीएसई (+2) / डिप्लोमा आवश्यक है?",
   "additional_details": "अतिरिक्त विवरण",
   "configure": "कॉन्फ़िगर करें",
-  "ex_servicemen": "भूतपूर्व सैनिक"
+  "ex_servicemen": "भूतपूर्व सैनिक",
+  "equivalentQualification": "समकक्ष योग्यता"
 }
