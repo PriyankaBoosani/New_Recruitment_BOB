@@ -52,9 +52,7 @@ const CreateRequisition = () => {
   const isDraftEdit = location.state?.isDraftEdit;
   const isDraftMode = isDraftView || isDraftEdit;
   const parentRequisitionId = location.state?.parentRequisitionId;
-  const [selectedReqForModal, setSelectedReqForModal] =
-    useState(null);
-
+  const [selectedReqForModal, setSelectedReqForModal] = useState(null);
 
   const handleCancel = () => {
     if (from === "approval") {
@@ -101,15 +99,19 @@ const CreateRequisition = () => {
         masterApiService.getExServiceCategories(),
       ]);
       setMasterData({
-        reservationCategories: (res.data?.reservationCategories || []).map((c) => ({
-          id: String(c.reservationCategoriesId),
-          code: c.categoryCode,
-        })),
+        reservationCategories: (res.data?.reservationCategories || []).map(
+          (c) => ({
+            id: String(c.reservationCategoriesId),
+            code: c.categoryCode,
+          })
+        ),
 
-        disabilityCategories: (res.data?.disabilityCategories || []).map((c) => ({
-          id: String(c.disabilityCategoryId),
-          code: c.disabilityCode,
-        })),
+        disabilityCategories: (res.data?.disabilityCategories || []).map(
+          (c) => ({
+            id: String(c.disabilityCategoryId),
+            code: c.disabilityCode,
+          })
+        ),
 
         // ✅ ADD THIS
         exServiceCategories: (exServiceRes.data || []).map((item) => ({
@@ -227,8 +229,11 @@ const CreateRequisition = () => {
             cutoffDate: formData.cutoffDate,
           };
 
-          await requisitionApiService.saveDraftDetails(editId, draftPayload);
-
+         const response =  await requisitionApiService.saveDraftDetails(editId, draftPayload);
+          if (!response?.success) {
+            toast.error( "Failed to create draft");
+            return;
+          }
           toast.success("Draft created successfully");
         }
       }
@@ -393,7 +398,9 @@ const CreateRequisition = () => {
                       placeholder={t("enter_description")}
                       value={formData.description}
                       onChange={(e) => {
-                        const result = validateDescriptionOnType(e.target.value);
+                        const result = validateDescriptionOnType(
+                          e.target.value
+                        );
 
                         if (!result.valid) {
                           setErrors((prev) => ({
@@ -432,7 +439,6 @@ const CreateRequisition = () => {
                   {(isCloneMode || isReinitializeMode) && (
                     <div className="mt-4">
                       <Form.Label>{t("select_positions_to_edit")}</Form.Label>
-
 
                       {loadingReqId === editId && <Spinner size="sm" />}
 
@@ -485,9 +491,9 @@ const CreateRequisition = () => {
                               }}
                               label={
                                 <span className="d-flex align-items-center">
-                                  {masterPositionsMap[pos.masterPositionId] || "Unknown"} - (
-                                  {pos.vacancies} vacancies)
-
+                                  {masterPositionsMap[pos.masterPositionId] ||
+                                    "Unknown"}{" "}
+                                  - ({pos.vacancies} vacancies)
                                   <i
                                     className="bi bi-info-circle-fill ms-2"
                                     style={{
@@ -513,12 +519,9 @@ const CreateRequisition = () => {
                                         const parentReqData = {
                                           requisitionId:
                                             reqRes?.data?.requisitionCode,
-                                          code:
-                                            reqRes?.data?.requisitionTitle,
-                                          startDate:
-                                            reqRes?.data?.startDate,
-                                          endDate:
-                                            reqRes?.data?.endDate,
+                                          code: reqRes?.data?.requisitionTitle,
+                                          startDate: reqRes?.data?.startDate,
+                                          endDate: reqRes?.data?.endDate,
                                         };
 
                                         const mappedData =
@@ -539,7 +542,6 @@ const CreateRequisition = () => {
                               }
                             />
                           </div>
-
                         ))}
                     </div>
                   )}
