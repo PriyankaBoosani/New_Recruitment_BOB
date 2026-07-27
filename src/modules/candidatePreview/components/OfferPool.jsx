@@ -102,6 +102,102 @@ const SELECTABLE_STATUSES = [
     setShowSingleExtendModal(true);
   };
 
+
+
+
+
+
+  // 1. State for controlling the history modal & loading
+const [showExtensionHistoryModal, setShowExtensionHistoryModal] = useState(false);
+const [extensionHistoryData, setExtensionHistoryData] = useState([]);
+const [loadingExtensionHistory, setLoadingExtensionHistory] = useState(false);
+
+// 2. Handler function to fetch extension history from backend API
+// Handler function to fetch and map extension history based on backend response
+// Handler function to fetch and map extension history based on backend response
+const handleViewExtensionHistory = async (offerId) => {
+  console.log("=== Fetching Extension History ===");
+  console.log("Offer ID:", offerId);
+
+  try {
+    setLoadingExtensionHistory(true);
+    setExtensionHistoryData([]);
+
+    const res = await jobPositionApiService.getOfferExtensionHistory(offerId);
+
+    console.log("Raw API Response:", res);
+
+    const apiPayload = res?.data || res;
+
+    // 1. CHECK FOR API FAILURE BEFORE OPENING MODAL
+    if (apiPayload?.success === false) {
+      console.log("Backend validation error detected:", apiPayload);
+
+      const errorMessage =
+        (typeof apiPayload.data === "string" && apiPayload.data.trim()) ||
+        (typeof res?.data?.data === "string" && res.data.data.trim()) ||
+        apiPayload.message ||
+        res?.message ||
+        "No offer extension history found";
+
+      console.log("Showing Toast Error:", errorMessage);
+      toast.error(errorMessage);
+      return; // Stop here, modal never opens!
+    }
+
+    // 2. EXTRACT LIST
+    const rawList = Array.isArray(apiPayload?.data)
+      ? apiPayload.data
+      : Array.isArray(apiPayload)
+      ? apiPayload
+      : [];
+
+    console.log("Raw List Extracted:", rawList);
+
+    if (rawList.length === 0) {
+      toast.error("No offer extension history found");
+      return;
+    }
+
+    // 3. MAP DATA FOR MODAL
+    const mappedHistory = rawList.map((item, index) => ({
+      approvalId: item.offerId ? `${item.offerId}-${index}` : index,
+      approverName:
+        userMap[item.approverId] ||
+        userMap[item.userId] ||
+        item.approverName ||
+        "Recruiter",
+      actionDate: item.changedDate || null,
+      status: item.status || "OFFER_EXTENDED",
+     comments: item.comment || "-",
+        extensionDate: item.extensionDate || "-"
+    }));
+
+    console.log("Mapped History Data for Modal UI:", mappedHistory);
+
+    // 4. OPEN MODAL ONLY WHEN DATA IS VALID AND READY
+    setExtensionHistoryData(mappedHistory);
+    setShowExtensionHistoryModal(true);
+  } catch (err) {
+    console.error("Failed to load extension history inside catch:", err);
+
+    const backendErrorData = err?.response?.data?.data;
+    const backendErrorMessage = err?.response?.data?.message;
+
+    const toastMessage =
+      typeof backendErrorData === "string" && backendErrorData.trim() !== ""
+        ? backendErrorData
+        : backendErrorMessage ||
+          t("candidateWorkflow:failed_load_history") ||
+          "Failed to load history";
+
+    console.log("Showing Catch Error Toast:", toastMessage);
+    toast.error(toastMessage);
+  } finally {
+    setLoadingExtensionHistory(false);
+  }
+};
+
   const fetchExamConfiguration = async () => {
     try {
       if (!selectedPositionId) {
@@ -760,13 +856,40 @@ useEffect(() => {
                     </p>
                   </td>
 
-                  <td
+  <td
   className="align-content-center"
   style={{ paddingLeft: "1.25rem" }}
 >
-  <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-    {c.extensionDate || "-"}
-  </p>
+  <div className="d-flex align-items-center gap-2 py-2">
+    <p className="fw-normal fs-14 mb-0 text-muted">
+      {c.extensionDate || "-"}
+    </p>
+
+    {/* Show history icon when extension date exists */}
+    {c.extensionDate && c.extensionDate !== "-" && (
+      <OverlayTrigger
+        placement="bottom"
+        overlay={
+          <Tooltip id={`tooltip-ext-history-${c.id}`}>
+            {t("candidateWorkflow:view_history") || "View History"}
+          </Tooltip>
+        }
+      >
+        <button
+          type="button"
+          className="history-btn border-0 bg-transparent p-0 cursor-pointer"
+          onClick={() => handleViewExtensionHistory(c.candidateOfferId || c.id)}
+        >
+          <img
+            src={history_icon}
+            alt="History"
+            width={14}
+            height={14}
+          />
+        </button>
+      </OverlayTrigger>
+    )}
+  </div>
 </td>
                   <td
                     className="align-content-center"
@@ -1084,18 +1207,32 @@ useEffect(() => {
         </Modal.Body>
       </Modal>
 
-      <ApprovalHistoryModal
-        show={showHistoryModal}
-        onClose={() => setShowHistoryModal(false)}
-        historyData={historyData.map((item) => ({
-          ...item,
-          approverName:
-            userMap[item.approverId] ||
-            userMap[item.userId] ||
-            item.approverRole ||
-            "-",
-        }))}
-      />
+
+      {/*  Extension Approval History Modal */}
+    {/* Extension Approval History Modal */}
+{/* Extension Approval History Modal */}
+<ApprovalHistoryModal
+  show={showExtensionHistoryModal}
+  onClose={() => setShowExtensionHistoryModal(false)}
+  historyData={extensionHistoryData}
+  loading={loadingExtensionHistory}
+  title={t("candidateWorkflow:accept_date_extension_history") || "Accept date extension history"}
+  subtitle={t("candidateWorkflow:track_date_extension_history") || "Track date extension history"}
+/>
+
+{/* Regular Approval History Modal */}
+<ApprovalHistoryModal
+  show={showHistoryModal}
+  onClose={() => setShowHistoryModal(false)}
+  historyData={historyData.map((item) => ({
+    ...item,
+    approverName:
+      userMap[item.approverId] ||
+      userMap[item.userId] ||
+      item.approverRole ||
+      "-",
+  }))}
+/>
     </div>
   );
 };

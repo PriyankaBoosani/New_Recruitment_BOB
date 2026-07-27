@@ -2260,7 +2260,7 @@ export default function CandidateScreening({ selectedJob }) {
     selectedOfferObjects.length > 0 &&
     selectedOfferObjects.every(
       (o) =>
-        ["OFFER_AWAITED", "L1_REJECTED", "L2_REJECTED"].includes(o.status) &&
+        ["OFFER_AWAITED","OFFER_GENERATED", "L1_REJECTED", "L2_REJECTED"].includes(o.status) &&
         o.qnq === "Q" &&
         !o.waitList
     );

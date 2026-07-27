@@ -435,6 +435,20 @@ getOffersByPosition(payload) {
     );
   },
 
+
+  // Add this inside the jobPositionApiService object in jobPositionApiService.js
+
+  getOfferExtensionHistory(offerId) {
+    return api.get(
+      `/recruiter/candidate-offer/extension-history/${offerId}`,
+      {
+        headers: {
+          "X-Client": "AzureAD",
+        },
+      }
+    );
+  },
+
   downloadOffersZip(payload) {
     return api.post("/recruiter/candidate-offer/download-offers/zip", payload, {
       responseType: "blob",
