@@ -23,8 +23,44 @@ export const validateCourse = (value) => {
   let error = requiredField(value);
   if (error) return error;
 
-  if (!validTextForm(value)) {
-    return i18n.t("education:invalid_characters", "Invalid characters");
+  const course = value.trim();
+
+  if (course.length < 3) {
+    return i18n.t(
+      "education:course_min_length",
+      "Course must be at least 3 characters"
+    );
+  }
+
+  if (!validTextForm(course)) {
+    return i18n.t(
+      "education:invalid_characters",
+      "Invalid characters"
+    );
+  }
+
+  // '+' cannot be at the beginning
+  if (/^\+/.test(course)) {
+    return i18n.t(
+      "education:invalid_course",
+      "Course cannot start with +"
+    );
+  }
+
+  // '+' cannot be at the end
+  if (/\+$/.test(course)) {
+    return i18n.t(
+      "education:invalid_course",
+      "Course cannot end with +"
+    );
+  }
+
+  // Multiple consecutive '+' not allowed
+  if (/\+{2,}/.test(course)) {
+    return i18n.t(
+      "education:invalid_course",
+      "Invalid course format"
+    );
   }
 
   return null;
@@ -67,19 +103,19 @@ export const validateSpecializationTest = (list = []) => {
 
     const code = typeof val === "object" ? val?.code : "";
 
-  // Empty row is allowed here.
-// Save validation will decide whether it's required.
-if (!value?.trim()) {
-  continue;
-}
+    // Empty row is allowed here.
+    // Save validation will decide whether it's required.
+    if (!value?.trim()) {
+      continue;
+    }
 
-// Once Name is entered, Code becomes mandatory.
-if (!code?.trim()) {
-  return i18n.t(
-    "education:specialization_code_required",
-    "Specialization code is required"
-  );
-}
+    // Once Name is entered, Code becomes mandatory.
+    if (!code?.trim()) {
+      return i18n.t(
+        "education:specialization_code_required",
+        "Specialization code is required"
+      );
+    }
 
     const normalized = normalize(value);
     const normalizedCode = normalize(code);
@@ -120,19 +156,19 @@ export const validateSpecialization = (list = []) => {
     const code = typeof val === "object" ? val?.code : "";
 
     // ✅ specialization required
- // Empty row is allowed here.
-// Save validation will decide whether it's required.
-if (!value?.trim()) {
-  continue;
-}
+    // Empty row is allowed here.
+    // Save validation will decide whether it's required.
+    if (!value?.trim()) {
+      continue;
+    }
 
-// Once Name is entered, Code becomes mandatory.
-if (!code?.trim()) {
-  return i18n.t(
-    "education:specialization_code_required",
-    "Specialization code is required"
-  );
-}
+    // Once Name is entered, Code becomes mandatory.
+    if (!code?.trim()) {
+      return i18n.t(
+        "education:specialization_code_required",
+        "Specialization code is required"
+      );
+    }
 
     const normalized = normalize(value);
     const normalizedCode = normalize(code);

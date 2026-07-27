@@ -78,7 +78,6 @@ export const useExperience = () => {
     }
   };
 
-
   const fetchEducationByIds = async (ids, educationOptionsList) => {
     try {
       setLoading(true);
@@ -111,10 +110,15 @@ export const useExperience = () => {
   };
 
   const handleFieldChange = (formIndex, field, value, specIndex = null) => {
-    const regex = /^[A-Za-z\s.&,()\-_/]*$/;
+    const courseRegex = /^[A-Za-z0-9\s.&,()+\-_/]*$/;
+    const specializationRegex = /^[A-Za-z0-9\s.&,()\-_/]*$/;
 
-    if (field === "course" || field === "specialization") {
-      if (!regex.test(value)) return;
+    if (field === "course") {
+      if (!courseRegex.test(value)) return;
+    }
+
+    if (field === "specialization") {
+      if (!specializationRegex.test(value)) return;
     }
 
     const updated = [...formData];
@@ -141,7 +145,7 @@ export const useExperience = () => {
     }
 
     if (field === "course") {
-      fieldError = validateCourse(value);
+      fieldError = null;
     }
 
     if (field === "courseCode") {
@@ -149,8 +153,6 @@ export const useExperience = () => {
         ? null
         : t("education:course_code_required", "Course code is required");
     }
-
-
 
     if (field === "group") {
       fieldError = value?.trim()
@@ -321,8 +323,6 @@ export const useExperience = () => {
   //     }
   //   };
 
-
-
   const saveExperience = async () => {
     try {
       const { valid, errors: newErrors } = validateEducationForm(formData[0], {
@@ -331,15 +331,14 @@ export const useExperience = () => {
         editMode: isEditMode,
       });
 
-
       const readOnlyCodes =
-  isEditMode &&
-  [
-    "Graduation",
-    "Post-Graduation",
-    "Any Graduation",
-    "Any Post-Graduation",
-  ].includes(formData[0].course?.trim());
+        isEditMode &&
+        [
+          "Graduation",
+          "Post-Graduation",
+          "Any Graduation",
+          "Any Post-Graduation",
+        ].includes(formData[0].course?.trim());
 
       // ===== Group Validation =====
       const selectedEducation = educationOptions.find(
@@ -347,107 +346,102 @@ export const useExperience = () => {
       );
 
       const hideGroup =
-        [
-          "Any Graduation",
-          "Any Post-Graduation",
-        ].includes(formData[0].course?.trim()) ||
-        [
-          "10th / SSC",
-          "Intermediate / 12th / HSC",
-        ].includes(selectedEducation?.documentName);
+        ["Any Graduation", "Any Post-Graduation"].includes(
+          formData[0].course?.trim()
+        ) ||
+        ["10th / SSC", "Intermediate / 12th / HSC"].includes(
+          selectedEducation?.documentName
+        );
 
       const showTopGroup =
-        !hideGroup &&
-        (formData[0].specializationOthers?.length || 0) === 0;
+        !hideGroup && (formData[0].specializationOthers?.length || 0) === 0;
 
       if (showTopGroup && !formData[0].group?.trim()) {
-        newErrors.group = t(
-          "education:group_required",
-          "Group is required"
-        );
+        newErrors.group = t("education:group_required", "Group is required");
       }
 
-const specs = formData[0].specializationOthers || [];
+      const specs = formData[0].specializationOthers || [];
 
-// Validate specialization rows BEFORE returning
-specs.forEach((s, index) => {
-  // User added a specialization row but left Name empty
-  if (!s.name?.trim()) {
-    newErrors.specialization = newErrors.specialization || [];
-    newErrors.specialization[index] = {
-      name: t(
-        "education:specialization_required",
-        "Specialization Name is required"
-      ),
-    };
-  }
-});
+      // Validate specialization rows BEFORE returning
+      specs.forEach((s, index) => {
+        // User added a specialization row but left Name empty
+        if (!s.name?.trim()) {
+          newErrors.specialization = newErrors.specialization || [];
+          newErrors.specialization[index] = {
+            name: t(
+              "education:specialization_required",
+              "Specialization Name is required"
+            ),
+          };
+        }
+      });
 
-const hasSpecializationError =
-  newErrors.specialization?.some((e) => e?.name);
+      const hasSpecializationError = newErrors.specialization?.some(
+        (e) => e?.name
+      );
 
-// Set all errors only once
-setErrors([newErrors]);
+      // Set all errors only once
+      setErrors([newErrors]);
 
-// Return only after all validations are completed
-if (!valid || newErrors.group || hasSpecializationError) {
-  return;
-}
+      // Return only after all validations are completed
+      if (!valid || newErrors.group || hasSpecializationError) {
+        return;
+      }
 
       const specializations =
         specs.length > 0
           ? specs.map((s) => ({
-           specialization: {
-  specializationId: s.id || null,
-  educationQualificationsId:
-    formData[0].educationQualificationsId || null,
-  specializationName: s.name || null,
-  ...(readOnlyCodes && s.id
-    ? {}
-    : {
-        specializationCode: s.code || null,
-      }),
-},
-            group: {
-              educationGroupId: s.group || formData[0].group || null,
-              groupCode: null,
-              groupName: null,
-              displayOrder: 0,
-            },
-          }))
+              specialization: {
+                specializationId: s.id || null,
+                educationQualificationsId:
+                  formData[0].educationQualificationsId || null,
+                specializationName: s.name || null,
+                ...(readOnlyCodes && s.id
+                  ? {}
+                  : {
+                      specializationCode: s.code || null,
+                    }),
+              },
+              group: {
+                educationGroupId: s.group || formData[0].group || null,
+                groupCode: null,
+                groupName: null,
+                displayOrder: 0,
+              },
+            }))
           : formData[0].group
             ? [
-              {
-                specialization: {
-                  specializationId: null,
-                  educationQualificationsId:
-                    formData[0].educationQualificationsId || null,
-                  specializationName: null,
-                  specializationCode: null,
+                {
+                  specialization: {
+                    specializationId: null,
+                    educationQualificationsId:
+                      formData[0].educationQualificationsId || null,
+                    specializationName: null,
+                    specializationCode: null,
+                  },
+                  group: {
+                    educationGroupId: formData[0].group,
+                    groupCode: null,
+                    groupName: null,
+                    displayOrder: 0,
+                  },
                 },
-                group: {
-                  educationGroupId: formData[0].group,
-                  groupCode: null,
-                  groupName: null,
-                  displayOrder: 0,
-                },
-              },
-            ]
+              ]
             : [];
 
       const payload = {
-   qualification: {
-  levelId: formData[0].educationLevel,
-  qualificationName: formData[0].course,
-  ...(readOnlyCodes
-    ? {}
-    : {
-        qualificationCode: formData[0].courseCode || "",
-      }),
-  displayOrder: 0,
-  educationQualificationsId:
-    formData[0].educationQualificationsId || null,
-},
+        qualification: {
+          levelId: formData[0].educationLevel,
+          qualificationName: formData[0].course,
+          ...(readOnlyCodes
+            ? {}
+            : {
+                qualificationCode: formData[0].courseCode || "",
+              }),
+          displayOrder: 0,
+          educationQualificationsId:
+            formData[0].educationQualificationsId || null,
+        },
         specializations,
       };
 
@@ -494,9 +488,7 @@ if (!valid || newErrors.group || hasSpecializationError) {
     );
 
     const hasSpecialization =
-      item.specialization?.some(
-        (s) => s.name || s.code
-      ) || false;
+      item.specialization?.some((s) => s.name || s.code) || false;
 
     setFormData([
       {
@@ -505,13 +497,9 @@ if (!valid || newErrors.group || hasSpecializationError) {
         courseCode: item.qualificationCode || "",
         educationQualificationsId: item.educationQualificationsId || null,
 
-        specializationOthers: hasSpecialization
-          ? item.specialization
-          : [],
+        specializationOthers: hasSpecialization ? item.specialization : [],
 
-        group: !hasSpecialization
-          ? item.group?.educationGroupId || ""
-          : "",
+        group: !hasSpecialization ? item.group?.educationGroupId || "" : "",
       },
     ]);
 
