@@ -253,25 +253,27 @@ const JobPostingsList = () => {
         ]);
 
         setMasterData({
-          reservationCategories: (masterRes.data?.reservationCategories || []).map(
-            (c) => ({
-              id: String(c.reservationCategoriesId),
-              code: c.categoryCode,
-            })
-          ),
-
-          disabilityCategories: (masterRes.data?.disabilityCategories || []).map(
-            (c) => ({
-              id: String(c.disabilityCategoryId),
-              code: c.disabilityCode,
-            })
-          ),
-
-          employmentTypes: (masterRes.data?.employementTypes || []).map((e) => ({
-            id: String(e.employementTypeId),
-            name: e.typeName,
-            code: e.typeCode,
+          reservationCategories: (
+            masterRes.data?.reservationCategories || []
+          ).map((c) => ({
+            id: String(c.reservationCategoriesId),
+            code: c.categoryCode,
           })),
+
+          disabilityCategories: (
+            masterRes.data?.disabilityCategories || []
+          ).map((c) => ({
+            id: String(c.disabilityCategoryId),
+            code: c.disabilityCode,
+          })),
+
+          employmentTypes: (masterRes.data?.employementTypes || []).map(
+            (e) => ({
+              id: String(e.employementTypeId),
+              name: e.typeName,
+              code: e.typeCode,
+            })
+          ),
 
           departments: (masterRes.data?.departments || []).map((d) => ({
             id: String(d.departmentId),
@@ -442,12 +444,15 @@ const JobPostingsList = () => {
   const handlePublish = async (req) => {
     try {
       setIsPublishing(true);
-      await requisitionApiService.publishDraftRequisition(
+      const response = await requisitionApiService.publishDraftRequisition(
         req.parentRequisitionId
       );
 
-      toast.success("Published successfully");
+      if (!response.success) {
+        toast.error( "Failed to publish");
+      }
 
+      toast.success("Published successfully");
       refetch(); // mandatory, otherwise UI lies again
     } catch (err) {
       console.error(err);
@@ -1319,67 +1324,67 @@ const JobPostingsList = () => {
 
                               {(req.isReinitialized ||
                                 pos.parentPositionId) && (
-                                  <span
-                                    style={{
-                                      cursor: "pointer",
-                                      fontSize: "12px",
-                                      fontWeight: "400",
-                                      color: "#f26522",
-                                    }}
-                                    onClick={async (e) => {
-                                      e.stopPropagation();
+                                <span
+                                  style={{
+                                    cursor: "pointer",
+                                    fontSize: "12px",
+                                    fontWeight: "400",
+                                    color: "#f26522",
+                                  }}
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
 
-                                      try {
-                                        const res =
-                                          await jobPositionApiService.getVacancyBreakdownByPosition(
-                                            pos.parentPositionId
-                                          );
-
-                                        let parentReqData = {};
-
-                                        if (
-                                          req.parentRequisitionId &&
-                                          req.parentRequisitionId !== ""
-                                        ) {
-                                          const res1 =
-                                            await jobPositionApiService.getRequisitionById(
-                                              req.parentRequisitionId
-                                            );
-
-                                          parentReqData = {
-                                            requisitionId:
-                                              res1?.data?.requisitionCode,
-                                            code: res1?.data?.requisitionTitle,
-                                            startDate: res1?.data?.startDate,
-                                            endDate: res1?.data?.endDate,
-                                          };
-                                        }
-                                        const mappedData =
-                                          mapVacancyBreakdownByPosition(
-                                            res.data,
-                                            masterData
-                                          );
-                                        setSelectedReqForModal({
-                                          ...req,
-                                          ...parentReqData,
-                                        });
-
-                                        // setSelectedReqForModal(req);
-                                        setSelectedPositionInfo(mappedData);
-                                        setShowPositionModal(true);
-                                      } catch (error) {
-                                        console.error(error);
-                                        toast.error(
-                                          "Failed to load position details"
+                                    try {
+                                      const res =
+                                        await jobPositionApiService.getVacancyBreakdownByPosition(
+                                          pos.parentPositionId
                                         );
+
+                                      let parentReqData = {};
+
+                                      if (
+                                        req.parentRequisitionId &&
+                                        req.parentRequisitionId !== ""
+                                      ) {
+                                        const res1 =
+                                          await jobPositionApiService.getRequisitionById(
+                                            req.parentRequisitionId
+                                          );
+
+                                        parentReqData = {
+                                          requisitionId:
+                                            res1?.data?.requisitionCode,
+                                          code: res1?.data?.requisitionTitle,
+                                          startDate: res1?.data?.startDate,
+                                          endDate: res1?.data?.endDate,
+                                        };
                                       }
-                                    }}
-                                  >
-                                    {parentReqDetails[req.id]
-                                      ? `${parentReqDetails[req.id].requisitionId} - ${parentReqDetails[req.id].code}`
-                                      : `${req.requisitionId} - ${req.code}`}{" "}
-                                  </span>
-                                )}
+                                      const mappedData =
+                                        mapVacancyBreakdownByPosition(
+                                          res.data,
+                                          masterData
+                                        );
+                                      setSelectedReqForModal({
+                                        ...req,
+                                        ...parentReqData,
+                                      });
+
+                                      // setSelectedReqForModal(req);
+                                      setSelectedPositionInfo(mappedData);
+                                      setShowPositionModal(true);
+                                    } catch (error) {
+                                      console.error(error);
+                                      toast.error(
+                                        "Failed to load position details"
+                                      );
+                                    }
+                                  }}
+                                >
+                                  {parentReqDetails[req.id]
+                                    ? `${parentReqDetails[req.id].requisitionId} - ${parentReqDetails[req.id].code}`
+                                    : `${req.requisitionId} - ${req.code}`}{" "}
+                                </span>
+                              )}
                             </div>
                             <div className="position-meta-inline">
                               <span>
@@ -1529,7 +1534,7 @@ const JobPostingsList = () => {
                                   {t("jobPostingsList:preferred_education")}:
                                 </span>{" "}
                                 {pos.preferredEducation &&
-                                  pos.preferredEducation.trim()
+                                pos.preferredEducation.trim()
                                   ? pos.preferredEducation
                                   : "NA"}
                               </div>
@@ -1654,8 +1659,9 @@ const JobPostingsList = () => {
 
                 {/* Next */}
                 <li
-                  className={`page-item ${page >= pageInfo.totalPages - 1 || loading ? "disabled" : ""
-                    }`}
+                  className={`page-item ${
+                    page >= pageInfo.totalPages - 1 || loading ? "disabled" : ""
+                  }`}
                 >
                   <button
                     className="page-link"
