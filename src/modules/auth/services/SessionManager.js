@@ -1,15 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { clearUser } from "../../../app/providers/userSlice";
 import { persistor } from "../../../store";
 import { Modal, Button } from "react-bootstrap";
 
-const IDLE_TIMEOUT = 15 * 60 * 1000; // 2 minutes
-const WARNING_TIME = 14 * 60 * 1000; // show modal at 1 minute
+const IDLE_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+const WARNING_TIME = 14 * 60 * 1000; // show modal at 14 minute
 
 const SessionManager = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const publicRoutes = ["/login", "/forgot-password", "/verify-otp"];
+
+  const isPublicRoute = publicRoutes.includes(location.pathname);
+
   const dispatch = useDispatch();
 
   const timerRef = useRef(null);
@@ -73,6 +79,13 @@ const SessionManager = ({ children }) => {
   };
 
   useEffect(() => {
+    if (isPublicRoute) {
+      setShowModal(false);
+      clearTimeout(timerRef.current);
+      clearTimeout(warningTimerRef.current);
+      clearInterval(intervalRef.current);
+      return;
+    }
     const events = [
       "mousemove",
       "mousedown",
@@ -94,7 +107,7 @@ const SessionManager = ({ children }) => {
       clearTimeout(warningTimerRef.current);
       clearInterval(intervalRef.current); // ✅ FIX
     };
-  }, []);
+  }, [isPublicRoute]);
 
   return (
     <>
@@ -113,7 +126,6 @@ const SessionManager = ({ children }) => {
         </Modal.Body>
 
         <Modal.Footer>
-         
           <Button variant="primary" onClick={extendSession}>
             Stay Logged In
           </Button>
