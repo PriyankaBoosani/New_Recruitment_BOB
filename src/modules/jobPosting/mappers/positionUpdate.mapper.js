@@ -70,9 +70,15 @@ const buildCategoryDistributionsForUpdate = (
   Object.entries(sd.exServicemen || {}).forEach(([groupId, value]) => {
     const count = Number(value || 0);
 
-    if (count > 0) {
+    const existing = sd.categoryDistributions?.find(
+      (x) =>
+        x.isExServiceman && String(x.exServicemanGroupId) === String(groupId)
+    );
+
+    if (existing || count > 0) {
       result.push({
-        positionCategoryDistributionId: null,
+        positionCategoryDistributionId:
+          existing?.positionCategoryDistributionId ?? null,
         reservationCategoryId: null,
         disabilityCategoryId: null,
         vacancyCount: count,
@@ -339,8 +345,17 @@ export const mapAddPositionToUpdateDto = ({
   Object.entries(nationalExServicemen || {}).forEach(([groupId, value]) => {
     const count = Number(value || 0);
 
-    if (count > 0) {
+    const existing =
+      existingPosition?.positionCategoryNationalDistributions?.find(
+        (x) =>
+          x.isExServiceman && String(x.exServicemanGroupId) === String(groupId)
+      );
+
+    // Existing record OR new value > 0
+    if (existing || count > 0) {
       dto.positionCategoryNationalDistributions.push({
+        positionCategoryNationalDistributionId:
+          existing?.positionCategoryNationalDistributionId ?? null,
         reservationCategoryId: null,
         disabilityCategoryId: null,
         vacancyCount: count,
