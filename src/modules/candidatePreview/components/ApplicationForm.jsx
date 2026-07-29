@@ -528,8 +528,9 @@ const ApplicationForm = ({
   const [errors, setErrors] = useState({});
   const [zonalDecision, setZonalDecision] = useState("");
 
-  const getDocCategory = (name = "") => {
+  const getDocCategories = (name = "") => {
     const n = name.toLowerCase().trim();
+    const categories = [];
 
     // AGE
     if (
@@ -537,16 +538,13 @@ const ApplicationForm = ({
       n.includes("10th") ||
       n.includes("10th certificate")
     ) {
-      return "AGE";
-    }
-
-    // WORK
-    if (/^work[_\s]?experience/i.test(name)) {
-      return "WORK";
+      categories.push("AGE");
     }
 
     // EDUCATION
     if (
+      n.includes("10th") ||
+      n.includes("ssc") ||
       n.includes("board") ||
       n.includes("intermediate") ||
       n.includes("graduation") ||
@@ -554,17 +552,25 @@ const ApplicationForm = ({
       n.includes("doctorate") ||
       n.includes("professional")
     ) {
-      return "EDUCATION";
+      categories.push("EDUCATION");
     }
 
-    return "OTHER";
+    // WORK
+    if (/^work[_\s]?experience/i.test(name)) {
+      categories.push("WORK");
+    }
+
+    return categories.length ? categories : ["OTHER"];
   };
-
   const groupedDocs = documentRows.reduce((acc, doc) => {
-    const category = getDocCategory(doc.name);
+    const categories = getDocCategories(doc.name);
 
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(doc);
+    categories.forEach((category) => {
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(doc);
+    });
 
     return acc;
   }, {});
@@ -1247,6 +1253,8 @@ const ApplicationForm = ({
   useEffect(() => {
     const ageVerified = isCategorySatisfied("AGE");
     const workVerified = isCategorySatisfied("WORK");
+    console.log("Grouped Docs", groupedDocs);
+    console.log("Education Docs", groupedDocs["EDUCATION"]);
     const educationVerified = isCategorySatisfied("EDUCATION");
 
     setScreeningForm((prev) => {
@@ -1786,7 +1794,9 @@ const ApplicationForm = ({
                   </tr>
                   {(hasOtherRelatedFields || hasEquivalentQualification) && (
                     <tr>
-                      <td className="fw-med">{t("eligibilityCriteriaMetThrough")}</td>
+                      <td className="fw-med">
+                        {t("eligibilityCriteriaMetThrough")}
+                      </td>
                       <td className="fw-reg" colSpan={5}>
                         {hasOtherRelatedFields
                           ? "Other Related Fields"
