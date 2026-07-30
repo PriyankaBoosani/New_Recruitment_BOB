@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import masterApiService from "../master/services/masterApiService";
 import "../../style/css/CandidateScreening.css";
-
+import Select, { components } from "react-select";
 import pdfIcon from "../../assets/pdf-icon.png";
 import excelIcon from "../../assets/export-excel-icon.png";
 import searchIcon from "../../assets/search-icon.png";
@@ -80,7 +80,7 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
 
-
+  const [offerTotalElements, setOfferTotalElements] = useState(0);
 
 
   const [isMarksUploaded, setIsMarksUploaded] = useState(false);
@@ -124,6 +124,11 @@ export default function CandidateScreening({ selectedJob }) {
 
   const sendOfferRef = useRef(false);
   const [sendingOffer, setSendingOffer] = useState(false);
+
+
+
+
+
 
 
 
@@ -378,6 +383,13 @@ export default function CandidateScreening({ selectedJob }) {
     masterData,
   ]);
 
+
+  useEffect(() => {
+    setOfferSelectedIds([]);
+    setOfferSelectAll(false);
+    setExcludedOfferIds([]);
+  }, [selectedPositionId]);
+
   useEffect(() => {
     // ONLY INITIAL LOAD
     if (location.state?.activeTab && activeTab === "CANDIDATE_POOL") {
@@ -522,7 +534,7 @@ export default function CandidateScreening({ selectedJob }) {
 
   const searchTimeoutRef = useRef(null);
 
-  const [allOffersForFilters, setAllOffersForFilters] = useState([]);
+  // const [allOffersForFilters, setAllOffersForFilters] = useState([]);
   const {
     interviewCandidates,
     totalElements: interviewTotalElements,
@@ -564,65 +576,65 @@ export default function CandidateScreening({ selectedJob }) {
 
 
 
-  const fetchAllOffersForFilters = async () => {
-    if (!selectedPositionId || !selectedPositionId.length) {
-      setAllOffersForFilters([]);
-      return;
-    }
+  // const fetchAllOffersForFilters = async () => {
+  //   if (!selectedPositionId || !selectedPositionId.length) {
+  //     setAllOffersForFilters([]);
+  //     return;
+  //   }
 
-    try {
-      const posId = Array.isArray(selectedPositionId)
-        ? selectedPositionId[0]
-        : selectedPositionId;
+  //   try {
+  //     const posId = Array.isArray(selectedPositionId)
+  //       ? selectedPositionId[0]
+  //       : selectedPositionId;
 
-      // 1. Fetch small batch to get page metadata (total elements)
-      const firstPayload = {
-        positionId: posId,
-        offerStatusList: filters?.status?.length ? filters.status : [],
-        page: 0,
-        size: 10,
-      };
-      const firstRes = await jobPositionApiService.getOffersByPosition(firstPayload);
-      const apiData = firstRes?.data;
-      const totalCount =
-        apiData?.page?.totalElements ||
-        (Array.isArray(apiData?.content) ? apiData.content.length : 0);
+  //     // 1. Fetch small batch to get page metadata (total elements)
+  //     const firstPayload = {
+  //       positionId: posId,
+  //       offerStatusList: filters?.status?.length ? filters.status : [],
+  //       page: 0,
+  //       size: 10,
+  //     };
+  //     const firstRes = await jobPositionApiService.getOffersByPosition(firstPayload);
+  //     const apiData = firstRes?.data;
+  //     const totalCount =
+  //       apiData?.page?.totalElements ||
+  //       (Array.isArray(apiData?.content) ? apiData.content.length : 0);
 
-      if (!totalCount) {
-        setAllOffersForFilters([]);
-        return;
-      }
+  //     if (!totalCount) {
+  //       setAllOffersForFilters([]);
+  //       return;
+  //     }
 
-      // 2. Fetch all IDs using totalCount as batch size
-      const fullPayload = {
-        positionId: posId,
-        offerStatusList: filters?.status?.length ? filters.status : [],
-        page: 0,
-        size: totalCount,
-      };
-      const res = await jobPositionApiService.getOffersByPosition(fullPayload);
-      const rawList = res?.data?.content || res?.data || [];
+  //     // 2. Fetch all IDs using totalCount as batch size
+  //     const fullPayload = {
+  //       positionId: posId,
+  //       offerStatusList: filters?.status?.length ? filters.status : [],
+  //       page: 0,
+  //       size: totalCount,
+  //     };
+  //     const res = await jobPositionApiService.getOffersByPosition(fullPayload);
+  //     const rawList = res?.data?.content || res?.data || [];
 
-      const mappedIds = rawList
-        .map((item) => {
-          const offer = item.candidateOffersDTO || item;
-          return offer?.candidateOfferId || item?.candidateOfferId || item?.id;
-        })
-        .filter(Boolean)
-        .map((id) => ({ id }));
+  //     const mappedIds = rawList
+  //       .map((item) => {
+  //         const offer = item.candidateOffersDTO || item;
+  //         return offer?.candidateOfferId || item?.candidateOfferId || item?.id;
+  //       })
+  //       .filter(Boolean)
+  //       .map((id) => ({ id }));
 
-      setAllOffersForFilters(mappedIds);
-    } catch (err) {
-      console.error("Failed to fetch all offers for filters", err);
-      setAllOffersForFilters([]);
-    }
-  };
+  //     setAllOffersForFilters(mappedIds);
+  //   } catch (err) {
+  //     console.error("Failed to fetch all offers for filters", err);
+  //     setAllOffersForFilters([]);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (activeTab === "OFFER_POOL") {
-      fetchAllOffersForFilters();
-    }
-  }, [selectedPositionId, filters?.status, activeTab]);
+  // useEffect(() => {
+  //   if (activeTab === "OFFER_POOL") {
+  //     fetchAllOffersForFilters();
+  //   }
+  // }, [selectedPositionId, filters?.status, activeTab]);
 
   const tabs = [
     {
@@ -665,6 +677,8 @@ export default function CandidateScreening({ selectedJob }) {
   const [showDigitalSignatureModal, setShowDigitalSignatureModal] =
     useState(false);
   const [offerSelectedIds, setOfferSelectedIds] = useState([]);
+  const [offerSelectAll, setOfferSelectAll] = useState(false);
+  const [excludedOfferIds, setExcludedOfferIds] = useState([]);
   const [offerRefreshKey, setOfferRefreshKey] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
   const [offerTemplateId, setOfferTemplateId] = useState("");
@@ -2162,29 +2176,68 @@ export default function CandidateScreening({ selectedJob }) {
   };
   const handleSendOfferForApproval = async () => {
     try {
-      const selectedOffers = offerData.filter((o) =>
-        offerSelectedIds.includes(o.id)
-      );
+      // 1. Calculate global selected count
+      const totalSelectedCount = offerSelectAll
+        ? offerTotalElements - excludedOfferIds.length
+        : effectiveSelectedOffers.length;
 
-      const approvedOffers = selectedOffers.filter(
-        (o) => o.status === "APPROVED"
-      );
-
-      if (!approvedOffers.length) {
-        toast.error("Please select approved offers only.");
+      if (totalSelectedCount <= 0) {
+        toast.error(
+          t("candidateWorkflow:select_at_least_one_candidate") ||
+          "Please select at least one candidate"
+        );
         return;
+      }
+
+      // 2. Normal selection validation
+      if (!offerSelectAll) {
+        const selectedOffers = offerData.filter((o) =>
+          offerSelectedIds.includes(o.id)
+        );
+
+        const approvedOffers = selectedOffers.filter(
+          (o) => o.status === "APPROVED"
+        );
+
+        if (!approvedOffers.length) {
+          toast.error("Please select approved offers only.");
+          return;
+        }
+      } else {
+        // Select All mode requires 'APPROVED' status filter
+        if (!filters?.status?.includes("APPROVED")) {
+          toast.error("Please select the 'Approved' status filter first.");
+          return;
+        }
       }
 
       setSendingOfferApproval(true);
 
-      const payload = approvedOffers.map((o) => o.candidateOfferId);
+      const payload = {
+        selectAll: offerSelectAll,
+        positionIds: selectedPositionId,
+        selectedIds: offerSelectAll
+          ? []
+          : offerData
+            .filter(
+              (o) =>
+                offerSelectedIds.includes(o.id) &&
+                o.status === "APPROVED"
+            )
+            .map((o) => o.candidateOfferId),
+        statusList: filters?.status || [],
+        excludedIds: offerSelectAll ? excludedOfferIds : [],
+      };
 
       await candidateWorkflowServices.sendOfferForApproval(payload);
 
       toast.success("Offer sent successfully.");
 
       setOfferRefreshKey((prev) => prev + 1);
+
       setOfferSelectedIds([]);
+      setOfferSelectAll(false);
+      setExcludedOfferIds([]);
     } catch (err) {
       toast.error(
         err?.response?.data?.message || "Failed to send offer for approval."
@@ -2199,6 +2252,19 @@ export default function CandidateScreening({ selectedJob }) {
   const selectedOfferObjects = useMemo(() => {
     return offerData.filter((o) => offerSelectedIds.includes(o.id));
   }, [offerData, offerSelectedIds]);
+
+  const effectiveSelectedOffers = useMemo(() => {
+    return offerSelectAll
+      ? offerData.filter(
+        (offer) => !excludedOfferIds.includes(offer.id)
+      )
+      : selectedOfferObjects;
+  }, [
+    offerSelectAll,
+    offerData,
+    excludedOfferIds,
+    selectedOfferObjects,
+  ]);
 
   // 1. Checks if all selected candidates have status OFFER_SENT or OFFER_EXTENDED
   const isAllOfferSentOrExtended = useMemo(() => {
@@ -2229,8 +2295,53 @@ export default function CandidateScreening({ selectedJob }) {
   const [showExtendModal, setShowExtendModal] = useState(false);
 
   // ⚡ Click Handler: Button remains clickable and explains WHY action is blocked via toast
+  // const handleBulkExtendClick = () => {
+
+
+  //   if (effectiveSelectedOffers.length === 0) {
+  //     toast.error(
+  //       t("candidateWorkflow:select_at_least_one_candidate") ||
+  //       "Please select at least one candidate"
+  //     );
+  //     return;
+  //   }
+
+  //   const isAllOfferSentOrExtended = effectiveSelectedOffers.every(
+  //     (offer) =>
+  //       offer.status === "OFFER_SENT" ||
+  //       offer.status === "OFFER_EXTENDED"
+  //   );
+
+  //   if (!isAllOfferSentOrExtended) {
+  //     toast.error(
+  //       t("candidateWorkflow:invalid_status_for_extend") ||
+  //       "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
+  //     );
+  //     return;
+  //   }
+
+  //   // const isAllDatesValidForExtension = effectiveSelectedOffers.every(...);
+
+  //   // if (!isAllDatesValidForExtension) {
+  //   //   toast.error(
+  //   //     t("candidateWorkflow:accept_before_date_not_expired") ||
+  //   //       "Cannot extend: Acceptance date has not expired yet or Joining Date has passed for selected candidates."
+  //   //   );
+  //   //   return;
+  //   // }
+
+  //   setShowExtendModal(true);
+  // };
+
+
+
   const handleBulkExtendClick = () => {
-    if (selectedOfferObjects.length === 0) {
+    // Check global count when selectAll is true, else check effectiveSelectedOffers
+    const totalSelectedCount = offerSelectAll
+      ? offerTotalElements - excludedOfferIds.length
+      : effectiveSelectedOffers.length;
+
+    if (totalSelectedCount <= 0) {
       toast.error(
         t("candidateWorkflow:select_at_least_one_candidate") ||
         "Please select at least one candidate"
@@ -2238,39 +2349,82 @@ export default function CandidateScreening({ selectedJob }) {
       return;
     }
 
-    if (!isAllOfferSentOrExtended) {
-      toast.error(
-        t("candidateWorkflow:invalid_status_for_extend") ||
-        "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
+    // Frontend status validation is performed when selectAll is false
+    if (!offerSelectAll) {
+      const isAllOfferSentOrExtended = effectiveSelectedOffers.every(
+        (offer) =>
+          offer.status === "OFFER_SENT" ||
+          offer.status === "OFFER_EXTENDED"
       );
-      return;
-    }
 
-    // if (!isAllDatesValidForExtension) {
-    //   toast.error(
-    //     t("candidateWorkflow:accept_before_date_not_expired") ||
-    //       "Cannot extend: Acceptance date has not expired yet or Joining Date has passed for selected candidates."
-    //   );
-    //   return;
-    // }
+      if (!isAllOfferSentOrExtended) {
+        toast.error(
+          t("candidateWorkflow:invalid_status_for_extend") ||
+          "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
+        );
+        return;
+      }
+    }
 
     setShowExtendModal(true);
   };
-  const canGenerateOffer =
-    selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every(
-      (o) =>
-        ["OFFER_AWAITED","OFFER_GENERATED", "L1_REJECTED", "L2_REJECTED"].includes(o.status) &&
-        o.qnq === "Q" &&
-        !o.waitList
-    );
+  const canGenerateOffer = useMemo(() => {
+    if (offerSelectAll) {
+      // When Select All is active across pages, check global candidate selection count
+      const totalSelectedCount = offerTotalElements - excludedOfferIds.length;
+      return totalSelectedCount > 0;
+    }
 
-  const canSendOfferForApproval =
-    selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every((o) => o.status === "APPROVED");
+    // When Select All is false (manual page-level selections)
+    return (
+      effectiveSelectedOffers.length > 0 &&
+      effectiveSelectedOffers.every(
+        (o) =>
+          ["OFFER_AWAITED", "OFFER_GENERATED", "L1_REJECTED", "L2_REJECTED"].includes(o.status) &&
+          o.qnq === "Q" &&
+          !o.waitList
+      )
+    );
+  }, [
+    offerSelectAll,
+    offerTotalElements,
+    excludedOfferIds,
+    effectiveSelectedOffers,
+  ]);
+
+
+  console.log("offerSelectAll:", offerSelectAll);
+  console.log("offerSelectedIds:", offerSelectedIds);
+  console.log("excludedOfferIds:", excludedOfferIds);
+  console.log("offerData:", offerData.length);
+  console.log("effectiveSelectedOffers:", effectiveSelectedOffers.length);
+  console.log("canGenerateOffer:", canGenerateOffer);
+
+  const canSendOfferForApproval = useMemo(() => {
+    if (offerSelectAll) {
+      // When Select All is active across pages:
+      // 1. Status filter must include "APPROVED"
+      // 2. Global selection count must be > 0
+      const hasApprovedFilter = filters?.status?.includes("APPROVED");
+      const totalSelectedCount = offerTotalElements - excludedOfferIds.length;
+      return hasApprovedFilter && totalSelectedCount > 0;
+    }
+
+    // When Select All is false (manual page-level selections):
+    return (
+      effectiveSelectedOffers.length > 0 &&
+      effectiveSelectedOffers.every((o) => o.status === "APPROVED")
+    );
+  }, [
+    offerSelectAll,
+    filters?.status,
+    offerTotalElements,
+    excludedOfferIds,
+    effectiveSelectedOffers,
+  ]);
   const allHaveLocationAndState =
-    selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every(
+    effectiveSelectedOffers.length > 0 &&
+    effectiveSelectedOffers.every(
       (o) =>
         o.location &&
         o.location.trim() !== "" &&
@@ -2282,14 +2436,14 @@ export default function CandidateScreening({ selectedJob }) {
   //   selectedOfferObjects.length > 0 &&
   //   selectedOfferObjects.every((o) => o.status === "OFFER_AWAITED", "APPROVAL_REJECTED");
   const allAwaited =
-    selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every((o) =>
+    effectiveSelectedOffers.length > 0 &&
+    effectiveSelectedOffers.every((o) =>
       ["OFFER_AWAITED", "L1_REJECTED", "L2_REJECTED"].includes(o.status)
     );
 
   const allHaveSelectListValue =
-    selectedOfferObjects.length > 0 &&
-    selectedOfferObjects.every(
+    effectiveSelectedOffers.length > 0 &&
+    effectiveSelectedOffers.every(
       (o) => o.selectList && o.selectList.trim() !== ""
     );
 
@@ -2503,11 +2657,17 @@ export default function CandidateScreening({ selectedJob }) {
   };
 
   const handleGenerateOffer = async () => {
-    if (offerSelectedIds.length === 0) {
+    // 1. Compute global selected count across pages
+    const totalSelectedCount = offerSelectAll
+      ? offerTotalElements - excludedOfferIds.length
+      : offerSelectedIds.length;
+
+    if (totalSelectedCount <= 0) {
       toast.error("Please select at least one candidate");
       return;
     }
 
+    // 2. Form field validations
     if (!offerTemplateId) {
       toast.error("Please select an offer template");
       return;
@@ -2528,61 +2688,70 @@ export default function CandidateScreening({ selectedJob }) {
       return;
     }
 
-    const selectedOffers = offerData.filter((offer) =>
-      offerSelectedIds.includes(offer.id)
-    );
+    // 3. Location check for manual selection
+    if (!offerSelectAll) {
+      const selectedOffers = offerData.filter((offer) =>
+        offerSelectedIds.includes(offer.id)
+      );
 
-    const invalidLocationOffers = selectedOffers.filter(
-      (offer) => !offer.state || !offer.location
-    );
+      const invalidLocationOffers = selectedOffers.filter(
+        (offer) => !offer.state || !offer.location
+      );
 
-    if (invalidLocationOffers.length > 0) {
-      toast.error("State and City are mandatory to generate the offer.");
-      return;
+      if (invalidLocationOffers.length > 0) {
+        toast.error("State and City are mandatory to generate the offer.");
+        return;
+      }
     }
 
     try {
       setGeneratingOffer(true);
 
       const payload = {
+        selection: {
+          selectAll: offerSelectAll,
+          positionIds: selectedPositionId,
+          selectedIds: offerSelectAll ? [] : offerSelectedIds,
+          statusList: filters?.status || [],
+          excludedIds: offerSelectAll ? excludedOfferIds : [],
+        },
+
         offerTemplateId,
         joiningDate,
         acceptBeforeDate,
         designationId: null,
-        offerIds: offerSelectedIds,
         signatoryName: signatory,
         signatoryDesignation: signatoryDesignation,
       };
 
       const res = await jobPositionApiService.generateOffers(payload);
-      if (!res.success) {
-        toast.error(res.data || res.message || "Failed to generate offers");
+
+      if (!res?.success) {
+        toast.error(res?.data || res?.message || "Failed to generate offers");
         return;
       }
-      console.log("Generate Offer Response:", res);
 
       toast.success("Offer generated successfully");
 
       setOfferRefreshKey((prev) => prev + 1);
 
-      // Clear form
+      // Reset
       setOfferTemplateId("");
       setSelectedTemplate("");
       setAcceptBeforeDate("");
       setJoiningDate("");
       setSignatory("");
       setSignatoryDesignation("");
+
       setOfferSelectedIds([]);
+      setOfferSelectAll(false);
+      setExcludedOfferIds([]);
 
       setFormErrors({
         acceptBeforeDate: "",
         joiningDate: "",
       });
-
-      console.log(res);
     } catch (err) {
-      // console.error(err);
-      // toast.error(err?.response?.data?.message || "Failed to generate offers");
       toast.error(
         err?.response?.data?.data ||
         err?.response?.data?.message ||
@@ -2718,6 +2887,85 @@ export default function CandidateScreening({ selectedJob }) {
         selectedPanels: groupedPanels,
       },
     });
+  };
+
+
+
+
+
+
+
+
+
+
+  const statusOptions = useMemo(
+    () =>
+      availableStatuses.map((status) => ({
+        value: status,
+        label: getStatusLabel(status),
+      })),
+    [availableStatuses, activeTab]
+  );
+
+  const StatusOption = (props) => (
+    <components.Option {...props}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={props.isSelected}
+          onChange={() => null}
+        />
+        <label style={{ margin: 0 }}>{props.label}</label>
+      </div>
+    </components.Option>
+  );
+
+  const StatusMultiValue = ({ index, getValue, ...props }) => {
+    const selected = getValue();
+
+    if (index === 0) {
+      const remainingSelected = selected.slice(1);
+
+      return (
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <components.MultiValue {...props} />
+          {selected.length > 1 && (
+            <OverlayTrigger
+              placement="bottom" // <-- Placed tooltip below
+              overlay={
+                <Tooltip id="selected-statuses-tooltip">
+                  <div style={{ textAlign: "left", padding: "2px 4px" }}>
+                    {remainingSelected.map((item) => (
+                      <div key={item.value}>{item.label}</div>
+                    ))}
+                  </div>
+                </Tooltip>
+              }
+            >
+              <span
+                style={{
+                  fontSize: 13,
+                  cursor: "pointer",
+                  color: "#555",
+                  fontWeight: "500",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                +{selected.length - 1}
+              </span>
+            </OverlayTrigger>
+          )}
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -3026,6 +3274,71 @@ export default function CandidateScreening({ selectedJob }) {
                 ))}
               </select>
             </div>
+
+            {/* <div className="row g-2 mt-1 px-2 py-1 align-items-center">
+            <div className="col-md-2 col-6 d-flex align-items-center gap-2">
+              <p className="text-muted fs-14 mb-1">
+                {" "}
+                {t("candidateWorkflow:filter_by")}:
+              </p>
+              <button
+                className="btn fs-14 mb-1 error-text"
+                onClick={() =>
+                  setFilters({
+                    status: [],
+                    stateId: "",
+                    categoryId: "",
+                    searchText: "",
+                  })
+                }
+              >
+                {t("common:clear_all")}
+              </button>
+            </div>
+            <div className="col-md-2 col-6 mt-0">
+              {activeTab === "OFFER_POOL" ? (
+          <Select
+            isMulti
+            closeMenuOnSelect={true} // <-- Changed from false to true
+            hideSelectedOptions={false}
+            className="fs-14"
+            classNamePrefix="react-select"
+            options={statusOptions}
+            components={{
+              Option: StatusOption,
+              MultiValue: StatusMultiValue,
+            }}
+            placeholder={t("candidateWorkflow:all_statuses")}
+            value={statusOptions.filter((o) =>
+              filters.status.includes(o.value)
+            )}
+            onChange={(options) =>
+              setFilters((prev) => ({
+                ...prev,
+                status: options ? options.map((o) => o.value) : [],
+              }))
+            }
+          />
+
+              ) : (
+                <select
+                  className="form-select fs-14 py-1 mt-0"
+                  value={filters?.status[0] || ""}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                >
+                  <option value="">
+                    {t("candidateWorkflow:all_statuses")}
+                  </option>
+
+                  {availableStatuses.map((status) => (
+                    <option key={status} value={status}>
+                      {getStatusLabel(status)}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+            </div> */}
 
             {activeTab === "CANDIDATE_POOL" && hasLocationData && (
               <div className="col-md-2 col-6 mt-0">
@@ -3803,14 +4116,19 @@ export default function CandidateScreening({ selectedJob }) {
             selectedIds={offerSelectedIds}
             setSelectedIds={setOfferSelectedIds}
             refreshKey={offerRefreshKey}
-            onOffersLoaded={(data) => setOfferData(data)}
+            onOffersLoaded={(data, total) => {
+              setOfferData(data);
+              setOfferTotalElements(total || 0);
+            }}
             offerTemplateId={offerTemplateId}
             acceptBeforeDate={acceptBeforeDate}
             joiningDate={joiningDate}
-            allOffersForFilters={allOffersForFilters}
+            offerSelectAll={offerSelectAll}
+            setOfferSelectAll={setOfferSelectAll}
+            excludedOfferIds={excludedOfferIds}
+            setExcludedOfferIds={setExcludedOfferIds}
           />
         )}
-
 
         <ExtendOfferModal
           show={showExtendModal}
@@ -3819,6 +4137,13 @@ export default function CandidateScreening({ selectedJob }) {
           isSingleMode={false}
           onExtendSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
           onRejectSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
+
+          // New props
+          offerSelectAll={offerSelectAll}
+          offerSelectedIds={offerSelectedIds}
+          excludedOfferIds={excludedOfferIds}
+          selectedPositionId={selectedPositionId}
+          filters={filters}
         />
 
         {/* {activeTab === "ONBOARDING_POOL" && <OnboardingPool />} */}
@@ -3874,6 +4199,11 @@ export default function CandidateScreening({ selectedJob }) {
           console.log("Incrementing refreshKey");
           setOfferRefreshKey((prev) => prev + 1);
         }}
+        offerSelectAll={offerSelectAll}
+        excludedOfferIds={excludedOfferIds}
+        selectedPositionId={selectedPositionId}
+        filters={filters}
+        offerTotalElements={offerTotalElements} // Pass totalElements here
       />
       {/* <Modal show={showPreview}
         onHide={() => setShowPreview(false)} size="lg">

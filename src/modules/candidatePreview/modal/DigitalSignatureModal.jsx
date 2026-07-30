@@ -15,6 +15,11 @@ const DigitalSignatureModal = ({
   setSelectedIds,
   positionId,
   offerData,
+  offerSelectAll,
+  excludedOfferIds,
+  selectedPositionId,
+  filters,
+  offerTotalElements = 0,
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const [loading, setLoading] = React.useState(false);
@@ -47,32 +52,51 @@ const DigitalSignatureModal = ({
     }
   };
 
+  /* ---------------- DOWNLOAD TEMPLATE ZIP ---------------- */
+
   const handleDownloadTemplate = async () => {
-    if (!selectedIds?.length) {
+    // 1. Calculate selection count (global when offerSelectAll is active vs local selectedIds)
+    const totalSelectedCount = offerSelectAll
+      ? offerTotalElements - excludedOfferIds.length
+      : selectedIds.length;
+
+    if (totalSelectedCount <= 0) {
       toast.error(t("candidateWorkflow:please_select_file"));
       return;
     }
 
-    const selectedOffers = offerData.filter((offer) =>
-      selectedIds.includes(offer.id)
-    );
-
-    const invalidOffers = selectedOffers.filter(
-      (offer) => offer.status !== "OFFER_GENERATED"
-    );
-
-    if (invalidOffers.length > 0) {
-      toast.error(
-        t("candidateWorkflow:only_offer_generated_candidates_can_be_downloaded")
+    // 2. Perform frontend status validation only when selectAll is false
+    if (!offerSelectAll) {
+      const selectedOffers = offerData.filter((offer) =>
+        selectedIds.includes(offer.id)
       );
-      return;
+
+      const invalidOffers = selectedOffers.filter(
+        (offer) => offer.status !== "OFFER_GENERATED"
+      );
+
+      if (invalidOffers.length > 0) {
+        toast.error(
+          t(
+            "candidateWorkflow:only_offer_generated_candidates_can_be_downloaded"
+          )
+        );
+        return;
+      }
     }
 
     try {
       setLoading(true);
 
-      const response =
-        await jobPositionApiService.downloadOffersZip(selectedIds);
+      const payload = {
+        selectAll: offerSelectAll,
+        positionIds: selectedPositionId,
+        selectedIds: offerSelectAll ? [] : selectedIds,
+        statusList: filters?.status || [],
+        excludedIds: offerSelectAll ? excludedOfferIds : [],
+      };
+
+      const response = await jobPositionApiService.downloadOffersZip(payload);
 
       const url = window.URL.createObjectURL(response.data);
 
@@ -88,13 +112,15 @@ const DigitalSignatureModal = ({
 
       toast.success(t("candidateWorkflow:offers_downloaded_successfully"));
     } catch (err) {
-      console.error(err);
-
-      toast.error(err?.response?.data?.message || t("candidateWorkflow:failed_to_download_offers"));
+      toast.error(
+        err?.response?.data?.message ||
+        t("candidateWorkflow:failed_to_download_offers")
+      );
     } finally {
       setLoading(false);
     }
   };
+
   /* ---------------- BULK UPLOAD ---------------- */
 
   const handleDigitalSignatureUpload = async () => {
@@ -107,7 +133,10 @@ const DigitalSignatureModal = ({
       setLoading(true);
       setValidationErrors([]);
 
-      const res = await jobPositionApiService.uploadSignedOffers(file,positionId);
+      const res = await jobPositionApiService.uploadSignedOffers(
+        file,
+        positionId
+      );
 
       if (res?.success === true) {
         const { successCount = 0, failureCount = 0 } = res.data || {};
@@ -117,7 +146,10 @@ const DigitalSignatureModal = ({
           return;
         }
 
-        toast.success(res?.message || t("candidateWorkflow:signed_offers_uploaded_successfully."));
+        toast.success(
+          res?.message ||
+          t("candidateWorkflow:signed_offers_uploaded_successfully.")
+        );
 
         if (typeof onUploadSuccess === "function") {
           await onUploadSuccess();
@@ -126,7 +158,10 @@ const DigitalSignatureModal = ({
         closeModal();
         setSelectedIds([]);
       } else {
-        toast.error(res?.message || t("candidateWorkflow:failed_to_upload_signed_offers"));
+        toast.error(
+          res?.message ||
+          t("candidateWorkflow:failed_to_upload_signed_offers")
+        );
 
         const errors = Array.isArray(res?.data) ? res.data : [];
         setValidationErrors(errors);
@@ -137,7 +172,9 @@ const DigitalSignatureModal = ({
       const errorData = err?.response?.data;
 
       toast.error(
-        errorData?.message || err?.message || t("candidateWorkflow:failed_to_upload_signed_offers")
+        errorData?.message ||
+        err?.message ||
+        t("candidateWorkflow:failed_to_upload_signed_offers")
       );
 
       const errors = Array.isArray(errorData?.data) ? errorData.data : [];
@@ -165,9 +202,11 @@ const DigitalSignatureModal = ({
     >
       <Modal.Header closeButton className="modalhead">
         <div className="d-grid">
-          <h5 className="mb-1 blue-color fs-15"> {t("candidateWorkflow:upload_digital_signature")} </h5>
+          <h5 className="mb-1 blue-color fs-15">
+            {t("candidateWorkflow:upload_digital_signature")}
+          </h5>
           <p className="text-muted fs-14 mb-0">
-                {t("candidateWorkflow:upload_digital_signature_description")}.{" "}
+            {t("candidateWorkflow:upload_digital_signature_description")}.
           </p>
         </div>
       </Modal.Header>
@@ -178,8 +217,12 @@ const DigitalSignatureModal = ({
           style={{ backgroundColor: "#FFF1E8" }}
         >
           <img src={fileIcon} width={60} className="mb-2" alt="file" />
-          <p className="mb-1 fw-600 fs-15">{t("candidateWorkflow:upload_signed_files")}</p>
-          <small className="text-muted fs-13">{t("candidateWorkflow:supports_zip_format")}</small>
+          <p className="mb-1 fw-600 fs-15">
+            {t("candidateWorkflow:upload_signed_files")}
+          </p>
+          <small className="text-muted fs-13">
+            {t("candidateWorkflow:supports_zip_format")}
+          </small>
 
           <div className="d-grid justify-content-center gap-2 mt-3">
             <button
@@ -256,7 +299,7 @@ const DigitalSignatureModal = ({
           onClick={handleDigitalSignatureUpload}
           disabled={!file}
         >
-          {t("candidateWorkflow:upload")}{" "}
+          {t("candidateWorkflow:upload")}
         </button>
       </Modal.Footer>
     </Modal>

@@ -11,6 +11,11 @@ export default function ExtendOfferModal({
     isSingleMode = false,
     onExtendSuccess,
     onRejectSuccess,
+    offerSelectAll,
+    offerSelectedIds,
+    excludedOfferIds,
+    selectedPositionId,
+    filters,
 }) {
     const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -172,12 +177,17 @@ export default function ExtendOfferModal({
         try {
             setLoading(true);
 
-            // UPDATED PAYLOAD HERE
-            const payload = selectedCandidates.map((c) => ({
-                offerId: c.candidateOfferId || c.id,
+            const payload = {
                 extensionDate: extendedDate,
-                extensionComments: remarks || "", // Added extensionComments field
-            }));
+                extensionComments: remarks || "",
+                selection: {
+                    selectAll: offerSelectAll,
+                    positionIds: selectedPositionId,
+                    selectedIds: offerSelectAll ? [] : offerSelectedIds,
+                    statusList: filters?.status || [],
+                    excludedIds: offerSelectAll ? excludedOfferIds : [],
+                },
+            };
 
             const res = await jobPositionApiService.extendOfferAcceptDate(payload);
 
@@ -195,6 +205,7 @@ export default function ExtendOfferModal({
                 t("candidateWorkflow:offer_date_extended_success") ||
                 "Offer date extended successfully"
             );
+
             onExtendSuccess?.();
             onHide();
         } catch (err) {
@@ -229,14 +240,15 @@ export default function ExtendOfferModal({
         try {
             setLoading(true);
 
-            const offerIds = selectedCandidates.map(
-                (c) => c.candidateOfferId || c.id
-            );
-
-            // Updated payload mapping 'remarks' to the 'comments' key as required
             const payload = {
-                comments: remarks,
-                offerIds: offerIds,
+                cancellationComments: remarks,
+                selection: {
+                    selectAll: offerSelectAll,
+                    positionIds: selectedPositionId,
+                    selectedIds: offerSelectAll ? [] : offerSelectedIds,
+                    statusList: filters?.status || [],
+                    excludedIds: offerSelectAll ? excludedOfferIds : [],
+                },
             };
 
             const res = await jobPositionApiService.cancelOffers(payload);
@@ -259,7 +271,7 @@ export default function ExtendOfferModal({
             onRejectSuccess?.();
             onHide();
         } catch (err) {
-            console.error("Cancel Offers Error Catch:", err);
+            console.error("Cancel Offers Error:", err);
 
             const errorData = err?.response?.data || err?.data || err;
 
@@ -283,13 +295,13 @@ export default function ExtendOfferModal({
             </Modal.Header>
 
             <Modal.Body>
-                <p className="fs-14 text-muted mb-3">
+                {/* <p className="fs-14 text-muted mb-3">
                     {t("candidateWorkflow:managing_offer_for") || "Managing offer for"}{" "}
                     <strong>{selectedCandidates.length}</strong>{" "}
                     {selectedCandidates.length === 1
                         ? t("candidateWorkflow:candidate") || "candidate"
                         : t("candidateWorkflow:candidates") || "candidate(s)"}.
-                </p>
+                </p> */}
 
                 {/* Date Input for Extension */}
                 <Form.Group className="mb-3">

@@ -14,7 +14,7 @@ import useOfferApproval from "../../Approvals/hooks/useOfferApproval";
 const OFFER_STATUS_CLASS_MAP = {
   OFFER_AWAITED: "bg-warning",
   OFFER_SENT: "bg-primary",
-  OFFER_EXTENDED: "bg-info", 
+  OFFER_EXTENDED: "bg-info",
   OFFER_REJECTED: "bg-danger",
   OFFER_CANCELED: "bg-danger",
   OFFER_ACCEPTED: "bg-success",
@@ -53,7 +53,11 @@ const OfferPool = ({
   acceptBeforeDate,
   joiningDate,
   offerApprovalId,
-  allOffersForFilters,
+  offerSelectAll,
+  setOfferSelectAll,
+  excludedOfferIds,
+  setExcludedOfferIds
+  // allOffersForFilters,
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -74,21 +78,23 @@ const OfferPool = ({
     OFFER_GENERATED: t("candidateWorkflow:offer_generated") || "Offer Generated",
     APPROVED: t("candidateWorkflow:approved") || "Approved",
   }), [t]);
-const [offers, setOffers] = useState([]);
-const [totalElements, setTotalElements] = useState(0); // 👈 ADD THIS LINE
-const [hasExamConfiguration, setHasExamConfiguration] = useState(false);
+  const [offers, setOffers] = useState([]);
+  //  const [selectAllActive, setSelectAllActive] = useState(false);
+  // const [excludedOfferIds, setExcludedOfferIds] = useState([]);
+  const [totalElements, setTotalElements] = useState(0); //  ADD THIS LINE
+  const [hasExamConfiguration, setHasExamConfiguration] = useState(false);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [showPreview, setShowPreview] = useState(false);
-const SELECTABLE_STATUSES = [
-  "OFFER_AWAITED",
-  "L1_REJECTED",
-  "L2_REJECTED",
-  "OFFER_GENERATED",
-  "APPROVED",
-  "OFFER_SENT",
-  "OFFER_EXTENDED",
-];
+  const SELECTABLE_STATUSES = [
+    "OFFER_AWAITED",
+    "L1_REJECTED",
+    "L2_REJECTED",
+    "OFFER_GENERATED",
+    "APPROVED",
+    "OFFER_SENT",
+    "OFFER_EXTENDED",
+  ];
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [showModal, setShowModal] = useState(false);
@@ -108,95 +114,95 @@ const SELECTABLE_STATUSES = [
 
 
   // 1. State for controlling the history modal & loading
-const [showExtensionHistoryModal, setShowExtensionHistoryModal] = useState(false);
-const [extensionHistoryData, setExtensionHistoryData] = useState([]);
-const [loadingExtensionHistory, setLoadingExtensionHistory] = useState(false);
+  const [showExtensionHistoryModal, setShowExtensionHistoryModal] = useState(false);
+  const [extensionHistoryData, setExtensionHistoryData] = useState([]);
+  const [loadingExtensionHistory, setLoadingExtensionHistory] = useState(false);
 
-// 2. Handler function to fetch extension history from backend API
-// Handler function to fetch and map extension history based on backend response
-// Handler function to fetch and map extension history based on backend response
-const handleViewExtensionHistory = async (offerId) => {
-  console.log("=== Fetching Extension History ===");
-  console.log("Offer ID:", offerId);
+  // 2. Handler function to fetch extension history from backend API
+  // Handler function to fetch and map extension history based on backend response
+  // Handler function to fetch and map extension history based on backend response
+  const handleViewExtensionHistory = async (offerId) => {
+    console.log("=== Fetching Extension History ===");
+    console.log("Offer ID:", offerId);
 
-  try {
-    setLoadingExtensionHistory(true);
-    setExtensionHistoryData([]);
+    try {
+      setLoadingExtensionHistory(true);
+      setExtensionHistoryData([]);
 
-    const res = await jobPositionApiService.getOfferExtensionHistory(offerId);
+      const res = await jobPositionApiService.getOfferExtensionHistory(offerId);
 
-    console.log("Raw API Response:", res);
+      console.log("Raw API Response:", res);
 
-    const apiPayload = res?.data || res;
+      const apiPayload = res?.data || res;
 
-    // 1. CHECK FOR API FAILURE BEFORE OPENING MODAL
-    if (apiPayload?.success === false) {
-      console.log("Backend validation error detected:", apiPayload);
+      // 1. CHECK FOR API FAILURE BEFORE OPENING MODAL
+      if (apiPayload?.success === false) {
+        console.log("Backend validation error detected:", apiPayload);
 
-      const errorMessage =
-        (typeof apiPayload.data === "string" && apiPayload.data.trim()) ||
-        (typeof res?.data?.data === "string" && res.data.data.trim()) ||
-        apiPayload.message ||
-        res?.message ||
-        "No offer extension history found";
+        const errorMessage =
+          (typeof apiPayload.data === "string" && apiPayload.data.trim()) ||
+          (typeof res?.data?.data === "string" && res.data.data.trim()) ||
+          apiPayload.message ||
+          res?.message ||
+          "No offer extension history found";
 
-      console.log("Showing Toast Error:", errorMessage);
-      toast.error(errorMessage);
-      return; // Stop here, modal never opens!
-    }
+        console.log("Showing Toast Error:", errorMessage);
+        toast.error(errorMessage);
+        return; // Stop here, modal never opens!
+      }
 
-    // 2. EXTRACT LIST
-    const rawList = Array.isArray(apiPayload?.data)
-      ? apiPayload.data
-      : Array.isArray(apiPayload)
-      ? apiPayload
-      : [];
+      // 2. EXTRACT LIST
+      const rawList = Array.isArray(apiPayload?.data)
+        ? apiPayload.data
+        : Array.isArray(apiPayload)
+          ? apiPayload
+          : [];
 
-    console.log("Raw List Extracted:", rawList);
+      console.log("Raw List Extracted:", rawList);
 
-    if (rawList.length === 0) {
-      toast.error("No offer extension history found");
-      return;
-    }
+      if (rawList.length === 0) {
+        toast.error("No offer extension history found");
+        return;
+      }
 
-    // 3. MAP DATA FOR MODAL
-    const mappedHistory = rawList.map((item, index) => ({
-      approvalId: item.offerId ? `${item.offerId}-${index}` : index,
-      approverName:
-        userMap[item.approverId] ||
-        userMap[item.userId] ||
-        item.approverName ||
-        "Recruiter",
-      actionDate: item.changedDate || null,
-      status: item.status || "OFFER_EXTENDED",
-     comments: item.comment || "-",
+      // 3. MAP DATA FOR MODAL
+      const mappedHistory = rawList.map((item, index) => ({
+        approvalId: item.offerId ? `${item.offerId}-${index}` : index,
+        approverName:
+          userMap[item.approverId] ||
+          userMap[item.userId] ||
+          item.approverName ||
+          "Recruiter",
+        actionDate: item.changedDate || null,
+        status: item.status || "OFFER_EXTENDED",
+        comments: item.comment || "-",
         extensionDate: item.extensionDate || "-"
-    }));
+      }));
 
-    console.log("Mapped History Data for Modal UI:", mappedHistory);
+      console.log("Mapped History Data for Modal UI:", mappedHistory);
 
-    // 4. OPEN MODAL ONLY WHEN DATA IS VALID AND READY
-    setExtensionHistoryData(mappedHistory);
-    setShowExtensionHistoryModal(true);
-  } catch (err) {
-    console.error("Failed to load extension history inside catch:", err);
+      // 4. OPEN MODAL ONLY WHEN DATA IS VALID AND READY
+      setExtensionHistoryData(mappedHistory);
+      setShowExtensionHistoryModal(true);
+    } catch (err) {
+      console.error("Failed to load extension history inside catch:", err);
 
-    const backendErrorData = err?.response?.data?.data;
-    const backendErrorMessage = err?.response?.data?.message;
+      const backendErrorData = err?.response?.data?.data;
+      const backendErrorMessage = err?.response?.data?.message;
 
-    const toastMessage =
-      typeof backendErrorData === "string" && backendErrorData.trim() !== ""
-        ? backendErrorData
-        : backendErrorMessage ||
+      const toastMessage =
+        typeof backendErrorData === "string" && backendErrorData.trim() !== ""
+          ? backendErrorData
+          : backendErrorMessage ||
           t("candidateWorkflow:failed_load_history") ||
           "Failed to load history";
 
-    console.log("Showing Catch Error Toast:", toastMessage);
-    toast.error(toastMessage);
-  } finally {
-    setLoadingExtensionHistory(false);
-  }
-};
+      console.log("Showing Catch Error Toast:", toastMessage);
+      toast.error(toastMessage);
+    } finally {
+      setLoadingExtensionHistory(false);
+    }
+  };
 
   const fetchExamConfiguration = async () => {
     try {
@@ -288,77 +294,181 @@ const handleViewExtensionHistory = async (offerId) => {
     }
   };
 
-// ➕ Add this logic to determine select-all state and behavior for the current page
-const formatStatus = (status = "") =>
+  // ➕ Add this logic to determine select-all state and behavior for the current page
+  const formatStatus = (status = "") =>
     status
       .toLowerCase()
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-// Extract IDs safely from allOffersForFilters or fall back to the currently loaded offers array
-// Filter only IDs for candidates whose status actually permits selection
-const selectableCandidateIds = useMemo(() => {
-  if (allOffersForFilters && allOffersForFilters.length > 0) {
-    // If a status filter is selected and it is NOT a selectable status (e.g. OFFER_CANCELED)
-    if (
-      filters?.status?.length &&
-      !filters.status.some((s) => SELECTABLE_STATUSES.includes(s))
-    ) {
-      return [];
-    }
+  // Extract IDs safely from allOffersForFilters or fall back to the currently loaded offers array
+  // Filter only IDs for candidates whose status actually permits selection
+  const selectableCandidateIds = useMemo(() => {
+    return offers.map(c => c.id);
+  }, [offers]);
 
-    return allOffersForFilters
-      .map((c) => (typeof c === "object" ? c.id : c))
-      .filter(Boolean);
-  }
+  const allSelected = offerSelectAll;
 
-  // Fallback to currently loaded page offers
-  return offers
-    .filter((c) => SELECTABLE_STATUSES.includes(c.status))
-    .map((c) => c.id)
-    .filter(Boolean);
-}, [allOffersForFilters, offers, filters?.status]);
-
-const allSelected =
-  selectableCandidateIds.length > 0 &&
-  selectableCandidateIds.every((id) => selectedIds.includes(id));
-
-const toggleSelectAll = () => {
+  const toggleSelectAll = () => {
     if (selectableCandidateIds.length === 0) {
       return;
     }
 
-    // 1. If everything is selected, ALWAYS allow clearing selections
-    if (allSelected) {
+    // Unselect everything
+    if (offerSelectAll) {
       setSelectedIds([]);
+      setExcludedOfferIds([]);
+      setOfferSelectAll(false);
       return;
     }
 
-    // 2. Require status filter ONLY when performing a fresh "Select All"
+    // Require status filter
     if (!filters?.status?.length) {
       toast.error(
         t("candidateWorkflow:select_status_filter_first") ||
-          "Please select the status filter first"
+        "Please select the status filter first"
       );
       return;
     }
 
-    // 3. Select all eligible candidates
-    setSelectedIds(selectableCandidateIds);
-    toast.success(
-      `${selectableCandidateIds.length} ${formatStatus(
-        filters?.status?.[0]
-      )} candidate${selectableCandidateIds.length !== 1 ? "s" : ""} selected`
-    );
+    setOfferSelectAll(true);
+    setExcludedOfferIds([]);
+    setSelectedIds([]);
+
+    // toast.success(
+    //   `${selectableCandidateIds.length} ${formatStatus(
+    //     filters?.status?.[0]
+    //   )} candidate${selectableCandidateIds.length !== 1 ? "s" : ""} selected`
+    // );
   };
 
   const toggleRow = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+
+    if (offerSelectAll) {
+
+      setExcludedOfferIds(prev =>
+
+        prev.includes(id)
+          ? prev.filter(x => x !== id)
+          : [...prev, id]
+
+      );
+
+      return;
+    }
+
+    setSelectedIds(prev =>
+
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : [...prev, id]
+
     );
   };
 
+  // const fetchOffers = async () => {
+  //   if (!selectedPositionId) {
+  //     setOffers([]);
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoading(true);
+
+  //     // Constructing the payload for the POST request
+  //     const payload = {
+  //       positionId: selectedPositionId,
+  //       offerStatusList: filters?.status && filters.status.length > 0 ? filters.status : [],
+  //       page: page,
+  //       size: pageSize,
+  //     };
+
+  //     const res =
+
+  //       await jobPositionApiService.getOffersByPosition(payload);
+
+  //     const apiData = res?.data; //  Define apiData here
+
+  //     // Support both a paged response object (apiData.content) or a flat array list (apiData)
+  //     const rawList = apiData?.content || (Array.isArray(apiData) ? apiData : []);
+  //     const mapped = rawList.map((item) => {
+  //       const offer = item.candidateOffersDTO || {};
+
+  //       return {
+  //         id: offer.candidateOfferId,
+  //         candidateOfferId: offer.candidateOfferId,
+  //         applicationNo: item.regNo,
+  //         applicationId: offer.applicationId,
+  //         offerFileUrl: offer.offerFileUrl,
+  //         letterNumber: offer.letterNumber,
+
+  //         name: item.candidateFullName,
+  //         categoryName: item.reservationCategory,
+  //         dateOfBirth: item.candidateDob ? formatDate(item.candidateDob) : "-",
+
+  //         age: item.age || "-",
+
+  //         ageConcession: item.hasAgeConcession ? "Yes" : "No",
+
+  //         qnq: offer.qualified ? "Q" : "NQ",
+
+  //         writtenMarks:
+  //           item.examMarks !== null && item.examMarks !== undefined
+  //             ? item.examMarks
+  //             : "-",
+
+  //         interviewScore:
+  //           item.interviewMarks !== null && item.interviewMarks !== undefined
+  //             ? item.interviewMarks
+  //             : "-",
+
+  //         combinedScore:
+  //           item.finalScore !== null && item.finalScore !== undefined
+  //             ? item.finalScore
+  //             : "-",
+
+  //         score: item.finalScore,
+  //         status: offer.status,
+  //         selectList: offer.selectList,
+  //         waitList: offer.waitList,
+  //         location: item.location,
+  //         state: item.state,
+  //         designation: item.designationName,
+  //         offerReleaseDate: formatDate(offer.offerReleaseDate),
+  //         acceptBeforeDate: formatDate(offer.acceptBeforeDate),
+  //         joiningDate: formatDate(offer.joiningDate),
+  //         extendedOfferDate: formatDate(offer.extendedOfferDate),
+
+  //         // Raw ISO strings for validation comparison
+  //         extensionDate: formatDate(offer.extensionDate),
+  //         rawAcceptBeforeDate: offer.acceptBeforeDate ? offer.acceptBeforeDate.split("T")[0] : "",
+  //         rawExtendedOfferDate: offer.extendedOfferDate ? offer.extendedOfferDate.split("T")[0] : "",
+
+  //         historyId: item.offerApprovalId,
+  //         cutOffDate: "-",
+  //         shortlisted: "-",
+  //         postingLocation: offer.postingLocation,
+  //         reportingAlpha: item.reportingAlpha
+  //       };
+  //     });
+
+  //     setOffers(mapped);
+  //     // 👈 ADD THIS LINE to track total counts coming from backend pagination metadata
+  //     setTotalElements(apiData?.page?.totalElements || mapped.length);
+
+  //     if (typeof onOffersLoaded === "function") {
+  //       onOffersLoaded(mapped);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Failed to load offers");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // Locate fetchOffers in OfferPool.jsx and update the onOffersLoaded invocation:
   const fetchOffers = async () => {
     if (!selectedPositionId) {
       setOffers([]);
@@ -367,8 +477,7 @@ const toggleSelectAll = () => {
 
     try {
       setLoading(true);
-      
-      // Constructing the payload for the POST request
+
       const payload = {
         positionId: selectedPositionId,
         offerStatusList: filters?.status && filters.status.length > 0 ? filters.status : [],
@@ -376,17 +485,12 @@ const toggleSelectAll = () => {
         size: pageSize,
       };
 
-      const res =
-    
-        await jobPositionApiService.getOffersByPosition(payload);
+      const res = await jobPositionApiService.getOffersByPosition(payload);
+      const apiData = res?.data;
 
-      const apiData = res?.data; // 👈 Define apiData here
-      
-      // Support both a paged response object (apiData.content) or a flat array list (apiData)
       const rawList = apiData?.content || (Array.isArray(apiData) ? apiData : []);
       const mapped = rawList.map((item) => {
         const offer = item.candidateOffersDTO || {};
-
         return {
           id: offer.candidateOfferId,
           candidateOfferId: offer.candidateOfferId,
@@ -394,32 +498,24 @@ const toggleSelectAll = () => {
           applicationId: offer.applicationId,
           offerFileUrl: offer.offerFileUrl,
           letterNumber: offer.letterNumber,
-
           name: item.candidateFullName,
           categoryName: item.reservationCategory,
           dateOfBirth: item.candidateDob ? formatDate(item.candidateDob) : "-",
-
           age: item.age || "-",
-
           ageConcession: item.hasAgeConcession ? "Yes" : "No",
-
           qnq: offer.qualified ? "Q" : "NQ",
-
           writtenMarks:
             item.examMarks !== null && item.examMarks !== undefined
               ? item.examMarks
               : "-",
-
           interviewScore:
             item.interviewMarks !== null && item.interviewMarks !== undefined
               ? item.interviewMarks
               : "-",
-
           combinedScore:
             item.finalScore !== null && item.finalScore !== undefined
               ? item.finalScore
               : "-",
-
           score: item.finalScore,
           status: offer.status,
           selectList: offer.selectList,
@@ -431,12 +527,9 @@ const toggleSelectAll = () => {
           acceptBeforeDate: formatDate(offer.acceptBeforeDate),
           joiningDate: formatDate(offer.joiningDate),
           extendedOfferDate: formatDate(offer.extendedOfferDate),
-          
-          // Raw ISO strings for validation comparison
           extensionDate: formatDate(offer.extensionDate),
           rawAcceptBeforeDate: offer.acceptBeforeDate ? offer.acceptBeforeDate.split("T")[0] : "",
           rawExtendedOfferDate: offer.extendedOfferDate ? offer.extendedOfferDate.split("T")[0] : "",
-
           historyId: item.offerApprovalId,
           cutOffDate: "-",
           shortlisted: "-",
@@ -445,20 +538,22 @@ const toggleSelectAll = () => {
         };
       });
 
-     setOffers(mapped);
-    // 👈 ADD THIS LINE to track total counts coming from backend pagination metadata
-    setTotalElements(apiData?.page?.totalElements || mapped.length);
+      setOffers(mapped);
+      const totalCount = apiData?.page?.totalElements || mapped.length;
+      setTotalElements(totalCount);
 
-    if (typeof onOffersLoaded === "function") {
-      onOffersLoaded(mapped);
-    }
-  } catch (err) {
+      // Pass mapped data AND totalElements up to parent component
+      if (typeof onOffersLoaded === "function") {
+        onOffersLoaded(mapped, totalCount);
+      }
+    } catch (err) {
       console.error(err);
       toast.error("Failed to load offers");
     } finally {
       setLoading(false);
     }
   };
+
 
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
@@ -470,15 +565,15 @@ const toggleSelectAll = () => {
     setShowHistoryModal(true);
   };
 
-// 👈 UPDATE useEffect dependencies to re-fetch when page, pageSize, or status changes
-useEffect(() => {
-  fetchOffers();
-  fetchUsers();
-  fetchExamConfiguration();
-}, [selectedPositionId, refreshKey, page, pageSize, filters?.status]);
+  // 👈 UPDATE useEffect dependencies to re-fetch when page, pageSize, or status changes
+  useEffect(() => {
+    fetchOffers();
+    fetchUsers();
+    fetchExamConfiguration();
+  }, [selectedPositionId, refreshKey, page, pageSize, filters?.status]);
 
-// ❌ REMOVED filteredOffers, paginatedOffers, and local totalElements calculation 
-// because the server handles filtering and pagination now.
+  // ❌ REMOVED filteredOffers, paginatedOffers, and local totalElements calculation 
+  // because the server handles filtering and pagination now.
 
   const InfoField = ({ label, value }) => (
     <div className="col-12 col-md-4 mb-3">
@@ -493,10 +588,11 @@ useEffect(() => {
     setPage(0);
   }, [pageSize]);
 
-useEffect(() => {
-  setPage(0);
-  setSelectedIds([]); // clear selected candidate checkboxes on status filter change
-}, [filters?.status]);
+  useEffect(() => {
+    setPage(0);
+    setSelectedIds([]);
+    setOfferSelectAll(false); setExcludedOfferIds([]);
+  }, [filters?.status]);
 
   // Ensure page index doesn't exceed total server pages if page size or items drop
   useEffect(() => {
@@ -513,9 +609,9 @@ useEffect(() => {
           className="table table-hover mb-0"
           style={{ minWidth: "1600px", whiteSpace: "nowrap" }}
         >
-         <thead className="bg-light">
+          <thead className="bg-light">
             <tr className="align-content-center">
-            <th
+              <th
                 className="sticky-col-checkbox border-top"
                 style={{
                   width: "50px",
@@ -523,12 +619,12 @@ useEffect(() => {
                   paddingLeft: "1.5rem",
                 }}
               >
-               <input
-  type="checkbox"
-  checked={allSelected}
-  onChange={toggleSelectAll}
-  disabled={!selectedPositionId || selectableCandidateIds.length === 0}
-/>
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={toggleSelectAll}
+                  disabled={!selectedPositionId || selectableCandidateIds.length === 0}
+                />
               </th>
               <th
                 className="fs-14 fw-normal py-3 border-top sticky-col-1"
@@ -647,13 +743,13 @@ useEffect(() => {
               </th>
 
               {/* ➕ ADD NEW EXTENDED OFFER DATE HEADER HERE */}
-<th
-  className="fs-14 fw-normal py-3 border-top"
-  scope="col"
-  style={{ paddingLeft: "1.25rem" }}
->
-  {t("candidateWorkflow:offer_extended_date") || "Extended Offer Date"}
-</th>
+              <th
+                className="fs-14 fw-normal py-3 border-top"
+                scope="col"
+                style={{ paddingLeft: "1.25rem" }}
+              >
+                {t("candidateWorkflow:offer_extended_date") || "Extended Offer Date"}
+              </th>
               <th
                 className="fs-14 fw-normal py-3 border-top"
                 scope="col"
@@ -672,20 +768,20 @@ useEffect(() => {
             </tr>
           </thead>
           <tbody>
-           {loading ? (
-            <tr>
-              <td colSpan="18" className="text-center py-4">
-                {t("loading_candidates")}
-              </td>
-            </tr>
-          ) : offers.length === 0 ? (  // 👈 Change paginatedOffers to offers
-            <tr>
-              <td colSpan="18" className="text-center py-4">
-                {t("no_candidates_found")}
-              </td>
-            </tr>
-          ) : (
-            offers.map((c) => (         // 👈 Change paginatedOffers to offers
+            {loading ? (
+              <tr>
+                <td colSpan="18" className="text-center py-4">
+                  {t("loading_candidates")}
+                </td>
+              </tr>
+            ) : offers.length === 0 ? (  // 👈 Change paginatedOffers to offers
+              <tr>
+                <td colSpan="18" className="text-center py-4">
+                  {t("no_candidates_found")}
+                </td>
+              </tr>
+            ) : (
+              offers.map((c) => (         // 👈 Change paginatedOffers to offers
                 <tr key={c.id}>
                   <td
                     className="sticky-col-checkbox"
@@ -696,13 +792,17 @@ useEffect(() => {
                     }}
                   >
                     {/* ✅ UPDATED: Added OFFER_SENT and OFFER_EXTENDED to allowed selection statuses */}
-                   <input
-  type="checkbox"
-  style={{ marginTop: "0.75rem" }}
-  checked={selectedIds.includes(c.id)}
-  onChange={() => toggleRow(c.id)}
-  disabled={!SELECTABLE_STATUSES.includes(c.status)}
-/>
+                    <input
+                      type="checkbox"
+                      style={{ marginTop: "0.75rem" }}
+                      checked={
+                        offerSelectAll
+                          ? !excludedOfferIds.includes(c.id)
+                          : selectedIds.includes(c.id)
+                      }
+                      onChange={() => toggleRow(c.id)}
+
+                    />
                   </td>
                   <td
                     className="align-content-center sticky-col-1"
@@ -774,9 +874,8 @@ useEffect(() => {
                     style={{ paddingLeft: "1.25rem", alignContent: "center" }}
                   >
                     <span
-                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
-                        OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
-                      }`}
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                        }`}
                     >
                       {OFFER_STATUS_LABEL_MAP[c.status] || c.status}
                     </span>
@@ -856,41 +955,41 @@ useEffect(() => {
                     </p>
                   </td>
 
-  <td
-  className="align-content-center"
-  style={{ paddingLeft: "1.25rem" }}
->
-  <div className="d-flex align-items-center gap-2 py-2">
-    <p className="fw-normal fs-14 mb-0 text-muted">
-      {c.extensionDate || "-"}
-    </p>
+                  <td
+                    className="align-content-center"
+                    style={{ paddingLeft: "1.25rem" }}
+                  >
+                    <div className="d-flex align-items-center gap-2 py-2">
+                      <p className="fw-normal fs-14 mb-0 text-muted">
+                        {c.extensionDate || "-"}
+                      </p>
 
-    {/* Show history icon when extension date exists */}
-    {c.extensionDate && c.extensionDate !== "-" && (
-      <OverlayTrigger
-        placement="bottom"
-        overlay={
-          <Tooltip id={`tooltip-ext-history-${c.id}`}>
-            {t("candidateWorkflow:view_history") || "View History"}
-          </Tooltip>
-        }
-      >
-        <button
-          type="button"
-          className="history-btn border-0 bg-transparent p-0 cursor-pointer"
-          onClick={() => handleViewExtensionHistory(c.candidateOfferId || c.id)}
-        >
-          <img
-            src={history_icon}
-            alt="History"
-            width={14}
-            height={14}
-          />
-        </button>
-      </OverlayTrigger>
-    )}
-  </div>
-</td>
+                      {/* Show history icon when extension date exists */}
+                      {c.extensionDate && c.extensionDate !== "-" && (
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={
+                            <Tooltip id={`tooltip-ext-history-${c.id}`}>
+                              {t("candidateWorkflow:view_history") || "View History"}
+                            </Tooltip>
+                          }
+                        >
+                          <button
+                            type="button"
+                            className="history-btn border-0 bg-transparent p-0 cursor-pointer"
+                            onClick={() => handleViewExtensionHistory(c.candidateOfferId || c.id)}
+                          >
+                            <img
+                              src={history_icon}
+                              alt="History"
+                              width={14}
+                              height={14}
+                            />
+                          </button>
+                        </OverlayTrigger>
+                      )}
+                    </div>
+                  </td>
                   <td
                     className="align-content-center"
                     style={{ paddingLeft: "1.25rem" }}
@@ -989,8 +1088,8 @@ useEffect(() => {
             value={pageSize}
             onChange={(e) => setPageSize(Number(e.target.value))}
           >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
+            <option value={1}>1</option>
+            <option value={5}>5</option>
             <option value={50}>50</option>
           </select>
         </div>
@@ -1209,30 +1308,30 @@ useEffect(() => {
 
 
       {/*  Extension Approval History Modal */}
-    {/* Extension Approval History Modal */}
-{/* Extension Approval History Modal */}
-<ApprovalHistoryModal
-  show={showExtensionHistoryModal}
-  onClose={() => setShowExtensionHistoryModal(false)}
-  historyData={extensionHistoryData}
-  loading={loadingExtensionHistory}
-  title={t("candidateWorkflow:accept_date_extension_history") || "Accept date extension history"}
-  subtitle={t("candidateWorkflow:track_date_extension_history") || "Track date extension history"}
-/>
+      {/* Extension Approval History Modal */}
+      {/* Extension Approval History Modal */}
+      <ApprovalHistoryModal
+        show={showExtensionHistoryModal}
+        onClose={() => setShowExtensionHistoryModal(false)}
+        historyData={extensionHistoryData}
+        loading={loadingExtensionHistory}
+        title={t("candidateWorkflow:accept_date_extension_history") || "Accept date extension history"}
+        subtitle={t("candidateWorkflow:track_date_extension_history") || "Track date extension history"}
+      />
 
-{/* Regular Approval History Modal */}
-<ApprovalHistoryModal
-  show={showHistoryModal}
-  onClose={() => setShowHistoryModal(false)}
-  historyData={historyData.map((item) => ({
-    ...item,
-    approverName:
-      userMap[item.approverId] ||
-      userMap[item.userId] ||
-      item.approverRole ||
-      "-",
-  }))}
-/>
+      {/* Regular Approval History Modal */}
+      <ApprovalHistoryModal
+        show={showHistoryModal}
+        onClose={() => setShowHistoryModal(false)}
+        historyData={historyData.map((item) => ({
+          ...item,
+          approverName:
+            userMap[item.approverId] ||
+            userMap[item.userId] ||
+            item.approverRole ||
+            "-",
+        }))}
+      />
     </div>
   );
 };
