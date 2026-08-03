@@ -366,5 +366,7 @@
   "cannot_reject_before_accept_expired": "Cannot reject: Accept Before Date has not expired yet.",
   "cannot_reject_before_extension_expired": "Cannot reject: Extended Offer Date has not expired yet.",
   "invalid_status_for_extend": "Extension is only permitted for candidates with Offer Sent or Offer Extended status.",
-  "invalid_status_for_reject": "Rejection is only permitted for candidates with Offer Sent or Offer Extended status."
+  "invalid_status_for_reject": "Rejection is only permitted for candidates with Offer Sent or Offer Extended status.",
+  "publish": "Publish",
+  "approvalstatus": "Approval Status"
 }

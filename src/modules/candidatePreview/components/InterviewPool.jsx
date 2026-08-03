@@ -53,7 +53,7 @@ export default function InterviewPool({
     allCandidatesForFilters?.length > 0 &&
     allCandidatesForFilters.every((c) => selectedIds.includes(String(c.id)));
 
-const toggleSelectAll = () => {
+  const toggleSelectAll = () => {
     // 1. Always allow clearing selections if all are selected
     if (allSelected) {
       setSelectedIds([]);
@@ -111,7 +111,7 @@ const toggleSelectAll = () => {
       {canReschedule && (
         <div className="d-flex justify-content-end px-3 pt-3">
           <button className="btn btn-primary fs-14" onClick={onReschedule}>
-           {t("candidateWorkflow:reschedule")}
+            {t("candidateWorkflow:reschedule")}
           </button>
         </div>
       )}
@@ -128,14 +128,13 @@ const toggleSelectAll = () => {
                 onChange={toggleSelectAll}
               />
             </th>
-           <th className="fs-14 fw-normal py-3">
-  {t("candidateWorkflow:candidate")}
-</th>
+            <th className="fs-14 fw-normal py-3">
+              {t("candidateWorkflow:candidate")}
+            </th>
 
-<th className="fs-14 fw-normal py-3">
-  {t("candidateWorkflow:category")}
-</th>
-
+            <th className="fs-14 fw-normal py-3">
+              {t("candidateWorkflow:category")}
+            </th>
 
             {/* <th className="fs-14 fw-normal py-3" >{t("candidateWorkflow:position")}</th> */}
             <th className="fs-14 fw-normal py-3">{t("common:date")}</th>
@@ -148,6 +147,9 @@ const toggleSelectAll = () => {
             </th>
             <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:interview_status")}
+            </th>
+            <th className="fs-14 fw-normal py-3">
+              {t("candidateWorkflow:approval_status")}
             </th>
             <th className="fs-14 fw-normal py-3">{t("common:score")}</th>
             <th className="text-center fs-14 fw-normal py-3">
@@ -177,24 +179,21 @@ const toggleSelectAll = () => {
                   />
                 </td>
 
-               <td className="align-content-center">
-  <p className="fw-normal fs-14 mb-0">{c.name}</p>
-  <p className="text-muted fs-12 mb-0">
-    {t("candidateWorkflow:application_number")}: {c.regNo}
-  </p>
-  <p className="text-muted fs-12 mb-0">
-    Position:{" "}
-    {position?.find((p) => p.positionId === c.positionId)?.positionName || "-"}
-  </p>
-</td>
+                <td className="align-content-center">
+                  <p className="fw-normal fs-14 mb-0">{c.name}</p>
+                  <p className="text-muted fs-12 mb-0">
+                    {t("candidateWorkflow:application_number")}: {c.regNo}
+                  </p>
+                  <p className="text-muted fs-12 mb-0">
+                    Position:{" "}
+                    {position?.find((p) => p.positionId === c.positionId)
+                      ?.positionName || "-"}
+                  </p>
+                </td>
 
-<td className="fs-14 align-content-center">
-  {c.categoryName}
-</td>
+                <td className="fs-14 align-content-center">{c.categoryName}</td>
 
-<td className="fs-14 align-content-center">
-  {c.date}
-</td>
+                <td className="fs-14 align-content-center">{c.date}</td>
                 <td className="fs-14 align-content-center">{c.time}</td>
                 <td className="fs-14 align-content-center">{c.zone}</td>
                 <td className="fs-14 align-content-center">{c.panel}</td>
@@ -230,7 +229,21 @@ const toggleSelectAll = () => {
                     )}
                   </div>
                 </td>
-
+                <td className="align-content-center">
+                  <span
+                    className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                      c.workflowStatus === "Published"
+                        ? "bg-success"
+                        : c.workflowStatus === "Approved"
+                          ? "bg-primary"
+                          : c.workflowStatus === "L1 Pending"
+                            ? "bg-warning text-dark"
+                            : "bg-secondary"
+                    }`}
+                  >
+                    {c.workflowStatus || "-"}
+                  </span>
+                </td>
                 <td className="fs-14 align-content-center">
                   <div className="d-flex align-items-center gap-2">
                     <span className="scorebg">

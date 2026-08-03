@@ -190,6 +190,7 @@ const RequisitionStrip = ({
       return `${name}: ${exp || "0 months"}`;
     });
   };
+  console.log("Requisition passed to strip:", requisition);
 
   return (
     <>
@@ -312,7 +313,9 @@ const RequisitionStrip = ({
               <span className="modal-date">
                 <i className="bi bi-calendar3 me-1"></i>
                 {t("candidateWorkflow:start")}:{" "}
-                {formatDMY(requisition?.registration_start_date)}
+                {formatDMY(
+                  requisition?.startDate || requisition?.registration_start_date
+                )}
               </span>
 
               <span className="modal-divider">|</span>
@@ -320,7 +323,9 @@ const RequisitionStrip = ({
               <span className="modal-date">
                 <i className="bi bi-clock me-1"></i>
                 {t("candidateWorkflow:end")}:{" "}
-                {formatDMY(requisition?.registration_end_date)}
+                {formatDMY(
+                  requisition?.endDate || requisition?.registration_end_date
+                )}
               </span>
             </div>
 

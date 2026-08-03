@@ -5,6 +5,17 @@ export const mapInterviewCandidates = (
 ) => {
   return apiData.map((item) => {
     const schedule = item.interviewSchedules || {};
+    const formatStatus = (status = "") =>
+      status
+        .toLowerCase()
+        .split("_")
+        .map((word) => {
+          if (word === "l1" || word === "l2") {
+            return word.toUpperCase();
+          }
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" ");
 
     return {
       candidateId: schedule.candidateId,
@@ -15,8 +26,8 @@ export const mapInterviewCandidates = (
       regNo: item?.application?.applicationNo || "-",
       fileUrl: item?.resumeUrl || "-",
 
-
-        categoryName: item?.categoryName || "-",
+      categoryName: item?.categoryName || "-",
+       workflowStatus: formatStatus(item.workflowStatus),
 
       date: schedule.interviewStartAt
         ? (() => {

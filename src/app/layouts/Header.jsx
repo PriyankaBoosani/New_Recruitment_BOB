@@ -358,7 +358,8 @@ const Header = () => {
                     location.pathname.startsWith("/committee-requests") ||
                     location.pathname.startsWith("/interview-requests") ||
                     location.pathname.startsWith("/exam-requests") ||
-                    location.pathname.startsWith("offerletter-requests")
+                    location.pathname.startsWith("/offerletter-requests") ||
+                    location.pathname.startsWith("/screening-requests")
                       ? "active-admin"
                       : ""
                   }`}
@@ -417,9 +418,17 @@ const Header = () => {
                     to="/offerletter-requests"
                     onClick={closeMenu}
                   >
-                 {t("offer_letter_request")}
+                    {t("offer_letter_request")}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to="/screening-requests"
+                    onClick={closeMenu}
+                  >
+                    {t("candidate_workflow_request")}
                   </NavDropdown.Item>
                 </NavDropdown>
+                
               )}
 
               {/* Admin Menu */}

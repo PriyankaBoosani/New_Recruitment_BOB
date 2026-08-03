@@ -167,6 +167,10 @@ const candidateWorkflowServices = {
   sendOfferForApproval(payload) {
     return api.post("/recruiter/candidate-offer/send-offer", payload);
   },
+  submitScreeningForApproval(payload) {
+  return api.post("/recruiter/position-stage/action", payload);
+},
+ 
 };
 
 export default candidateWorkflowServices;

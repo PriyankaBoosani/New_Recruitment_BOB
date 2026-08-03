@@ -38,7 +38,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   const isRecruiter = role === "recruiter";
 
   const selectedDate = state?.selectedDate;
-
+  const isFromApproval = state?.fromApproval;
   //  Now safe to use state
   const interviewScheduleId = state?.interviewScheduleId;
 
@@ -69,7 +69,10 @@ const CandidatePreviewPage = ({ onHide }) => {
   const [dynamicFormData, setDynamicFormData] = useState([]);
   const [dynamicFields, setDynamicFields] = useState([]);
 
-  const isFromInterview = state?.from === "/candidate-interviewer";
+  const isFromInterview =
+    state?.from === "/candidate-interviewer" ||
+    state?.fromInterviewPool ||
+    state?.activeTab === "INTERVIEW_POOL";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,12 +119,12 @@ const CandidatePreviewPage = ({ onHide }) => {
 
           setPreviewData(mapped);
           console.log("previewData", previewData);
-console.log(
-  "Application No:",
-  previewData?.personalDetails?.applicationNo
-);
+          console.log(
+            "Application No:",
+            previewData?.personalDetails?.applicationNo
+          );
           setDynamicFormData(mapped?.additionalDetails?.dynamicFormData || []);
-           console.log("PreviewPage mapped ", mapped || []);
+          console.log("PreviewPage mapped ", mapped || []);
         }
       } catch (error) {
         console.error("Candidate preview load failed", error);
@@ -152,6 +155,20 @@ console.log(
           title={t("candidateWorkflow:candidate_screening")}
           subtitle={t("candidateWorkflow:manage_schedule_interviews")}
           onBack={() => {
+            if (isFromApproval) {
+              navigate("/screening-requests", {
+                state: {
+                  selectedRequisitionOption: state.selectedRequisitionOption,
+                  selectedPositionOption: state.selectedPositionOption,
+                  page: state.page,
+                  pageSize: state.pageSize,
+                  activeTab: state.activeTab,
+                },
+              });
+              return;
+            }
+
+            // existing logic
             navigate("/candidate-verification", {
               state: {
                 requisition: state.requisition,
@@ -269,6 +286,7 @@ console.log(
               dynamicFormData={dynamicFormData}
               dynamicFields={dynamicFields || []}
               isCandidateWorkflow={isCandidateWorkflow}
+              isFromApproval={isFromApproval}
             />
           )
         )}

@@ -73,6 +73,8 @@
   "committee_requests": "Committee Requests",
   "interview_requests": "Interview Requests",
   "exam_requests": "Exam Requests",
+  "screening_approval": "Screening Approval",
+  "candidate_workflow_request": "Candidate Workflow Request",
   "back": "Back",
   "view_details": "View Details",
   "add": "Add",

@@ -195,13 +195,13 @@ export default function CandidateScreening({ selectedJob }) {
     "L1_REJECTED",
     "L2_REJECTED",
     "OFFER_GENERATED",
-    "APPROVED"
+    "APPROVED",
   ];
   const SCHEDULE_POOL_STATUSES = ["L1_PENDING", "PENDING", "REJECTED"];
   const OFFER_STATUS_LABEL_MAP = {
     OFFER_AWAITED: t("candidateWorkflow:offer_awaited"),
     OFFER_SENT: t("candidateWorkflow:offer_sent"),
-    // OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended", 
+    // OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended",
     OFFER_EXTENDED: t("candidateWorkflow:offer_extended") || "Offer Extended",
 
     OFFER_CANCELED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", //  ADD THIS LINE
@@ -532,6 +532,54 @@ export default function CandidateScreening({ selectedJob }) {
     });
   };
 
+  const handleScreeningAction = async (action) => {
+    try {
+      setSubmittingApproval(true);
+
+      const stage =
+        activeTab === "INTERVIEW_POOL"
+          ? "INTERVIEW"
+          : activeTab === "CANDIDATE_POOL"
+            ? "SCREENING"
+            : "";
+
+      const payload = {
+        positionIds: selectedPositionId,
+        stage,
+        action,
+      };
+      const res =
+        await candidateWorkflowServices.submitScreeningForApproval(payload);
+
+      if (!res?.success) {
+        toast.error(
+          res?.data ||
+            `Failed to ${action === "SUBMIT" ? "submit for approval" : "publish"}.`
+        );
+        return;
+      }
+
+      toast.success(
+        res?.message ||
+          (action === "SUBMIT"
+            ? "Submitted for approval successfully."
+            : "Published successfully.")
+      );
+
+      if (activeTab === "INTERVIEW_POOL") {
+        await refetchInterviewPool();
+      } else {
+        await fetchCandidates();
+      }
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message ||
+          `Failed to ${action === "SUBMIT" ? "submit for approval" : "publish"}.`
+      );
+    } finally {
+      setSubmittingApproval(false);
+    }
+  };
   const searchTimeoutRef = useRef(null);
 
   // const [allOffersForFilters, setAllOffersForFilters] = useState([]);
@@ -547,6 +595,21 @@ export default function CandidateScreening({ selectedJob }) {
     pageSize: interviewPageSize,
     enabled: activeTab === "INTERVIEW_POOL" && selectedPositionId.length > 0,
   });
+  const workflowStatus =
+    activeTab === "CANDIDATE_POOL"
+      ? candidates?.[0]?.workflowStatus
+      : activeTab === "INTERVIEW_POOL"
+        ? interviewCandidates?.[0]?.workflowStatus
+        : "";
+  console.log(workflowStatus, "workflowStatus");
+  const isWorkflowPublished = workflowStatus === "Published";
+
+  const disableSendForApproval =
+    selectedPositionId.length !== 1 ||
+    ["L1 Pending", "Approved", "Published"].includes(workflowStatus);
+
+  const disablePublish =
+    selectedPositionId.length !== 1 || workflowStatus !== "Approved";
 
   const {
     data: compensationCandidates,
@@ -573,8 +636,6 @@ export default function CandidateScreening({ selectedJob }) {
     OFFER_POOL: "Offer Pool",
     // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
   };
-
-
 
   // const fetchAllOffersForFilters = async () => {
   //   if (!selectedPositionId || !selectedPositionId.length) {
@@ -992,12 +1053,21 @@ export default function CandidateScreening({ selectedJob }) {
   }, []);
   const formatCandidateData = (apiData) => {
     const formatStatus = (status = "") =>
-      status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-
+      status
+        .toLowerCase()
+        .split("_")
+        .map((word) => {
+          if (word === "l1" || word === "l2") {
+            return word.toUpperCase();
+          }
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(" ");
     return (apiData?.content || []).map((c) => ({
       id: c.candidateApplications.id, // REQUIRED for selection
       name: c.fullName,
       rank: c.rank,
+      workflowStatus: formatStatus(c.workflowStatus),
 
       totalMarksObtained:
         Number(c.totalMarksObtained) > 0 ? c.totalMarksObtained : "-",
@@ -1253,8 +1323,8 @@ export default function CandidateScreening({ selectedJob }) {
           time:
             start && end
               ? `${start.split("T")[1].slice(0, 5)} - ${end
-                .split("T")[1]
-                .slice(0, 5)}`
+                  .split("T")[1]
+                  .slice(0, 5)}`
               : "-",
 
           zone: c?.interviewCentres?.displayName || "-",
@@ -1266,6 +1336,7 @@ export default function CandidateScreening({ selectedJob }) {
           interviewStatus:
             c?.interviewScheduleStaging.interviewSchedulingApprovalStatus ||
             "-",
+          workflowStatus: c.workflowStatus,
           remarks: c?.interviewScheduleStaging.remarks || " -",
         };
       });
@@ -1481,6 +1552,7 @@ export default function CandidateScreening({ selectedJob }) {
   //   selectedCandidates.every((c) => c.status === "Shortlisted");
 
   const canScheduleInterview =
+    isWorkflowPublished &&
     selectedCandidates.length > 0 &&
     selectedCandidates.every((c) => {
       if (!hasExamConfiguration) {
@@ -1497,7 +1569,6 @@ export default function CandidateScreening({ selectedJob }) {
         ].includes(c.examQualificationStatus)
       );
     });
-
   const canScheduleMultiPositionInterview =
     canScheduleInterview && selectedPositionId?.length > 0;
 
@@ -1506,12 +1577,12 @@ export default function CandidateScreening({ selectedJob }) {
   );
   const normalizedRequisition = selectedRequisition
     ? {
-      requisition_id: selectedRequisition.id,
-      requisition_code: selectedRequisition.requisitionCode,
-      requisition_title: selectedRequisition.requisitionTitle,
-      registration_start_date: selectedRequisition.startDate,
-      registration_end_date: selectedRequisition.endDate,
-    }
+        requisition_id: selectedRequisition.id,
+        requisition_code: selectedRequisition.requisitionCode,
+        requisition_title: selectedRequisition.requisitionTitle,
+        registration_start_date: selectedRequisition.startDate,
+        registration_end_date: selectedRequisition.endDate,
+      }
     : null;
 
   const selectedPosition = positions
@@ -1607,10 +1678,10 @@ export default function CandidateScreening({ selectedJob }) {
 
       time:
         c?.interviewSchedules?.interviewStartAt &&
-          c?.interviewSchedules?.interviewEndAt
+        c?.interviewSchedules?.interviewEndAt
           ? `${c.interviewSchedules.interviewStartAt
-            .split("T")[1]
-            .slice(0, 5)} - ${c.interviewSchedules.interviewEndAt
+              .split("T")[1]
+              .slice(0, 5)} - ${c.interviewSchedules.interviewEndAt
               .split("T")[1]
               .slice(0, 5)}`
           : "-",
@@ -2104,7 +2175,7 @@ export default function CandidateScreening({ selectedJob }) {
       console.error(err);
       toast.error(
         err?.response?.data?.message ||
-        t("candidateWorkflow:failed_to_send_offer_pool")
+          t("candidateWorkflow:failed_to_send_offer_pool")
       );
     } finally {
       //  Stop Loader
@@ -2149,7 +2220,7 @@ export default function CandidateScreening({ selectedJob }) {
       if (response?.data?.success === false) {
         toast.error(
           response?.data?.message ||
-          t("candidateWorkflow:failed_send_offer_approval")
+            t("candidateWorkflow:failed_send_offer_approval")
         );
         return;
       }
@@ -2344,7 +2415,7 @@ export default function CandidateScreening({ selectedJob }) {
     if (totalSelectedCount <= 0) {
       toast.error(
         t("candidateWorkflow:select_at_least_one_candidate") ||
-        "Please select at least one candidate"
+          "Please select at least one candidate"
       );
       return;
     }
@@ -2360,14 +2431,23 @@ export default function CandidateScreening({ selectedJob }) {
       if (!isAllOfferSentOrExtended) {
         toast.error(
           t("candidateWorkflow:invalid_status_for_extend") ||
-          "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
+            "Selected candidates must have status 'Offer Sent' or 'Offer Extended'."
         );
         return;
       }
+
+      // if (!isAllDatesValidForExtension) {
+      //   toast.error(
+      //     t("candidateWorkflow:accept_before_date_not_expired") ||
+      //       "Cannot extend: Acceptance date has not expired yet or Joining Date has passed for selected candidates."
+      //   );
+      //   return;
+      // }
     }
 
     setShowExtendModal(true);
   };
+
   const canGenerateOffer = useMemo(() => {
     if (offerSelectAll) {
       // When Select All is active across pages, check global candidate selection count
@@ -2614,8 +2694,8 @@ export default function CandidateScreening({ selectedJob }) {
 
       toast.error(
         errorResponse?.data ||
-        errorResponse?.message ||
-        "Failed to load summary"
+          errorResponse?.message ||
+          "Failed to load summary"
       );
     }
   };
@@ -2754,8 +2834,8 @@ export default function CandidateScreening({ selectedJob }) {
     } catch (err) {
       toast.error(
         err?.response?.data?.data ||
-        err?.response?.data?.message ||
-        "Failed to generate offers"
+          err?.response?.data?.message ||
+          "Failed to generate offers"
       );
     } finally {
       setGeneratingOffer(false);
@@ -2985,8 +3065,8 @@ export default function CandidateScreening({ selectedJob }) {
         <div className="card-body p-0">
           <div className="row g-2 align-items-end border-bottom pb-4 px-3 py-3">
             {activeTab === "CANDIDATE_POOL" ||
-              activeTab === "INTERVIEW_POOL" ||
-              activeTab === "SCHEDULE_POOL" ? (
+            activeTab === "INTERVIEW_POOL" ||
+            activeTab === "SCHEDULE_POOL" ? (
               <DropdownStripMultipleposition
                 requisitions={requisitions}
                 positions={positions}
@@ -3049,8 +3129,8 @@ export default function CandidateScreening({ selectedJob }) {
           </div>
 
           {activeTab === "CANDIDATE_POOL" ||
-            activeTab === "INTERVIEW_POOL" ||
-            activeTab === "SCHEDULE_POOL" ? (
+          activeTab === "INTERVIEW_POOL" ||
+          activeTab === "SCHEDULE_POOL" ? (
             <div className="mt-2 pt-1 pb-3">
               {normalizedRequisition && selectedPosition?.length > 0 && (
                 <RequisitionStripformultiplepositions
@@ -3089,10 +3169,11 @@ export default function CandidateScreening({ selectedJob }) {
             {accessibleTabs.map((tab) => (
               <li className="nav-item" key={tab.key}>
                 <button
-                  className={`nav-link fs-14 ${activeTab === tab.key
-                    ? "orange-color orange-bottom-border"
-                    : "text-muted"
-                    }`}
+                  className={`nav-link fs-14 ${
+                    activeTab === tab.key
+                      ? "orange-color orange-bottom-border"
+                      : "text-muted"
+                  }`}
                   onClick={() => {
                     setActiveTab(tab.key);
 
@@ -3396,17 +3477,18 @@ export default function CandidateScreening({ selectedJob }) {
               activeTab === "COMPENSATION_POOL" ||
               activeTab === "SCHEDULE_POOL" ||
               activeTab === "OFFER_POOL") && (
-                <div className="col-md-4 d-none d-md-block" />
-              )}
+              <div className="col-md-4 d-none d-md-block" />
+            )}
 
             {selectedPositionId.length > 0 && selectedRequisitionId && (
               <div
-                className={`col-12 text-md-end mt-2 mt-md-0 ${activeTab === "CANDIDATE_POOL" && hasLocationData
-                  ? "col-md-4"
-                  : activeTab === "CANDIDATE_POOL"
-                    ? "col-md-6"
-                    : "col-md-4"
-                  }`}
+                className={`col-12 text-md-end mt-2 mt-md-0 ${
+                  activeTab === "CANDIDATE_POOL" && hasLocationData
+                    ? "col-md-4"
+                    : activeTab === "CANDIDATE_POOL"
+                      ? "col-md-6"
+                      : "col-md-4"
+                }`}
               >
                 {activeTab === "CANDIDATE_POOL" && (
                   <button
@@ -3441,7 +3523,9 @@ export default function CandidateScreening({ selectedJob }) {
                     <OverlayTrigger
                       placement="bottom"
                       overlay={
-                        <Tooltip>{t("candidateWorkflow:download_excel")}</Tooltip>
+                        <Tooltip>
+                          {t("candidateWorkflow:download_excel")}
+                        </Tooltip>
                       }
                     >
                       <button
@@ -3629,10 +3713,11 @@ export default function CandidateScreening({ selectedJob }) {
                         }
                       />
                       <small
-                        className={`d-block mt-1 fs-12 ${formErrors.acceptBeforeDate
-                          ? "text-danger"
-                          : "invisible"
-                          }`}
+                        className={`d-block mt-1 fs-12 ${
+                          formErrors.acceptBeforeDate
+                            ? "text-danger"
+                            : "invisible"
+                        }`}
                       >
                         {formErrors.acceptBeforeDate || "placeholder"}
                       </small>
@@ -3654,8 +3739,9 @@ export default function CandidateScreening({ selectedJob }) {
                         }
                       />
                       <small
-                        className={`d-block mt-1 fs-12 ${formErrors.joiningDate ? "text-danger" : "invisible"
-                          }`}
+                        className={`d-block mt-1 fs-12 ${
+                          formErrors.joiningDate ? "text-danger" : "invisible"
+                        }`}
                       >
                         {formErrors.joiningDate || "placeholder"}
                       </small>
@@ -3755,19 +3841,7 @@ export default function CandidateScreening({ selectedJob }) {
               {/* RIGHT SECTION IN OFFER POOL */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end align-items-end gap-2 flex-wrap">
-                  {/* NEW: Extend Offer Date Button */}
-                  {/* Bulk Extend Offer Date Button - Always clickable when tab is active */}
-                  {/* <button
-  className="btn fs-13 px-3 py-1 blue-border blue-color"
-  style={{ minHeight: "39px" }}
-  onClick={handleBulkExtendClick}
->
-  <i className="bi bi-calendar-plus me-1"></i>
-  {t("candidateWorkflow:Manager_offer") || "Manager offer"}
-</button> */}
-
-                  {/* Rank List Button */}
-                  {/* Rank List Button */}
+                 
                   <button
                     className="btn blue-border blue-color fs-13 px-3 py-1"
                     style={{ minHeight: "39px" }}
@@ -3776,11 +3850,11 @@ export default function CandidateScreening({ selectedJob }) {
                   >
                     {t("candidateWorkflow:rank_list")}
                   </button>
-
                   {/* Assign Locations */}
                   <button
-                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""
-                      }`}
+                    className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+                      !rankListGenerated ? "disabled_button" : ""
+                    }`}
                     style={{ minHeight: "39px" }}
                     onClick={() => setShowRankListModal(true)}
                     disabled={!rankListGenerated}
@@ -3805,8 +3879,9 @@ export default function CandidateScreening({ selectedJob }) {
                   >
                     <span className="d-inline-block">
                       <button
-                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${!rankListGenerated ? "disabled_button" : ""
-                          }`}
+                        className={`btn fs-13 px-3 py-1 orange-bg text-white ${
+                          !rankListGenerated ? "disabled_button" : ""
+                        }`}
                         style={{ minHeight: "39px" }}
                         onClick={handleDownloadRankList}
                         disabled={!rankListGenerated}
@@ -3814,7 +3889,8 @@ export default function CandidateScreening({ selectedJob }) {
                         <i className="bi bi-download"></i>
                       </button>
                     </span>
-                  </OverlayTrigger>  </div>
+                  </OverlayTrigger>{" "}
+                </div>
               </div>
             </div>
           )}
@@ -3880,6 +3956,29 @@ export default function CandidateScreening({ selectedJob }) {
 
                   {/* RIGHT SIDE BUTTONS */}
                   <div className="d-flex gap-2">
+                    {(activeTab === "CANDIDATE_POOL" ||
+                      activeTab === "INTERVIEW_POOL") && (
+                      <>
+                        <button
+                          className="btn blue-bg text-white fs-14"
+                          type="button"
+                          onClick={() => handleScreeningAction("SUBMIT")}
+                          disabled={disableSendForApproval}
+                        >
+                          {t("candidateWorkflow:send_for_approval")}
+                        </button>
+
+                        <button
+                          className="btn btn-success text-white fs-14"
+                          type="button"
+                          onClick={() => handleScreeningAction("PUBLISH")}
+                          disabled={disablePublish}
+                        >
+                          {t("candidateWorkflow:publish")}
+                        </button>
+                      </>
+                    )}
+
                     {activeTab === "CANDIDATE_POOL" &&
                       hasPrivilege("Interview Pool") &&
                       canScheduleMultiPositionInterview && (
@@ -3920,7 +4019,7 @@ export default function CandidateScreening({ selectedJob }) {
                           <button
                             className="btn orange-bg text-white fs-14"
                             onClick={handleSendToCompensation}
-                          // disabled={!submitBeforeDate} // 🔥 important
+                            // disabled={!submitBeforeDate} // 🔥 important
                           >
                             {t("candidateWorkflow:Compensation_Request")}
                           </button>
@@ -4104,9 +4203,6 @@ export default function CandidateScreening({ selectedJob }) {
             />
           </div>
         )}
-
-
-
 
         {activeTab === "OFFER_POOL" && (
           <OfferPool

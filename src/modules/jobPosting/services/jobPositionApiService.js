@@ -565,6 +565,24 @@ cancelOffers(offerIds) {
         },
       }
     ),
+    getCandidateSummary: (positionId, workflowStage) =>
+  api.get("/recruiter/position-stage/candidate-summary", {
+    params: {
+      positionId,
+      workflowStage,
+    },
+    headers: {
+      "X-Client": "AzureAD",
+    },
+  }),
+   getScreeingByPosition: (payload) =>
+    api.post("/recruiter/position-stage/get/screening-candidates", payload, {
+      headers: { "X-Client": "AzureAD" },
+    }),
+     getInterviewByPosition: (payload) =>
+    api.post("/recruiter/position-stage/get/interviewed-candidates", payload, {
+      headers: { "X-Client": "AzureAD" },
+    }),
 };
 
 export default jobPositionApiService;

@@ -538,3 +538,6 @@ candidate-screening-tabs-header ul {
 .orange-bg:disabled {
   opacity: 0.5 !important;
 }
+.mulsel #react-select-4-placeholder {
+  color: #000 !important;
+}

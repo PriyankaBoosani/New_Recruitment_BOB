@@ -10,6 +10,7 @@ export const formatCandidateData = (
     id: c.candidateApplications.id,
     name: c.fullName,
     rank: c.rank,
+    workflowStatus:formatStatus(c.workflowStatus),
     experienceMonths: c.totalMonths || 0,
     status: formatStatus(c.candidateApplications.applicationStatus),
     applicationNo: c.candidateApplications.applicationNo,

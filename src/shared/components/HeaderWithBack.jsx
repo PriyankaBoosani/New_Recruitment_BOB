@@ -18,7 +18,10 @@ const PageHeaderWithBack = ({
     const from = state.from;
 
     // fallback if from missing
-    const target = from || "/candidate-workflow";
+
+    const target = state.fromApproval
+      ? "/screening-requests"
+      : state.from || "/candidate-workflow";
 
     // 🔥 keep this (your interviewer depends on it)
     sessionStorage.setItem("fromPreviewBack", "true");

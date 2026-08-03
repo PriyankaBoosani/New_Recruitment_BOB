@@ -42,6 +42,7 @@ import InterviewRequests from "../modules/Approvals/pages/InterviewRequests";
 import OfferLetterRequestApproval from "../modules/Approvals/pages/OfferLetterRequestApproval";
 import Messages from "../modules/Messages/messagesScreen";
 import DashboardPage from "../modules/Dashboard/DashboardPage";
+import ScreeningApproval from "../modules/Approvals/pages/ScreeningApproval";
 
 import UnauthorizedPage from "./UnauthorizedPage";
 import PrivilegeRoute from "./PrivilegeRoute";
@@ -403,6 +404,16 @@ const AppRoutes = () => {
               }
             />
           </Route>
+           <Route
+                path="/screening-requests"
+                element={
+                  <PrivilegeRoute
+                    privilegesRequired={["L1 Approval"]}
+                  >
+                    <ScreeningApproval />
+                  </PrivilegeRoute>
+                }
+              />
         </Route>
 
         {/* Catch-all → login */}

@@ -36,6 +36,11 @@ export default function CandidatePool({
     Rejected: "bg-danger",
     Pending: "bg-info",
   };
+  const WORKFLOW_STATUS_CLASS_MAP = {
+    PENDING: "bg-warning",
+    APPROVED: "bg-success",
+    REJECTED: "bg-danger",
+  };
   const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -43,7 +48,7 @@ export default function CandidatePool({
 
   const allSelected =
     allCandidatesForFilters?.length > 0 &&
-    allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
+      allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
 
   useEffect(() => {
     if (!filters?.status?.length) {
@@ -51,14 +56,19 @@ export default function CandidatePool({
     }
   }, [filters?.status]);
 
-  const formatStatus = (status = "") =>
-    status
-      .toLowerCase()
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+const formatStatus = (status = "") =>
+  status
+    .toLowerCase()
+    .split("_")
+    .map((word) => {
+      if (word === "l1" || word === "l2") {
+        return word.toUpperCase();
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
 
-const toggleSelectAll = () => {
+  const toggleSelectAll = () => {
     // 1. If everything is already selected, ALWAYS allow clearing selections
     if (allSelected) {
       setSelectedIds([]);
@@ -82,9 +92,9 @@ const toggleSelectAll = () => {
   };
 
   const toggleRow = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+      setSelectedIds((prev) =>
+        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      );
   };
 
   /* ---------- Sorting logic ---------- */
@@ -134,93 +144,91 @@ const toggleSelectAll = () => {
   const renderPopover = (c) => {
     const scoreMeta = getLevelFrom100(c.finalScore);
     return (
-<Popover className="rank-popover">
-  <div className="rank-header">
-    {t("candidateWorkflow:candidate_analysis")} - {c.name}
-  </div>
+      <Popover className="rank-popover">
+        <div className="rank-header">
+          {t("candidateWorkflow:candidate_analysis")} - {c.name}
+        </div>
 
-  <div className="rank-body">
+        <div className="rank-body">
+          <div className="final-score">
+            <p className="m-0 p-0 greenfin">
+              {t("candidateWorkflow:final_score")}
+            </p>
 
-    <div className="final-score">
-      <p className="m-0 p-0 greenfin">
-        {t("candidateWorkflow:final_score")}
-      </p>
+            <div className="score">{c.finalScore}%</div>
 
-      <div className="score">{c.finalScore}%</div>
+            <div className={`score-label ${scoreMeta.color}`}>
+              {t(`candidateWorkflow:${scoreMeta.label.toLowerCase()}`)}
+            </div>
+          </div>
 
-      <div className={`score-label ${scoreMeta.color}`}>
-        {t(`candidateWorkflow:${scoreMeta.label.toLowerCase()}`)}
-      </div>
-    </div>
+          <hr />
 
-    <hr />
+          <div className="section">
+            <div className="section-header">
+              <span>{t("candidateWorkflow:score_details")}</span>
+              <span className="weight-header">
+                {t("candidateWorkflow:weightage")}
+              </span>
+            </div>
 
-    <div className="section">
-      <div className="section-header">
-        <span>{t("candidateWorkflow:score_details")}</span>
-        <span className="weight-header">
-          {t("candidateWorkflow:weightage")}
-        </span>
-      </div>
+            <div className="item">
+              <span className="dot green"></span>
 
-      <div className="item">
-        <span className="dot green"></span>
+              <span className="label">
+                {t("candidateWorkflow:education")}:{" "}
+                <strong>{c.educationScore}%</strong>
+              </span>
 
-        <span className="label">
-          {t("candidateWorkflow:education")}:{" "}
-          <strong>{c.educationScore}%</strong>
-        </span>
+              <span className="weight">10%</span>
+            </div>
 
-        <span className="weight">10%</span>
-      </div>
+            <div className="item">
+              <span className="dot green"></span>
 
-      <div className="item">
-        <span className="dot green"></span>
+              <span className="label">
+                {t("candidateWorkflow:experience")}:{" "}
+                <strong>{c.experienceScore}%</strong>
+              </span>
 
-        <span className="label">
-          {t("candidateWorkflow:experience")}:{" "}
-          <strong>{c.experienceScore}%</strong>
-        </span>
+              <span className="weight">10%</span>
+            </div>
+          </div>
 
-        <span className="weight">10%</span>
-      </div>
-    </div>
+          <hr />
 
-    <hr />
+          <div className="section">
+            <div className="section-header">
+              <span>{t("candidateWorkflow:areas_for_review")}</span>
+              <span className="weight-header">
+                {t("candidateWorkflow:weightage")}
+              </span>
+            </div>
 
-    <div className="section">
-      <div className="section-header">
-        <span>{t("candidateWorkflow:areas_for_review")}</span>
-        <span className="weight-header">
-          {t("candidateWorkflow:weightage")}
-        </span>
-      </div>
+            <div className="item">
+              <span className="dot yellow"></span>
 
-      <div className="item">
-        <span className="dot yellow"></span>
+              <span className="label">
+                {t("candidateWorkflow:education_similarity")}:{" "}
+                <strong>{c.educationSimilarity}%</strong>
+              </span>
 
-        <span className="label">
-          {t("candidateWorkflow:education_similarity")}:{" "}
-          <strong>{c.educationSimilarity}%</strong>
-        </span>
+              <span className="weight">20%</span>
+            </div>
 
-        <span className="weight">20%</span>
-      </div>
+            <div className="item">
+              <span className="dot yellow"></span>
 
-      <div className="item">
-        <span className="dot yellow"></span>
+              <span className="label">
+                {t("candidateWorkflow:experience_similarity")}:{" "}
+                <strong>{c.experienceSimilarity}%</strong>
+              </span>
 
-        <span className="label">
-          {t("candidateWorkflow:experience_similarity")}:{" "}
-          <strong>{c.experienceSimilarity}%</strong>
-        </span>
-
-        <span className="weight">60%</span>
-      </div>
-    </div>
-
-  </div>
-</Popover>
+              <span className="weight">60%</span>
+            </div>
+          </div>
+        </div>
+      </Popover>
     );
   };
   return (
@@ -272,6 +280,9 @@ const toggleSelectAll = () => {
 
               <th className="fs-14 fw-normal py-3">
                 {t("candidateWorkflow:status")}
+              </th>
+              <th className="fs-14 fw-normal py-3">
+                {t("candidateWorkflow:approvalstatus")}
               </th>
 
               {hasLocationData && (
@@ -332,7 +343,7 @@ const toggleSelectAll = () => {
                       {c.applicationNo}
                     </p>
                     <p className="text-muted fs-12 mb-0">
-                        {t("candidateWorkflow:position")}:{" "}
+                      {t("candidateWorkflow:position")}:{" "}
                       {position?.find((p) => p.positionId === c.positionId)
                         ?.positionName || "-"}
                     </p>
@@ -390,6 +401,16 @@ const toggleSelectAll = () => {
                       }`}
                     >
                       {c.status}
+                    </span>
+                  </td>
+                  <td className="align-content-center">
+                    <span
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                        WORKFLOW_STATUS_CLASS_MAP[c.workflowStatus] ||
+                        "bg-secondary"
+                      }`}
+                    >
+                      {c.workflowStatus || "-"}
                     </span>
                   </td>
 

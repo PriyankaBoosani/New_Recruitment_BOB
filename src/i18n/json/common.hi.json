@@ -72,6 +72,8 @@
   "committee_requests": "समिति अनुरोध",
   "exam_requests": "परीक्षा अनुरोध",
   "interview_requests": "साक्षात्कार अनुरोध",
+  "screening_approval": "स्क्रीनिंग स्वीकृति",
+  "candidate_workflow_request": "उम्मीदवार कार्यप्रवाह अनुरोध",
   "back": "वापस",
   "view_details": "विवरण देखें",
   "add": "जोड़ें",

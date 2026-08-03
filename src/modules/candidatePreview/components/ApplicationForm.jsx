@@ -64,6 +64,7 @@ const ApplicationForm = ({
   isCandidateWorkflow,
   dynamicFormData,
   dynamicFields,
+  isFromApproval,
 }) => {
   console.log("test55 1", dynamicFormData, dynamicFields);
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -613,9 +614,10 @@ const ApplicationForm = ({
       (res.data || []).forEach((item) => {
         const isZonal = isZonalHr;
 
-        const status = isCandidateWorkflow
-          ? item.docScreeningStatus || "PENDING"
-          : item.zonalHrDocStatus || "PENDING";
+        const status =
+          isCandidateWorkflow || isFromApproval
+            ? item.docScreeningStatus || "PENDING"
+            : item.zonalHrDocStatus || "PENDING";
 
         const comments = isZonal
           ? item.zonalHrDocComments
@@ -639,6 +641,9 @@ const ApplicationForm = ({
           isDigilocker: item.isDigilocker,
         });
       });
+      console.log("Document Status Response:", res.data);
+      console.log("Document Status Map:", map);
+      console.log("Screening Documents:", documents);
 
       setDocStatusMap(map);
       setScreeningDocuments(documents);
@@ -971,6 +976,8 @@ const ApplicationForm = ({
       return status === "VERIFIED" || status === "REJECTED";
     });
   };
+  console.log("isCandidateWorkflow:", isCandidateWorkflow);
+  console.log("isFromApproval:", isFromApproval);
 
   const disableDocAction = isInterviewView || isFromInterview;
 
@@ -1032,15 +1039,19 @@ const ApplicationForm = ({
 
   const handleFinalSubmit = async () => {
     console.log("Final submit clicked");
-    if (submitRef.current) {
-      return;
-    }
+
+    if (submitRef.current) return;
+
     submitRef.current = true;
     setSubmitting(true);
 
-    // ✅ Validation 1: Criteria must be selected
     const isValid = validateForm();
-    if (!isValid) return;
+
+    if (!isValid) {
+      submitRef.current = false;
+      setSubmitting(false);
+      return;
+    }
 
     // ✅ Validation 2: Check document satisfaction for shortlist logic
     const isAgeValid = isCategorySatisfied("AGE");
@@ -1088,6 +1099,9 @@ const ApplicationForm = ({
     } catch (err) {
       console.error(t("screening_submit_failed"), err);
       toast.error(t("submission_failed"));
+    } finally {
+      submitRef.current = false;
+      setSubmitting(false);
     }
   };
 
@@ -2054,17 +2068,22 @@ const ApplicationForm = ({
                                 src={viewIcon}
                                 alt={t("view")}
                                 style={{
-                                  cursor: disableDocAction
-                                    ? "not-allowed"
-                                    : "pointer",
-                                  opacity: disableDocAction ? 0.4 : 1,
-                                  pointerEvents: disableDocAction
-                                    ? "none"
-                                    : "auto",
-                                  // marginLeft: "12px",
+                                  cursor:
+                                    disableDocAction || isFromApproval
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  opacity:
+                                    disableDocAction || isFromApproval
+                                      ? 0.4
+                                      : 1,
+                                  pointerEvents:
+                                    disableDocAction || isFromApproval
+                                      ? "none"
+                                      : "auto",
                                 }}
                                 onClick={() => {
-                                  if (disableDocAction) return;
+                                  if (disableDocAction || isFromApproval)
+                                    return;
 
                                   setSelectedDoc({
                                     candidateDocumentId:
@@ -2156,17 +2175,22 @@ const ApplicationForm = ({
                                 src={viewIcon}
                                 alt={t("view")}
                                 style={{
-                                  cursor: disableDocAction
-                                    ? "not-allowed"
-                                    : "pointer",
-                                  opacity: disableDocAction ? 0.4 : 1,
-                                  pointerEvents: disableDocAction
-                                    ? "none"
-                                    : "auto",
-                                  // marginLeft: "12px",
+                                  cursor:
+                                    disableDocAction || isFromApproval
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  opacity:
+                                    disableDocAction || isFromApproval
+                                      ? 0.4
+                                      : 1,
+                                  pointerEvents:
+                                    disableDocAction || isFromApproval
+                                      ? "none"
+                                      : "auto",
                                 }}
                                 onClick={() => {
-                                  if (disableDocAction) return;
+                                  if (disableDocAction || isFromApproval)
+                                    return;
 
                                   setSelectedDoc({
                                     candidateDocumentId:
@@ -2201,7 +2225,8 @@ const ApplicationForm = ({
         {canCandidatePool &&
           !disableDocAction &&
           !isFromInterview &&
-          !isFromCompensationPool && (
+          !isFromCompensationPool &&
+          !isFromApproval && (
             <div className="card mt-3 border-0">
               <div className="d-flex gap-3 align-items-center border-bottom p-3">
                 <label
@@ -2279,6 +2304,7 @@ const ApplicationForm = ({
         {canCandidatePool &&
           !disableDocAction &&
           !isFromInterview &&
+          !isFromApproval &&
           !isFromCompensationPool && (
             <Card className="criteria-main-card">
               <div className="criteria-wrapper">

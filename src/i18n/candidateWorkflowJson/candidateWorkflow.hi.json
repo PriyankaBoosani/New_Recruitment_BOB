@@ -372,5 +372,8 @@
   "cannot_reject_before_accept_expired": "अस्वीकार नहीं किया जा सकता: स्वीकार करने की तिथि अभी समाप्त नहीं हुई है।",
   "cannot_reject_before_extension_expired": "अस्वीकार नहीं किया जा सकता: बढ़ाई गई तिथि अभी समाप्त नहीं हुई है।",
   "invalid_status_for_extend": "केवल ऑफर भेजे गए (Offer Sent) या ऑफर विस्तारित (Offer Extended) उम्मीदवारों की तिथि बढ़ाई जा सकती है।",
-  "invalid_status_for_reject": "केवल ऑफर भेजे गए (Offer Sent) या ऑफर विस्तारित (Offer Extended) उम्मीदवारों का ऑफर अस्वीकृत किया जा सकता है।"
+  "invalid_status_for_reject": "केवल ऑफर भेजे गए (Offer Sent) या ऑफर विस्तारित (Offer Extended) उम्मीदवारों का ऑफर अस्वीकृत किया जा सकता है।",
+  "publish": "प्रकाशित करें",
+  "approvalstatus": "स्वीकृति स्थिति"
+
 }
