@@ -203,9 +203,9 @@ export default function EducationModal({
               (spec) =>
                 `${type ? `${type} ` : ""}${degree} in ${spec.label}${extraText}`
             )
-            .join("\n OR\n");
+            .join("\nOR\n");
         })
-        .join(" AND ");
+        .join("\nAND\n");
 
       return groupText || null;
     })
@@ -385,7 +385,8 @@ export default function EducationModal({
           return cert ? cert.name : "";
         })
         .filter(Boolean)
-        .join(" AND ");
+         .join("\nAND\n");
+
 
       return groupText ? groupText : null;
     })
