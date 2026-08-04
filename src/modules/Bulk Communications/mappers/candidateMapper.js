@@ -28,5 +28,6 @@ export const formatCandidateData = (
       c.candidateRankingResults?.educationSimilarity ?? "-",
     experienceSimilarity:
       c.candidateRankingResults?.experienceSimilarity ?? "-",
+      posStageWorkflowId: c.posStageWorkflowId,
   }));
 };

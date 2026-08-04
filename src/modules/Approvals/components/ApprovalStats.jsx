@@ -1,4 +1,7 @@
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export default function ApprovalStats({
   total,
@@ -33,6 +36,13 @@ export default function ApprovalStats({
           icon: "⏳",
           label: "Pending",
         };
+        case "L1_PENDING":
+        return {
+          className: "warning",
+          icon: "⏳",
+          label: "L1 Pending",
+        };
+        
 
       default:
         return {
@@ -50,7 +60,7 @@ export default function ApprovalStats({
     <div className="stats-row">
       <div className="stats-card">
         <div>
-        <div className="stat-label">Total Candidates in Position</div>
+          <div className="stat-label">Total Candidates in Position</div>
           <div className="stat-value">{total}</div>
         </div>
 
@@ -59,7 +69,7 @@ export default function ApprovalStats({
 
       <div className="stats-card shortlisted">
         <div>
-         <div className="stat-label">{approvedLabel}</div>
+          <div className="stat-label">{approvedLabel}</div>
           <div className="stat-value">{approved}</div>
         </div>
 
@@ -92,8 +102,14 @@ export default function ApprovalStats({
           <div className="stat-label">Download</div>
           <div className="stat-value">PDF</div>
         </div>
-
-        <div className="stat-icon info">📄</div>
+        <OverlayTrigger
+          placement="bottom"
+          overlay={<Tooltip id="download-tooltip">Download PDF</Tooltip>}
+        >
+          <div className="stat-icon info">
+            <FontAwesomeIcon icon={faDownload} />
+          </div>
+        </OverlayTrigger>
       </div>
 
       <div className="action-row action-block">

@@ -152,8 +152,17 @@ const CandidatePreviewPage = ({ onHide }) => {
       privileges?.["Candidate Pool"] ||
       privileges?.["Compensation Pool"] ? (
         <HeaderWithBack
-          title={t("candidateWorkflow:candidate_screening")}
-          subtitle={t("candidateWorkflow:manage_schedule_interviews")}
+          title={
+            isFromApproval
+              ? t("candidateWorkflow:candidate_approval_screening")
+              : t("candidateWorkflow:candidate_screening")
+          }
+          subtitle={
+            isFromApproval
+              ? t("candidateWorkflow:manage_candidate_approvals")
+              : t("candidateWorkflow:manage_schedule_interviews")
+          }
+         
           onBack={() => {
             if (isFromApproval) {
               navigate("/screening-requests", {

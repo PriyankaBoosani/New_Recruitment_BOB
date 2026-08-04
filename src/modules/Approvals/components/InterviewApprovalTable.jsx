@@ -6,6 +6,7 @@ export default function InterviewApprovalTable({
   candidates,
   onViewProfile,
   onViewResume,
+  loading
 }) {
   return (
     <div className="table-wrap">
@@ -23,34 +24,50 @@ export default function InterviewApprovalTable({
         </thead>
 
         <tbody>
-          {candidates.map((c) => (
-            <tr key={c.id}>
-              <td>{c.name}</td>
-              <td>{c.category}</td>
-              <td>{c.zone}</td>
-              <td>{c.panel}</td>
-              <td>{c.score}</td>
-              <td>{c.status}</td>
-
-              <td className="text-center">
-                <OverlayTrigger overlay={<Tooltip>View Profile</Tooltip>}>
-                  <Person
-                    size={17}
-                    className="me-3 cursor-pointer"
-                    onClick={() => onViewProfile(c)}
-                  />
-                </OverlayTrigger>
-
-                <OverlayTrigger overlay={<Tooltip>View Resume</Tooltip>}>
-                  <FileText
-                    size={17}
-                    className="cursor-pointer"
-                    onClick={() => onViewResume(c)}
-                  />
-                </OverlayTrigger>
+          {loading ? (
+            <tr>
+              <td colSpan={7} className="text-center py-4">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
               </td>
             </tr>
-          ))}
+          ) : candidates.length > 0 ? (
+            candidates.map((c) => (
+              <tr key={c.id}>
+                <td>{c.name}</td>
+                <td>{c.category}</td>
+                <td>{c.zone}</td>
+                <td>{c.panel}</td>
+                <td>{c.score}</td>
+                <td>{c.status}</td>
+
+                <td className="text-center">
+                  <OverlayTrigger overlay={<Tooltip>View Profile</Tooltip>}>
+                    <Person
+                      size={17}
+                      className="me-3 cursor-pointer"
+                      onClick={() => onViewProfile(c)}
+                    />
+                  </OverlayTrigger>
+
+                  <OverlayTrigger overlay={<Tooltip>View Resume</Tooltip>}>
+                    <FileText
+                      size={17}
+                      className="cursor-pointer"
+                      onClick={() => onViewResume(c)}
+                    />
+                  </OverlayTrigger>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={7} className="text-center py-4 text-muted">
+                No candidates found
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

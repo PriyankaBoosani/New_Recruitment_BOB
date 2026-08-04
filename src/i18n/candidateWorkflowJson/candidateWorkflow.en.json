@@ -368,5 +368,6 @@
   "invalid_status_for_extend": "Extension is only permitted for candidates with Offer Sent or Offer Extended status.",
   "invalid_status_for_reject": "Rejection is only permitted for candidates with Offer Sent or Offer Extended status.",
   "publish": "Publish",
-  "approvalstatus": "Approval Status"
-}
+  "approvalstatus": "Approval Status",
+  "candidate_approval_screening": "Candidate Approval Screening",
+"manage_candidate_approvals": "Review and approve candidate results"}

@@ -30,6 +30,7 @@ export const mapWorkflowApprovalCandidates = (
       candidateId: item.application?.candidateId,
       positionId: item.application?.positionId,
       applicationId: item.application?.id,
+      posStageWorkflowId: item.posStageWorkflowId,
     }));
   }
 
@@ -51,5 +52,6 @@ export const mapWorkflowApprovalCandidates = (
     candidateId: item.candidateApplications?.candidateId,
     positionId: item.candidateApplications?.positionId,
     applicationId: item.candidateApplications?.id,
+    posStageWorkflowId: item.posStageWorkflowId,
   }));
 };

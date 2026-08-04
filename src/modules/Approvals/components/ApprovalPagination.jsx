@@ -9,6 +9,10 @@ export default function ApprovalPagination({
   pageInfo,
   getVisiblePages,
 }) {
+  if (pageInfo.totalElements === 0) {
+    return null;
+  }
+
   return (
     <div className="table-footer d-flex justify-content-between align-items-center flex-wrap">
       <div className="d-flex align-items-center gap-2">
@@ -23,14 +27,15 @@ export default function ApprovalPagination({
           }}
         >
           {[5, 10, 15, 20, 25, 30].map((n) => (
-            <option key={n}>{n}</option>
+            <option key={n} value={n}>
+              {n}
+            </option>
           ))}
         </Form.Select>
       </div>
 
       <nav>
         <ul className="pagination mb-0">
-
           <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
             <button
               className="page-link"
@@ -40,46 +45,34 @@ export default function ApprovalPagination({
             </button>
           </li>
 
-          {(() => {
-            const { pages } = getVisiblePages(
-              page,
-              pageInfo.totalPages
-            );
-
-            return pages.map((p) => (
-              <li
-                key={p}
-                className={`page-item ${page === p ? "active" : ""}`}
+          {getVisiblePages(page, pageInfo.totalPages).pages.map((p) => (
+            <li
+              key={p}
+              className={`page-item ${page === p ? "active" : ""}`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setPage(p)}
               >
-                <button
-                  className="page-link"
-                  onClick={() => setPage(p)}
-                >
-                  {p + 1}
-                </button>
-              </li>
-            ));
-          })()}
+                {p + 1}
+              </button>
+            </li>
+          ))}
 
           <li
             className={`page-item ${
-              page >= pageInfo.totalPages - 1
-                ? "disabled"
-                : ""
+              page >= pageInfo.totalPages - 1 ? "disabled" : ""
             }`}
           >
             <button
               className="page-link"
               onClick={() =>
-                setPage((p) =>
-                  Math.min(pageInfo.totalPages - 1, p + 1)
-                )
+                setPage((p) => Math.min(pageInfo.totalPages - 1, p + 1))
               }
             >
               &raquo;
             </button>
           </li>
-
         </ul>
       </nav>
     </div>

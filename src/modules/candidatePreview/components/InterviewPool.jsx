@@ -5,6 +5,7 @@ import I_icon from "../../../assets/I_icon.png";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
+import history_icon from "../../../assets/history_icon.png";
 
 export default function InterviewPool({
   selectedIds,
@@ -26,6 +27,7 @@ export default function InterviewPool({
   canReschedule,
   onReschedule,
   allCandidatesForFilters,
+  onApprovalHistory
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
@@ -105,6 +107,7 @@ export default function InterviewPool({
         : String(bVal).localeCompare(String(aVal));
     });
   }, [candidates, sortConfig]);
+  const posStageWorkflowId = candidates[0]?.posStageWorkflowId;
 
   return (
     <div className="card-body p-0 interview-pool">
@@ -149,7 +152,13 @@ export default function InterviewPool({
               {t("candidateWorkflow:interview_status")}
             </th>
             <th className="fs-14 fw-normal py-3">
-              {t("candidateWorkflow:approval_status")}
+              {t("candidateWorkflow:approvalstatus")}
+               <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip>Approval History</Tooltip>}
+                >
+                  <img src={history_icon} alt="history_icon" className="cursor-pointer" style={{width: "16px", height: "16px"}} onClick={() => onApprovalHistory(posStageWorkflowId)} />
+                </OverlayTrigger>
             </th>
             <th className="fs-14 fw-normal py-3">{t("common:score")}</th>
             <th className="text-center fs-14 fw-normal py-3">

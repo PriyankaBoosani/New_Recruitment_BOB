@@ -112,6 +112,7 @@ export default function Approval() {
     loadingCandidates,
     searchText,
     onSearch,
+    handleDownload,
   } = useApprovalFilters();
   useEffect(() => {
     fetchRequisitions();
@@ -247,7 +248,7 @@ export default function Approval() {
       );
     }
   };
-  const handleDownload = () => {};
+
   return (
     <div className="screening-page">
       <Container fluid className="screening-approval-page">
@@ -336,7 +337,11 @@ export default function Approval() {
             workflowStatus={candidateSummary?.workflowStatus}
             onApprove={handleApprove}
             onReject={handleReject}
-            onDownload={handleDownload}
+            onDownload={() =>
+              handleDownload(
+                activeTab === "screening" ? "SCREENING" : "INTERVIEW"
+              )
+            }
           />
 
           {activeTab === "screening" ? (

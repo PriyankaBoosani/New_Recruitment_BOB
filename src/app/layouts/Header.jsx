@@ -331,20 +331,15 @@ const Header = () => {
                 </Nav.Link>
               )}
 
-            
-
-
               {canMessages && (
-  <Nav.Link
-    as={NavLink}
-    to="/bulk-communication"
-    onClick={closeMenu}
-  >
-    {t("Bulk_Communication")}
-  </Nav.Link>
-)}
-
-
+                <Nav.Link
+                  as={NavLink}
+                  to="/bulk-communication"
+                  onClick={closeMenu}
+                >
+                  {t("Bulk_Communication")}
+                </Nav.Link>
+              )}
 
               {canApprovals && (
                 <NavDropdown
@@ -420,15 +415,16 @@ const Header = () => {
                   >
                     {t("offer_letter_request")}
                   </NavDropdown.Item>
-                  <NavDropdown.Item
-                    as={NavLink}
-                    to="/screening-requests"
-                    onClick={closeMenu}
-                  >
-                    {t("candidate_workflow_request")}
-                  </NavDropdown.Item>
+                  {!canL2 && (
+                    <NavDropdown.Item
+                      as={NavLink}
+                      to="/screening-requests"
+                      onClick={closeMenu}
+                    >
+                      {t("candidate_workflow_request")}
+                    </NavDropdown.Item>
+                  )}
                 </NavDropdown>
-                
               )}
 
               {/* Admin Menu */}

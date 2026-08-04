@@ -168,9 +168,13 @@ const candidateWorkflowServices = {
     return api.post("/recruiter/candidate-offer/send-offer", payload);
   },
   submitScreeningForApproval(payload) {
-  return api.post("/recruiter/position-stage/action", payload);
-},
- 
+    return api.post("/recruiter/position-stage/action", payload);
+  },
+  getWorkflowHistory(posStageWorkflowId) {
+  return api.get(
+    `/recruiter/position-stage/get-workflow-history/${posStageWorkflowId}`
+  );
+  }
 };
 
 export default candidateWorkflowServices;

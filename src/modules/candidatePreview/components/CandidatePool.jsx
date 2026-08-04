@@ -4,6 +4,7 @@ import { Person, FileText } from "react-bootstrap-icons";
 import { OverlayTrigger, Popover, Tooltip } from "react-bootstrap";
 import I_icon from "../../../assets/I_icon.png";
 import { toast } from "react-toastify";
+import history_icon from "../../../assets/history_icon.png";
 
 import { useTranslation } from "react-i18next";
 
@@ -27,6 +28,7 @@ export default function CandidatePool({
   hasLocationData,
   allCandidatesForFilters,
   isMarksUploaded,
+  onApprovalHistory,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -37,10 +39,13 @@ export default function CandidatePool({
     Pending: "bg-info",
   };
   const WORKFLOW_STATUS_CLASS_MAP = {
-    PENDING: "bg-warning",
-    APPROVED: "bg-success",
-    REJECTED: "bg-danger",
+    Pending: "bg-info",
+    "L1 Pending": "bg-warning",
+    Approved: "bg-success",
+    Rejected: "bg-danger",
+    published: "bg-success",
   };
+
   const navigate = useNavigate();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
@@ -48,7 +53,7 @@ export default function CandidatePool({
 
   const allSelected =
     allCandidatesForFilters?.length > 0 &&
-      allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
+    allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
 
   useEffect(() => {
     if (!filters?.status?.length) {
@@ -56,17 +61,17 @@ export default function CandidatePool({
     }
   }, [filters?.status]);
 
-const formatStatus = (status = "") =>
-  status
-    .toLowerCase()
-    .split("_")
-    .map((word) => {
-      if (word === "l1" || word === "l2") {
-        return word.toUpperCase();
-      }
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    })
-    .join(" ");
+  const formatStatus = (status = "") =>
+    status
+      .toLowerCase()
+      .split("_")
+      .map((word) => {
+        if (word === "l1" || word === "l2") {
+          return word.toUpperCase();
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(" ");
 
   const toggleSelectAll = () => {
     // 1. If everything is already selected, ALWAYS allow clearing selections
@@ -92,9 +97,9 @@ const formatStatus = (status = "") =>
   };
 
   const toggleRow = (id) => {
-      setSelectedIds((prev) =>
-        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-      );
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
   };
 
   /* ---------- Sorting logic ---------- */
@@ -140,7 +145,7 @@ const formatStatus = (status = "") =>
     if (val >= 50) return { label: "Moderate", color: "orange" };
     return { label: "Weak", color: "red" };
   };
-
+const posStageWorkflowId = candidates[0]?.posStageWorkflowId;
   const renderPopover = (c) => {
     const scoreMeta = getLevelFrom100(c.finalScore);
     return (
@@ -283,6 +288,12 @@ const formatStatus = (status = "") =>
               </th>
               <th className="fs-14 fw-normal py-3">
                 {t("candidateWorkflow:approvalstatus")}
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip>Approval History</Tooltip>}
+                >
+                  <img src={history_icon} alt="history_icon" className="cursor-pointer" style={{width: "16px", height: "16px"}} onClick={() => onApprovalHistory(posStageWorkflowId)} />
+                </OverlayTrigger>
               </th>
 
               {hasLocationData && (
@@ -404,14 +415,16 @@ const formatStatus = (status = "") =>
                     </span>
                   </td>
                   <td className="align-content-center">
-                    <span
-                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
-                        WORKFLOW_STATUS_CLASS_MAP[c.workflowStatus] ||
-                        "bg-secondary"
-                      }`}
-                    >
-                      {c.workflowStatus || "-"}
-                    </span>
+                      <span
+                        className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                          WORKFLOW_STATUS_CLASS_MAP[c.workflowStatus] ||
+                          "bg-secondary"
+                        }`}
+                        
+                      >
+                        {c.workflowStatus || "-"}
+                        
+                      </span>
                   </td>
 
                   {hasLocationData && (

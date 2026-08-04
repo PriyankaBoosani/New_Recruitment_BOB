@@ -28,7 +28,7 @@ export const mapInterviewCandidates = (
 
       categoryName: item?.categoryName || "-",
        workflowStatus: formatStatus(item.workflowStatus),
-
+ posStageWorkflowId: item?.posStageWorkflowId,
       date: schedule.interviewStartAt
         ? (() => {
             const d = new Date(schedule.interviewStartAt);
@@ -73,6 +73,7 @@ export const mapInterviewCandidates = (
       zonalOfficeId: schedule.zonalOfficeId,
       zonalVerificationStatus: schedule.zonalVerificationStatus,
       zonalSubmitBeforeDate: schedule.zonalSubmitBeforeDate,
+      
     };
   });
 };

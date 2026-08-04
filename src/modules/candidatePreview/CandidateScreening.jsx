@@ -57,6 +57,7 @@ import { BsFileEarmarkPlus } from "react-icons/bs";
 import DigitalSignatureModal from "./modal/DigitalSignatureModal";
 import Loader from "../../shared/components/Loader";
 import committeeManagementService from "../committeeManagement/services/committeeManagementService";
+import ApprovalHistoryModal from "../Approvals/components/ApprovalHistoryModal";
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -81,7 +82,6 @@ export default function CandidateScreening({ selectedJob }) {
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
 
   const [offerTotalElements, setOfferTotalElements] = useState(0);
-
 
   const [isMarksUploaded, setIsMarksUploaded] = useState(false);
 
@@ -124,13 +124,6 @@ export default function CandidateScreening({ selectedJob }) {
 
   const sendOfferRef = useRef(false);
   const [sendingOffer, setSendingOffer] = useState(false);
-
-
-
-
-
-
-
 
   const [generatingRankList, setGeneratingRankList] = useState(false);
 
@@ -382,7 +375,6 @@ export default function CandidateScreening({ selectedJob }) {
     reservationCategories,
     masterData,
   ]);
-
 
   useEffect(() => {
     setOfferSelectedIds([]);
@@ -735,6 +727,12 @@ export default function CandidateScreening({ selectedJob }) {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
   const [showRankListModal, setShowRankListModal] = useState(false);
+  const [showApprovalHistory, setShowApprovalHistory] = useState(false);
+  const [approvalHistory, setApprovalHistory] = useState([]);
+  const [loadingApprovalHistory, setLoadingApprovalHistory] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
   const [showDigitalSignatureModal, setShowDigitalSignatureModal] =
     useState(false);
   const [offerSelectedIds, setOfferSelectedIds] = useState([]);
@@ -896,6 +894,63 @@ export default function CandidateScreening({ selectedJob }) {
     setOfferSelectedIds([]);
   }, [activeTab]);
 
+  const fetchUsers = useCallback(async () => {
+    try {
+      setLoadingUsers(true);
+
+      const res = await masterApiService.getUser();
+
+      const data = Object.values(res?.data || {});
+
+      setUsers(data);
+
+      return data;
+    } catch (error) {
+      toast.error("Failed to load users");
+
+      setUsers([]);
+
+      return [];
+    } finally {
+      setLoadingUsers(false);
+    }
+  }, []);
+  const handleApprovalHistory = async (posStageWorkflowId) => {
+    try {
+      setLoadingApprovalHistory(true);
+
+      // Use cached users if available, otherwise fetch them
+      let userList = users;
+
+      if (!userList.length) {
+        userList = await fetchUsers();
+      }
+
+      const res =
+        await candidateWorkflowServices.getWorkflowHistory(posStageWorkflowId);
+
+      const history = (res.data || []).map((item) => {
+        const approver = userList.find(
+          (user) =>
+            user.userId === item.approverId || user.id === item.approverId
+        );
+
+        return {
+          ...item,
+          approverName:
+            approver?.fullName || approver?.name || approver?.userName || "-",
+        };
+      });
+
+      setApprovalHistory(history);
+      setShowApprovalHistory(true);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load approval history");
+    } finally {
+      setLoadingApprovalHistory(false);
+    }
+  };
   const isContractPosition = useMemo(() => {
     if (!positions.length || !selectedPositionId.length || !employmentTypeMap)
       return false;
@@ -1068,6 +1123,7 @@ export default function CandidateScreening({ selectedJob }) {
       name: c.fullName,
       rank: c.rank,
       workflowStatus: formatStatus(c.workflowStatus),
+      posStageWorkflowId: c.posStageWorkflowId,
 
       totalMarksObtained:
         Number(c.totalMarksObtained) > 0 ? c.totalMarksObtained : "-",
@@ -1113,6 +1169,7 @@ export default function CandidateScreening({ selectedJob }) {
       interviewCenterName: c.interviewCenter?.interviewCentre, // Add interview centre name
     }));
   };
+  console.log(workflowStatus, "dfdf");
 
   const [
     allInterviewCandidatesForFilters,
@@ -1638,6 +1695,7 @@ export default function CandidateScreening({ selectedJob }) {
   }, [allInterviewCandidatesForFilters, selectedInterviewCandidateIds]);
 
   const canSendToOfferPool =
+    isWorkflowPublished &&
     selectedInterviewCandidates.length > 0 &&
     selectedInterviewCandidates.every(
       (c) => c?.interviewSchedules?.interviewStatus === "QUALIFIED"
@@ -2255,7 +2313,7 @@ export default function CandidateScreening({ selectedJob }) {
       if (totalSelectedCount <= 0) {
         toast.error(
           t("candidateWorkflow:select_at_least_one_candidate") ||
-          "Please select at least one candidate"
+            "Please select at least one candidate"
         );
         return;
       }
@@ -2290,12 +2348,11 @@ export default function CandidateScreening({ selectedJob }) {
         selectedIds: offerSelectAll
           ? []
           : offerData
-            .filter(
-              (o) =>
-                offerSelectedIds.includes(o.id) &&
-                o.status === "APPROVED"
-            )
-            .map((o) => o.candidateOfferId),
+              .filter(
+                (o) =>
+                  offerSelectedIds.includes(o.id) && o.status === "APPROVED"
+              )
+              .map((o) => o.candidateOfferId),
         statusList: filters?.status || [],
         excludedIds: offerSelectAll ? excludedOfferIds : [],
       };
@@ -2326,16 +2383,9 @@ export default function CandidateScreening({ selectedJob }) {
 
   const effectiveSelectedOffers = useMemo(() => {
     return offerSelectAll
-      ? offerData.filter(
-        (offer) => !excludedOfferIds.includes(offer.id)
-      )
+      ? offerData.filter((offer) => !excludedOfferIds.includes(offer.id))
       : selectedOfferObjects;
-  }, [
-    offerSelectAll,
-    offerData,
-    excludedOfferIds,
-    selectedOfferObjects,
-  ]);
+  }, [offerSelectAll, offerData, excludedOfferIds, selectedOfferObjects]);
 
   // 1. Checks if all selected candidates have status OFFER_SENT or OFFER_EXTENDED
   const isAllOfferSentOrExtended = useMemo(() => {
@@ -2367,7 +2417,6 @@ export default function CandidateScreening({ selectedJob }) {
 
   // ⚡ Click Handler: Button remains clickable and explains WHY action is blocked via toast
   // const handleBulkExtendClick = () => {
-
 
   //   if (effectiveSelectedOffers.length === 0) {
   //     toast.error(
@@ -2404,8 +2453,6 @@ export default function CandidateScreening({ selectedJob }) {
   //   setShowExtendModal(true);
   // };
 
-
-
   const handleBulkExtendClick = () => {
     // Check global count when selectAll is true, else check effectiveSelectedOffers
     const totalSelectedCount = offerSelectAll
@@ -2424,8 +2471,7 @@ export default function CandidateScreening({ selectedJob }) {
     if (!offerSelectAll) {
       const isAllOfferSentOrExtended = effectiveSelectedOffers.every(
         (offer) =>
-          offer.status === "OFFER_SENT" ||
-          offer.status === "OFFER_EXTENDED"
+          offer.status === "OFFER_SENT" || offer.status === "OFFER_EXTENDED"
       );
 
       if (!isAllOfferSentOrExtended) {
@@ -2460,7 +2506,12 @@ export default function CandidateScreening({ selectedJob }) {
       effectiveSelectedOffers.length > 0 &&
       effectiveSelectedOffers.every(
         (o) =>
-          ["OFFER_AWAITED", "OFFER_GENERATED", "L1_REJECTED", "L2_REJECTED"].includes(o.status) &&
+          [
+            "OFFER_AWAITED",
+            "OFFER_GENERATED",
+            "L1_REJECTED",
+            "L2_REJECTED",
+          ].includes(o.status) &&
           o.qnq === "Q" &&
           !o.waitList
       )
@@ -2471,7 +2522,6 @@ export default function CandidateScreening({ selectedJob }) {
     excludedOfferIds,
     effectiveSelectedOffers,
   ]);
-
 
   console.log("offerSelectAll:", offerSelectAll);
   console.log("offerSelectedIds:", offerSelectedIds);
@@ -2968,15 +3018,6 @@ export default function CandidateScreening({ selectedJob }) {
       },
     });
   };
-
-
-
-
-
-
-
-
-
 
   const statusOptions = useMemo(
     () =>
@@ -3841,7 +3882,6 @@ export default function CandidateScreening({ selectedJob }) {
               {/* RIGHT SECTION IN OFFER POOL */}
               <div className="col-md-4 col-12">
                 <div className="d-flex justify-content-end align-items-end gap-2 flex-wrap">
-                 
                   <button
                     className="btn blue-border blue-color fs-13 px-3 py-1"
                     style={{ minHeight: "39px" }}
@@ -4028,7 +4068,9 @@ export default function CandidateScreening({ selectedJob }) {
                         hasPrivilege("Offer Pool") && (
                           <button
                             className="btn blue-bg text-white fs-14"
-                            onClick={handleSendToOfferPool}
+                            onClick={handleSendToOfferPool} 
+                            disabled={!canSendToOfferPool}
+
                           >
                             {t("candidateWorkflow:send_to_offer_pool")}
                           </button>
@@ -4073,6 +4115,7 @@ export default function CandidateScreening({ selectedJob }) {
             hasLocationData={hasLocationData}
             allCandidatesForFilters={allCandidatesForFilters}
             isMarksUploaded={isMarksUploaded}
+            onApprovalHistory={handleApprovalHistory}
           />
         )}
 
@@ -4097,6 +4140,7 @@ export default function CandidateScreening({ selectedJob }) {
             canReschedule={canReschedule}
             onReschedule={handleReschedule}
             allCandidatesForFilters={allInterviewCandidatesForFilters}
+             onApprovalHistory={handleApprovalHistory}
             onOpenFeedback={async (scheduledInterviewId) => {
               try {
                 setShowFeedbackModal(true);
@@ -4233,7 +4277,6 @@ export default function CandidateScreening({ selectedJob }) {
           isSingleMode={false}
           onExtendSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
           onRejectSuccess={() => setOfferRefreshKey((prev) => prev + 1)}
-
           // New props
           offerSelectAll={offerSelectAll}
           offerSelectedIds={offerSelectedIds}
@@ -4432,6 +4475,12 @@ export default function CandidateScreening({ selectedJob }) {
       {/* Render Loader when generating Offer OR Rank List */}
       {/* Render Loader when generating Offer, Rank List, or Moving Candidates */}
       {(generatingOffer || generatingRankList || movingCandidate) && <Loader />}
+      <ApprovalHistoryModal
+        show={showApprovalHistory}
+        onClose={() => setShowApprovalHistory(false)}
+        historyData={approvalHistory}
+        loading={loadingApprovalHistory}
+      />
     </div>
   );
 }

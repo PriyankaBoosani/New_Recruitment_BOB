@@ -374,6 +374,7 @@
   "invalid_status_for_extend": "केवल ऑफर भेजे गए (Offer Sent) या ऑफर विस्तारित (Offer Extended) उम्मीदवारों की तिथि बढ़ाई जा सकती है।",
   "invalid_status_for_reject": "केवल ऑफर भेजे गए (Offer Sent) या ऑफर विस्तारित (Offer Extended) उम्मीदवारों का ऑफर अस्वीकृत किया जा सकता है।",
   "publish": "प्रकाशित करें",
-  "approvalstatus": "स्वीकृति स्थिति"
-
+  "approvalstatus": "स्वीकृति स्थिति",
+  "candidate_approval_screening": "उम्मीदवार स्वीकृति स्क्रीनिंग",
+  "manage_candidate_approvals": "उम्मीदवारों के परिणामों की समीक्षा करें और उन्हें स्वीकृत करें"
 }

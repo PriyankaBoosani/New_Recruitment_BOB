@@ -135,6 +135,51 @@ const useApprovalFilters = () => {
       setLoadingCandidates(false);
     }
   };
+  const handleDownload = async (stage = "SCREENING") => {
+    try {
+      if (!selectedPosition?.positionId) {
+        toast.error("Please select a position");
+        return;
+      }
+
+      const isScreening = stage.toUpperCase() === "SCREENING";
+
+      const payload = {
+        documentType: ".pdf",
+        positionIds: [selectedPosition.positionId],
+        screenName: isScreening ? "ScreeningApproval" : "InterviewApproval",
+        candidateApplicationStatuses: isScreening
+          ? ["SHORTLISTED", "REJECTED"]
+          : [],
+        interviewSchedulingStatuses: isScreening
+          ? []
+          : ["QUALIFIED", "DISQUALIFIED"],
+      };
+
+      console.log("Download Payload:", payload);
+
+      const res = await jobPositionApiService.downloadCandidateDetails(payload);
+
+      const blob = new Blob([res.data], {
+        type: "application/pdf",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "candidate-details.pdf";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to download PDF");
+    }
+  };
   const selectedRequisitionOption = selectedRequisition
     ? {
         label: `${selectedRequisition.requisitionCode} - ${selectedRequisition.requisitionTitle}`,
@@ -172,6 +217,7 @@ const useApprovalFilters = () => {
     candidateSummary,
     searchText,
     onSearch,
+    handleDownload,
   };
 };
 
