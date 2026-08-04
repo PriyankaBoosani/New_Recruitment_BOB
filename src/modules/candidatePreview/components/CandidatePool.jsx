@@ -43,7 +43,7 @@ export default function CandidatePool({
     "L1 Pending": "bg-warning",
     Approved: "bg-success",
     Rejected: "bg-danger",
-    published: "bg-success",
+    Published: "bg-success",
   };
 
   const navigate = useNavigate();

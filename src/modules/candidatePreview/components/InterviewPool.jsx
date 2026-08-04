@@ -27,7 +27,7 @@ export default function InterviewPool({
   canReschedule,
   onReschedule,
   allCandidatesForFilters,
-  onApprovalHistory
+  onApprovalHistory,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
@@ -153,12 +153,18 @@ export default function InterviewPool({
             </th>
             <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:approvalstatus")}
-               <OverlayTrigger
-                  placement="top"
-                  overlay={<Tooltip>Approval History</Tooltip>}
-                >
-                  <img src={history_icon} alt="history_icon" className="cursor-pointer" style={{width: "16px", height: "16px"}} onClick={() => onApprovalHistory(posStageWorkflowId)} />
-                </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>Approval History</Tooltip>}
+              >
+                <img
+                  src={history_icon}
+                  alt="history_icon"
+                  className="cursor-pointer"
+                  style={{ width: "16px", height: "16px" }}
+                  onClick={() => onApprovalHistory(posStageWorkflowId)}
+                />
+              </OverlayTrigger>
             </th>
             <th className="fs-14 fw-normal py-3">{t("common:score")}</th>
             <th className="text-center fs-14 fw-normal py-3">
@@ -240,14 +246,18 @@ export default function InterviewPool({
                 </td>
                 <td className="align-content-center">
                   <span
-                    className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                    className={`round_badge px-3 py-1 fs-12 rounded ${
                       c.workflowStatus === "Published"
-                        ? "bg-success"
+                        ? "bg-success text-white"
                         : c.workflowStatus === "Approved"
-                          ? "bg-primary"
+                          ? "bg-success text-white"
                           : c.workflowStatus === "L1 Pending"
-                            ? "bg-warning text-dark"
-                            : "bg-secondary"
+                            ? "bg-warning text-white"
+                            : c.workflowStatus === "Rejected"
+                              ? "bg-danger text-white"
+                              : c.workflowStatus === "Pending"
+                                ? "bg-info text-white"
+                                : "bg-secondary text-white"
                     }`}
                   >
                     {c.workflowStatus || "-"}

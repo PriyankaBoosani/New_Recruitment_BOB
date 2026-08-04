@@ -184,6 +184,9 @@
   background: #fdeeee;
   color: #d73c40;
 }
+.screening-approval-page .filter-select__value-container {
+	font-size: 14px;
+}
 
 .screening-approval-page .info {
   background: #eef4ff;

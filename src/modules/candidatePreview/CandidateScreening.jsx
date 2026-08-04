@@ -587,22 +587,7 @@ export default function CandidateScreening({ selectedJob }) {
     pageSize: interviewPageSize,
     enabled: activeTab === "INTERVIEW_POOL" && selectedPositionId.length > 0,
   });
-  const workflowStatus =
-    activeTab === "CANDIDATE_POOL"
-      ? candidates?.[0]?.workflowStatus
-      : activeTab === "INTERVIEW_POOL"
-        ? interviewCandidates?.[0]?.workflowStatus
-        : "";
-  console.log(workflowStatus, "workflowStatus");
-  const isWorkflowPublished = workflowStatus === "Published";
-
-  const disableSendForApproval =
-    selectedPositionId.length !== 1 ||
-    ["L1 Pending", "Approved", "Published"].includes(workflowStatus);
-
-  const disablePublish =
-    selectedPositionId.length !== 1 || workflowStatus !== "Approved";
-
+  
   const {
     data: compensationCandidates,
     totalElements: compensationTotal,
@@ -1169,12 +1154,53 @@ export default function CandidateScreening({ selectedJob }) {
       interviewCenterName: c.interviewCenter?.interviewCentre, // Add interview centre name
     }));
   };
-  console.log(workflowStatus, "dfdf");
 
   const [
     allInterviewCandidatesForFilters,
     setAllInterviewCandidatesForFilters,
   ] = useState([]);
+  const workflowStatus =
+    activeTab === "CANDIDATE_POOL"
+      ? candidates?.[0]?.workflowStatus
+      : activeTab === "INTERVIEW_POOL"
+        ? interviewCandidates?.[0]?.workflowStatus
+        : "";
+  console.log(workflowStatus, "workflowStatus");
+  const isWorkflowPublished = workflowStatus === "Published";
+  const hasCandidatesInPool =
+    activeTab === "CANDIDATE_POOL"
+      ? totalElements > 0
+      : activeTab === "INTERVIEW_POOL"
+        ? interviewTotalElements > 0
+        : false;
+
+  const isApprovalReady =
+    activeTab === "CANDIDATE_POOL"
+      ? allCandidatesForFilters.length > 0 &&
+        allCandidatesForFilters.every(
+          (candidate) =>
+            candidate.status === "Shortlisted" ||
+            candidate.status === "Rejected"
+        )
+      : activeTab === "INTERVIEW_POOL"
+        ? allInterviewCandidatesForFilters.length > 0 &&
+          allInterviewCandidatesForFilters.every(
+            (candidate) =>
+              candidate.interviewSchedules?.interviewStatus === "QUALIFIED" ||
+              candidate.interviewSchedules?.interviewStatus === "DISQUALIFIED"
+          )
+        : false;
+
+  const disableSendForApproval =
+    !hasCandidatesInPool ||
+    !isApprovalReady ||
+    selectedPositionId.length !== 1 ||
+    ["L1 Pending", "Approved", "Published"].includes(workflowStatus);
+
+  const disablePublish =
+    !hasCandidatesInPool ||
+    selectedPositionId.length !== 1 ||
+    workflowStatus !== "Approved";
 
   useEffect(() => {
     if (activeTab !== "INTERVIEW_POOL" || !selectedPositionId.length) {
@@ -3999,23 +4025,25 @@ export default function CandidateScreening({ selectedJob }) {
                     {(activeTab === "CANDIDATE_POOL" ||
                       activeTab === "INTERVIEW_POOL") && (
                       <>
-                        <button
-                          className="btn blue-bg text-white fs-14"
-                          type="button"
-                          onClick={() => handleScreeningAction("SUBMIT")}
-                          disabled={disableSendForApproval}
-                        >
-                          {t("candidateWorkflow:send_for_approval")}
-                        </button>
-
-                        <button
-                          className="btn btn-success text-white fs-14"
-                          type="button"
-                          onClick={() => handleScreeningAction("PUBLISH")}
-                          disabled={disablePublish}
-                        >
-                          {t("candidateWorkflow:publish")}
-                        </button>
+                        {hasCandidatesInPool && (
+                          <button
+                            className="btn blue-bg text-white fs-14"
+                            disabled={disableSendForApproval}
+                            onClick={() => handleScreeningAction("SUBMIT")}
+                          >
+                            {t("candidateWorkflow:send_for_approval")}
+                          </button>
+                        )}
+                        {hasCandidatesInPool && (
+                          <button
+                            className="btn btn-success text-white fs-14"
+                            type="button"
+                            onClick={() => handleScreeningAction("PUBLISH")}
+                            disabled={disablePublish}
+                          >
+                            {t("candidateWorkflow:publish")}
+                          </button>
+                        )}
                       </>
                     )}
 
@@ -4068,9 +4096,8 @@ export default function CandidateScreening({ selectedJob }) {
                         hasPrivilege("Offer Pool") && (
                           <button
                             className="btn blue-bg text-white fs-14"
-                            onClick={handleSendToOfferPool} 
+                            onClick={handleSendToOfferPool}
                             disabled={!canSendToOfferPool}
-
                           >
                             {t("candidateWorkflow:send_to_offer_pool")}
                           </button>
@@ -4140,7 +4167,7 @@ export default function CandidateScreening({ selectedJob }) {
             canReschedule={canReschedule}
             onReschedule={handleReschedule}
             allCandidatesForFilters={allInterviewCandidatesForFilters}
-             onApprovalHistory={handleApprovalHistory}
+            onApprovalHistory={handleApprovalHistory}
             onOpenFeedback={async (scheduledInterviewId) => {
               try {
                 setShowFeedbackModal(true);
