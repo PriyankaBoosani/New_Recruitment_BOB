@@ -277,6 +277,7 @@ const ApplicationForm = ({
     // Helper Conditions
     const allVerified = areAllDocumentsVerified(); // returns true/false
     const anyRejected = hasAnyRejectedDocument(); // returns true/false
+
     const hasPendingDocument = documentRows.some((doc) => {
       const status = docStatusMap[doc.candidateDocumentId]?.status;
       return !status || status === "PENDING";
@@ -2702,10 +2703,13 @@ const ApplicationForm = ({
 
                 const disableYes =
                   opt === "YES" && (!areAllDocumentsVerified() || isLptFailed);
-                const disableNo = opt === "NO" && !isLptFailed;
+
+                const disableNo =
+                  opt === "NO" && !(isLptFailed || hasAnyRejectedDocument());
 
                 const disableProvisionallyApproved =
-                  opt === "PROVISIONALLY_APPROVED" && areAllDocumentsVerified();
+                  opt === "PROVISIONALLY_APPROVED" &&
+                  !(isLptFailed || hasAnyRejectedDocument());
 
                 const isDisabled =
                   isZonalAbsent ||

@@ -170,6 +170,10 @@ export default function Approval() {
   }, [searchText, activeTab]);
 
   const currentData = candidates;
+  const movedToInterviewCount =
+    candidateSummary?.shortlistedCandidates ??
+    candidates.filter((c) => c.result === "Shortlisted").length;
+
   const pageInfo = {
     totalElements: currentData.length,
     totalPages: Math.ceil(currentData.length / pageSize),
@@ -316,16 +320,15 @@ export default function Approval() {
             total={candidateSummary?.totalCandidates ?? candidates.length}
             approved={
               activeTab === "screening"
-                ? (candidateSummary?.shortlistedCandidates ??
-                  candidates.filter((c) => c.result === "Shortlisted").length)
-                : (candidateSummary?.qualifiedCandidates ??
+                ? movedToInterviewCount
+                : (candidateSummary?.shortlistedCandidates ??
                   candidates.filter((c) => c.result === "Qualified").length)
             }
             rejected={
               activeTab === "screening"
                 ? (candidateSummary?.rejectedCandidates ??
                   candidates.filter((c) => c.result === "Rejected").length)
-                : (candidateSummary?.disqualifiedCandidates ??
+                : (candidateSummary?.rejectedCandidates ??
                   candidates.filter((c) => c.result === "Disqualified").length)
             }
             approvedLabel={
@@ -350,6 +353,8 @@ export default function Approval() {
               loading={loadingCandidates}
               onViewProfile={handleViewProfile}
               onViewResume={handleViewFile}
+              workflowStatus={candidateSummary?.workflowStatus}
+              movedToInterviewCount={movedToInterviewCount}
             />
           ) : (
             <InterviewApprovalTable

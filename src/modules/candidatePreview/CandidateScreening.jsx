@@ -552,10 +552,10 @@ export default function CandidateScreening({ selectedJob }) {
       }
 
       toast.success(
-        res?.message ||
-          (action === "SUBMIT"
+        
+          action === "SUBMIT"
             ? "Submitted for approval successfully."
-            : "Published successfully.")
+            : "Published successfully."
       );
 
       if (activeTab === "INTERVIEW_POOL") {
@@ -4143,6 +4143,7 @@ export default function CandidateScreening({ selectedJob }) {
             allCandidatesForFilters={allCandidatesForFilters}
             isMarksUploaded={isMarksUploaded}
             onApprovalHistory={handleApprovalHistory}
+            workflowStatus={workflowStatus}
           />
         )}
 
@@ -4168,6 +4169,7 @@ export default function CandidateScreening({ selectedJob }) {
             onReschedule={handleReschedule}
             allCandidatesForFilters={allInterviewCandidatesForFilters}
             onApprovalHistory={handleApprovalHistory}
+             workflowStatus={workflowStatus}
             onOpenFeedback={async (scheduledInterviewId) => {
               try {
                 setShowFeedbackModal(true);

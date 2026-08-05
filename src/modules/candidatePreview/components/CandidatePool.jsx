@@ -29,6 +29,7 @@ export default function CandidatePool({
   allCandidatesForFilters,
   isMarksUploaded,
   onApprovalHistory,
+  workflowStatus
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -145,7 +146,7 @@ export default function CandidatePool({
     if (val >= 50) return { label: "Moderate", color: "orange" };
     return { label: "Weak", color: "red" };
   };
-const posStageWorkflowId = candidates[0]?.posStageWorkflowId;
+  const posStageWorkflowId = candidates[0]?.posStageWorkflowId;
   const renderPopover = (c) => {
     const scoreMeta = getLevelFrom100(c.finalScore);
     return (
@@ -286,15 +287,28 @@ const posStageWorkflowId = candidates[0]?.posStageWorkflowId;
               <th className="fs-14 fw-normal py-3">
                 {t("candidateWorkflow:status")}
               </th>
-              <th className="fs-14 fw-normal py-3">
-                {t("candidateWorkflow:approvalstatus")}
-                <OverlayTrigger
-                  placement="top"
-                  overlay={<Tooltip>Approval History</Tooltip>}
-                >
-                  <img src={history_icon} alt="history_icon" className="cursor-pointer" style={{width: "16px", height: "16px"}} onClick={() => onApprovalHistory(posStageWorkflowId)} />
-                </OverlayTrigger>
-              </th>
+             
+                <th className="fs-14 fw-normal py-3">
+                  {t("candidateWorkflow:approvalstatus")}
+
+                  {["L1 Pending", "Approved", "Published"].includes(
+                    workflowStatus
+                  ) && (
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={<Tooltip>Approval History</Tooltip>}
+                    >
+                      <img
+                        src={history_icon}
+                        alt="history_icon"
+                        className="cursor-pointer ms-1"
+                        style={{ width: "16px", height: "16px" }}
+                        onClick={() => onApprovalHistory(posStageWorkflowId)}
+                      />
+                    </OverlayTrigger>
+                  )}
+                </th>
+            
 
               {hasLocationData && (
                 <th className="fs-14 fw-normal py-3">{t("common:location")}</th>
@@ -415,16 +429,14 @@ const posStageWorkflowId = candidates[0]?.posStageWorkflowId;
                     </span>
                   </td>
                   <td className="align-content-center">
-                      <span
-                        className={`round_badge px-3 py-1 fs-12 rounded text-white ${
-                          WORKFLOW_STATUS_CLASS_MAP[c.workflowStatus] ||
-                          "bg-secondary"
-                        }`}
-                        
-                      >
-                        {c.workflowStatus || "-"}
-                        
-                      </span>
+                    <span
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                        WORKFLOW_STATUS_CLASS_MAP[c.workflowStatus] ||
+                        "bg-secondary"
+                      }`}
+                    >
+                      {c.workflowStatus || "-"}
+                    </span>
                   </td>
 
                   {hasLocationData && (

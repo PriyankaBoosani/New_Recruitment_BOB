@@ -28,6 +28,7 @@ export default function InterviewPool({
   onReschedule,
   allCandidatesForFilters,
   onApprovalHistory,
+  workflowStatus
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const navigate = useNavigate();
@@ -153,18 +154,22 @@ export default function InterviewPool({
             </th>
             <th className="fs-14 fw-normal py-3">
               {t("candidateWorkflow:approvalstatus")}
-              <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip>Approval History</Tooltip>}
-              >
-                <img
-                  src={history_icon}
-                  alt="history_icon"
-                  className="cursor-pointer"
-                  style={{ width: "16px", height: "16px" }}
-                  onClick={() => onApprovalHistory(posStageWorkflowId)}
-                />
-              </OverlayTrigger>
+              {["L1 Pending", "Approved", "Published"].includes(
+                workflowStatus
+              ) && (
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip>Approval History</Tooltip>}
+                >
+                  <img
+                    src={history_icon}
+                    alt="history_icon"
+                    className="cursor-pointer ms-1"
+                    style={{ width: "16px", height: "16px" }}
+                    onClick={() => onApprovalHistory(posStageWorkflowId)}
+                  />
+                </OverlayTrigger>
+              )}
             </th>
             <th className="fs-14 fw-normal py-3">{t("common:score")}</th>
             <th className="text-center fs-14 fw-normal py-3">

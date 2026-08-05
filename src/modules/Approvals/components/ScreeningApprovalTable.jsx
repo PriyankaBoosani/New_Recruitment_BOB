@@ -7,8 +7,10 @@ export default function ScreeningApprovalTable({
   loading = false,
   onViewProfile,
   onViewResume,
-  
+  workflowStatus,
 }) {
+  const isBatchApproved = workflowStatus?.toUpperCase() === "APPROVED";
+
   return (
     <div className="table-wrap">
       <table className="table table-hover align-middle">
@@ -33,8 +35,10 @@ export default function ScreeningApprovalTable({
             </tr>
           ) : candidates.length === 0 ? (
             <tr>
-              <td colSpan="7" className="text-center py-4">
-                No candidates found
+              <td colSpan="7" className="text-center py-4 text-muted">
+                {isBatchApproved
+                  ? "No screening candidates found. Shortlisted candidates are moved to the Interview Approval tab."
+                  : "No candidates found"}
               </td>
             </tr>
           ) : (

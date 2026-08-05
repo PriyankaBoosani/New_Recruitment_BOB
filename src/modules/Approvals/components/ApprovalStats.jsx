@@ -34,7 +34,7 @@ export default function ApprovalStats({
         return {
           className: "warning",
           icon: "⏳",
-          label: "Pending",
+          label: "-",
         };
         case "L1_PENDING":
         return {

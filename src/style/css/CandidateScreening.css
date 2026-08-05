@@ -130,9 +130,8 @@
 }
 
 .fs-12 {
-  font-size: 0.75rem !important;
+	font-size: .65rem !important;
 }
-
 candidate-screening-tabs-header ul {
   padding-top: 1rem !important;
 }

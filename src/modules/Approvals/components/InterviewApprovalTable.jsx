@@ -14,6 +14,7 @@ export default function InterviewApprovalTable({
         <thead className="table-light">
           <tr>
             <th>Candidate</th>
+            <th>Application Number</th>
             <th>Category</th>
             <th>Zone</th>
             <th>Panel Details</th>
@@ -36,11 +37,22 @@ export default function InterviewApprovalTable({
             candidates.map((c) => (
               <tr key={c.id}>
                 <td>{c.name}</td>
+                 <td>{c.appNo}</td>
                 <td>{c.category}</td>
                 <td>{c.zone}</td>
                 <td>{c.panel}</td>
                 <td>{c.score}</td>
-                <td>{c.status}</td>
+                <td>
+                  <span
+                    className={`status-badge ${
+                      c.status === "Qualified"
+                        ? "status-approved"
+                        : "status-rejected"
+                    }`}
+                  >
+                    {c.status}
+                  </span>
+                </td>
 
                 <td className="text-center">
                   <OverlayTrigger overlay={<Tooltip>View Profile</Tooltip>}>
