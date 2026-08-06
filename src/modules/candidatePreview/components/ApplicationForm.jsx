@@ -65,6 +65,7 @@ const ApplicationForm = ({
   dynamicFormData,
   dynamicFields,
   isFromApproval,
+  isApprovalLocked,
 }) => {
   console.log("test55 1", dynamicFormData, dynamicFields);
   const { t } = useTranslation(["preview", "common", "validation"]);
@@ -786,6 +787,7 @@ const ApplicationForm = ({
   };
 
   const handleVerify = async (comment) => {
+    
     if (!selectedDoc) return;
     if (docActionRef.current) return;
     docActionRef.current = true;
@@ -822,6 +824,7 @@ const ApplicationForm = ({
   };
 
   const handleReject = async (comment) => {
+   
     if (!selectedDoc) return;
     if (docActionRef.current) return;
     docActionRef.current = true;
@@ -1039,6 +1042,12 @@ const ApplicationForm = ({
   const disableNoOption = disableShortlistedSection;
 
   const handleFinalSubmit = async () => {
+    if (isApprovalLocked) {
+      toast.warning(
+        "Candidate cannot be modified while approval is in progress."
+      );
+      return;
+    }
     console.log("Final submit clicked");
 
     if (submitRef.current) return;
@@ -1105,7 +1114,7 @@ const ApplicationForm = ({
       setSubmitting(false);
     }
   };
-
+  console.log("isApprovalLocked:", isApprovalLocked);
   const getTomorrowDate = () => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -2070,20 +2079,30 @@ const ApplicationForm = ({
                                 alt={t("view")}
                                 style={{
                                   cursor:
-                                    disableDocAction || isFromApproval
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
                                       ? "not-allowed"
                                       : "pointer",
                                   opacity:
-                                    disableDocAction || isFromApproval
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
                                       ? 0.4
                                       : 1,
                                   pointerEvents:
-                                    disableDocAction || isFromApproval
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
                                       ? "none"
                                       : "auto",
                                 }}
                                 onClick={() => {
-                                  if (disableDocAction || isFromApproval)
+                                  if (
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
+                                  )
                                     return;
 
                                   setSelectedDoc({
@@ -2177,20 +2196,30 @@ const ApplicationForm = ({
                                 alt={t("view")}
                                 style={{
                                   cursor:
-                                    disableDocAction || isFromApproval
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
                                       ? "not-allowed"
                                       : "pointer",
                                   opacity:
-                                    disableDocAction || isFromApproval
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
                                       ? 0.4
                                       : 1,
                                   pointerEvents:
-                                    disableDocAction || isFromApproval
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
                                       ? "none"
                                       : "auto",
                                 }}
                                 onClick={() => {
-                                  if (disableDocAction || isFromApproval)
+                                  if (
+                                    disableDocAction ||
+                                    isFromApproval ||
+                                    isApprovalLocked
+                                  )
                                     return;
 
                                   setSelectedDoc({
@@ -2241,7 +2270,14 @@ const ApplicationForm = ({
                 </label>
                 <button
                   className="btn-submit-orange py-1 px-2"
-                  style={{ height: "auto", fontSize: "0.75rem" }}
+                  style={{
+                    height: "auto",
+                    fontSize: "0.75rem",
+                    cursor: isApprovalLocked ? "not-allowed" : "pointer",
+                    opacity: isApprovalLocked ? 0.4 : 1,
+                    pointerEvents: isApprovalLocked ? "none" : "auto",
+                  }}
+                  disabled={isApprovalLocked}
                   onClick={handleAddDocumentRow}
                 >
                   + {t("add_document")}
@@ -2594,11 +2630,18 @@ const ApplicationForm = ({
                       className="btn-submit-orange"
                       onClick={handleFinalSubmit}
                       disabled={
-                        isExamDisqualified || submitting || zonalSubmitting
+                        isApprovalLocked ||
+                        isExamDisqualified ||
+                        submitting ||
+                        zonalSubmitting
                       }
                       style={{
-                        opacity: isExamDisqualified ? 0.5 : 1,
-                        cursor: isExamDisqualified ? "not-allowed" : "pointer",
+                        opacity:
+                          isApprovalLocked || isExamDisqualified ? 0.5 : 1,
+                        cursor:
+                          isApprovalLocked || isExamDisqualified
+                            ? "not-allowed"
+                            : "pointer",
                       }}
                     >
                       {t("submit")}
@@ -2838,6 +2881,8 @@ const ApplicationForm = ({
         onReject={handleReject}
         isZonalAbsent={isZonalAbsent}
         isFromCompensationPool={isFromCompensationPool}
+        isFromApproval={isFromApproval}
+        isApprovalLocked={isApprovalLocked}
       />
 
       <CommentsModal

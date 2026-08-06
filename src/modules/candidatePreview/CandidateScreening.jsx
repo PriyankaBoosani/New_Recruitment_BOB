@@ -552,10 +552,9 @@ export default function CandidateScreening({ selectedJob }) {
       }
 
       toast.success(
-        
-          action === "SUBMIT"
-            ? "Submitted for approval successfully."
-            : "Published successfully."
+        action === "SUBMIT"
+          ? "Submitted for approval successfully."
+          : "Published successfully."
       );
 
       if (activeTab === "INTERVIEW_POOL") {
@@ -587,7 +586,7 @@ export default function CandidateScreening({ selectedJob }) {
     pageSize: interviewPageSize,
     enabled: activeTab === "INTERVIEW_POOL" && selectedPositionId.length > 0,
   });
-  
+
   const {
     data: compensationCandidates,
     totalElements: compensationTotal,
@@ -1184,13 +1183,12 @@ export default function CandidateScreening({ selectedJob }) {
         )
       : activeTab === "INTERVIEW_POOL"
         ? allInterviewCandidatesForFilters.length > 0 &&
-          allInterviewCandidatesForFilters.every(
-            (candidate) =>
-              candidate.interviewSchedules?.interviewStatus === "QUALIFIED" ||
-              candidate.interviewSchedules?.interviewStatus === "DISQUALIFIED"
+          allInterviewCandidatesForFilters.every((candidate) =>
+            ["QUALIFIED", "DISQUALIFIED", "ZONAL_REJECTED", "INTERVIEW_ABSENT"].includes(
+              candidate.interviewSchedules?.interviewStatus
+            )
           )
         : false;
-
   const disableSendForApproval =
     !hasCandidatesInPool ||
     !isApprovalReady ||
@@ -4169,7 +4167,7 @@ export default function CandidateScreening({ selectedJob }) {
             onReschedule={handleReschedule}
             allCandidatesForFilters={allInterviewCandidatesForFilters}
             onApprovalHistory={handleApprovalHistory}
-             workflowStatus={workflowStatus}
+            workflowStatus={workflowStatus}
             onOpenFeedback={async (scheduledInterviewId) => {
               try {
                 setShowFeedbackModal(true);

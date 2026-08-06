@@ -74,6 +74,19 @@ const CandidatePreviewPage = ({ onHide }) => {
     state?.fromInterviewPool ||
     state?.activeTab === "INTERVIEW_POOL";
 
+ const LOCKED_APPROVAL_STATUSES = [
+  "L1 PENDING",
+  "APPROVED",
+  "PUBLISHED",
+];
+
+const isApprovalLocked = LOCKED_APPROVAL_STATUSES.includes(
+  String(state?.workflowStatus || "").toUpperCase()
+);
+  console.log("isApprovalLocked in preview page:", isApprovalLocked);
+  console.log("location.state", location.state);
+console.log("workflowStatus", location.state?.workflowStatus);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -162,7 +175,6 @@ const CandidatePreviewPage = ({ onHide }) => {
               ? t("candidateWorkflow:manage_candidate_approvals")
               : t("candidateWorkflow:manage_schedule_interviews")
           }
-         
           onBack={() => {
             if (isFromApproval) {
               navigate("/screening-requests", {
@@ -296,6 +308,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               dynamicFields={dynamicFields || []}
               isCandidateWorkflow={isCandidateWorkflow}
               isFromApproval={isFromApproval}
+              isApprovalLocked={isApprovalLocked}
             />
           )
         )}

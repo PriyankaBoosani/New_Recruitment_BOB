@@ -29,7 +29,7 @@ export default function CandidatePool({
   allCandidatesForFilters,
   isMarksUploaded,
   onApprovalHistory,
-  workflowStatus
+  workflowStatus,
 }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
   const STATUS_CLASS_MAP = {
@@ -287,28 +287,27 @@ export default function CandidatePool({
               <th className="fs-14 fw-normal py-3">
                 {t("candidateWorkflow:status")}
               </th>
-             
-                <th className="fs-14 fw-normal py-3">
-                  {t("candidateWorkflow:approvalstatus")}
 
-                  {["L1 Pending", "Approved", "Published"].includes(
-                    workflowStatus
-                  ) && (
-                    <OverlayTrigger
-                      placement="top"
-                      overlay={<Tooltip>Approval History</Tooltip>}
-                    >
-                      <img
-                        src={history_icon}
-                        alt="history_icon"
-                        className="cursor-pointer ms-1"
-                        style={{ width: "16px", height: "16px" }}
-                        onClick={() => onApprovalHistory(posStageWorkflowId)}
-                      />
-                    </OverlayTrigger>
-                  )}
-                </th>
-            
+              <th className="fs-14 fw-normal py-3">
+                {t("candidateWorkflow:approvalstatus")}
+
+                {["L1 Pending", "Approved", "Published"].includes(
+                  workflowStatus
+                ) && (
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={<Tooltip>Approval History</Tooltip>}
+                  >
+                    <img
+                      src={history_icon}
+                      alt="history_icon"
+                      className="cursor-pointer ms-1"
+                      style={{ width: "16px", height: "16px" }}
+                      onClick={() => onApprovalHistory(posStageWorkflowId)}
+                    />
+                  </OverlayTrigger>
+                )}
+              </th>
 
               {hasLocationData && (
                 <th className="fs-14 fw-normal py-3">{t("common:location")}</th>
@@ -482,7 +481,7 @@ export default function CandidatePool({
                             state: {
                               from: "/candidate-workflow",
                               candidate: c,
-
+                              workflowStatus: c.workflowStatus,
                               positionId: selectedPositionId, // for preview API
                               positionIds: selectedPositionId, // for auto populate after back
                               candidatePositionId: c.positionId,
@@ -633,6 +632,7 @@ export default function CandidatePool({
                         pageSize,
                         filters,
                         candidate: c,
+                        workflowStatus: c.workflowStatus,
                         positionId: selectedPositionId,
                         requisitionId: selectedRequisitionId,
                         requisition: requisition

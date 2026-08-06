@@ -318,6 +318,7 @@ export default function InterviewPool({
                             candidate: c,
                             applicationId: c.applicationId,
                             positionId: selectedPositionId,
+                             workflowStatus: c.workflowStatus,
                             requisitionId: selectedRequisitionId,
                             fromInterviewPool: true,
                             activeTab: "INTERVIEW_POOL",
