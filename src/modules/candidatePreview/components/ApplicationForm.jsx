@@ -67,7 +67,6 @@ const ApplicationForm = ({
   isFromApproval,
   isApprovalLocked,
 }) => {
-  console.log("test55 1", dynamicFormData, dynamicFields);
   const { t } = useTranslation(["preview", "common", "validation"]);
 
   const navigate = useNavigate();
@@ -158,7 +157,6 @@ const ApplicationForm = ({
     const fetchMasterData = async () => {
       try {
         const exServiceRes = await masterApiService.getExServiceCategories();
-        console.log("exServiceRes", exServiceRes.data);
         setExServicemen(exServiceRes.data || []);
       } catch (err) {
         console.error(err);
@@ -447,14 +445,6 @@ const ApplicationForm = ({
     education: [],
     experience: [],
   };
-
-  console.log("previewData", previewData);
-  console.log("personalDetails", previewData?.personalDetails);
-  console.log(
-    "Application No in ApplicationForm:",
-    previewData?.personalDetails?.applicationNo
-  );
-
   const CRITERIA_OPTIONS = ["YES", "NO", "DISCREPANCY"];
 
   const documentRows = [
@@ -553,13 +543,16 @@ const ApplicationForm = ({
       n.includes("graduation") ||
       n.includes("post-graduation") ||
       n.includes("doctorate") ||
-      n.includes("professional")
+      n.includes("professional") ||
+      n.includes("intcourse") ||
+      n.includes("diploma") ||
+      n.includes("phd")
     ) {
       categories.push("EDUCATION");
     }
 
     // WORK
-    if (/^work[_\s]?experience/i.test(name)) {
+    if (/^work[_\s]?experience/i.test(name) || /^payslips?/i.test(name)) {
       categories.push("WORK");
     }
 
@@ -567,7 +560,6 @@ const ApplicationForm = ({
   };
   const groupedDocs = documentRows.reduce((acc, doc) => {
     const categories = getDocCategories(doc.name);
-
     categories.forEach((category) => {
       if (!acc[category]) {
         acc[category] = [];
@@ -593,7 +585,6 @@ const ApplicationForm = ({
       (item) =>
         item.exServicemanCategoryId === previewData?.personalDetails?.exService
     )?.exsCategoryName || "Not Applicable";
-  console.log("exServiceName", exServiceName);
 
   const refreshDocStatuses = async () => {
     try {
@@ -643,9 +634,6 @@ const ApplicationForm = ({
           isDigilocker: item.isDigilocker,
         });
       });
-      console.log("Document Status Response:", res.data);
-      console.log("Document Status Map:", map);
-      console.log("Screening Documents:", documents);
 
       setDocStatusMap(map);
       setScreeningDocuments(documents);
@@ -787,7 +775,6 @@ const ApplicationForm = ({
   };
 
   const handleVerify = async (comment) => {
-    
     if (!selectedDoc) return;
     if (docActionRef.current) return;
     docActionRef.current = true;
@@ -824,7 +811,6 @@ const ApplicationForm = ({
   };
 
   const handleReject = async (comment) => {
-   
     if (!selectedDoc) return;
     if (docActionRef.current) return;
     docActionRef.current = true;
@@ -980,9 +966,6 @@ const ApplicationForm = ({
       return status === "VERIFIED" || status === "REJECTED";
     });
   };
-  console.log("isCandidateWorkflow:", isCandidateWorkflow);
-  console.log("isFromApproval:", isFromApproval);
-
   const disableDocAction = isInterviewView || isFromInterview;
 
   const allDocsVerified = documentRows.length > 0 && areAllDocumentsValidated();
@@ -1048,7 +1031,6 @@ const ApplicationForm = ({
       );
       return;
     }
-    console.log("Final submit clicked");
 
     if (submitRef.current) return;
 
@@ -1114,7 +1096,6 @@ const ApplicationForm = ({
       setSubmitting(false);
     }
   };
-  console.log("isApprovalLocked:", isApprovalLocked);
   const getTomorrowDate = () => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -1256,45 +1237,77 @@ const ApplicationForm = ({
       status === "REJECTED" || status === "PENDING" || status === "DISCREPANCY"
     );
   });
+  const isCategoryRejected = (category) => {
+  const docs = groupedDocs[category] || [];
+
+  if (category === "AGE") {
+    // If any AGE document is VERIFIED, don't treat AGE as rejected
+    const hasVerified = docs.some((doc) => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return status === "VERIFIED";
+    });
+
+    if (hasVerified) {
+      return false;
+    }
+  }
+
+  return docs.some((doc) => {
+    const status = docStatusMap[doc.candidateDocumentId]?.status;
+    return status === "REJECTED";
+  });
+};
   const isOptionDisabled = (option, category) => {
     const categorySatisfied = isCategorySatisfied(category);
-    if (category === "WORK" && option === "YES" && hasWorkDiscrepancy) {
+    const categoryRejected = isCategoryRejected(category);
+
+    // Disable YES whenever any document of that category is rejected
+    if (option === "YES" && categoryRejected) {
       return true;
     }
-    // Disable YES if no VERIFIED doc exists
+
+    // Disable YES if no VERIFIED document exists
     if (option === "YES" && !categorySatisfied) {
       return true;
     }
 
-    // Disable DISCREPANCY if all docs verified
+    // Existing work logic
+    // if (category === "WORK" && option === "YES" && hasWorkDiscrepancy) {
+    //   return true;
+    // }
+
+    // Existing discrepancy logic
     if (option === "DISCREPANCY" && allDocsAreVerified) {
       return true;
     }
 
     return false;
   };
-
   useEffect(() => {
     const ageVerified = isCategorySatisfied("AGE");
     const workVerified = isCategorySatisfied("WORK");
-    console.log("Grouped Docs", groupedDocs);
-    console.log("Education Docs", groupedDocs["EDUCATION"]);
     const educationVerified = isCategorySatisfied("EDUCATION");
-
+    const ageRejected = isCategoryRejected("AGE");
+    const workRejected = isCategoryRejected("WORK");
+    const educationRejected = isCategoryRejected("EDUCATION");
     setScreeningForm((prev) => {
       let changed = false;
 
       const updated = { ...prev };
 
       // AGE
-      const nextAge = ageVerified
-        ? prev.isAgeCriteriaMet === "NO" ||
-          prev.isAgeCriteriaMet === "DISCREPANCY"
-          ? prev.isAgeCriteriaMet
-          : "YES"
-        : prev.isAgeCriteriaMet === "YES"
+      const nextAge = ageRejected
+        ? prev.isAgeCriteriaMet === "YES"
           ? ""
-          : prev.isAgeCriteriaMet;
+          : prev.isAgeCriteriaMet
+        : ageVerified
+          ? prev.isAgeCriteriaMet === "NO" ||
+            prev.isAgeCriteriaMet === "DISCREPANCY"
+            ? prev.isAgeCriteriaMet
+            : "YES"
+          : prev.isAgeCriteriaMet === "YES"
+            ? ""
+            : prev.isAgeCriteriaMet;
 
       if (nextAge !== prev.isAgeCriteriaMet) {
         updated.isAgeCriteriaMet = nextAge;
@@ -1302,29 +1315,40 @@ const ApplicationForm = ({
       }
 
       // WORK
-      const nextWork = workVerified
-        ? prev.isWorkCriteriaMet === "NO" ||
-          prev.isWorkCriteriaMet === "DISCREPANCY"
-          ? prev.isWorkCriteriaMet
-          : "YES"
-        : prev.isWorkCriteriaMet === "YES"
+      const nextWork = workRejected
+        ? prev.isWorkCriteriaMet === "YES"
           ? ""
-          : prev.isWorkCriteriaMet;
+          : prev.isWorkCriteriaMet
+        : workVerified
+          ? prev.isWorkCriteriaMet === "NO" ||
+            prev.isWorkCriteriaMet === "DISCREPANCY"
+            ? prev.isWorkCriteriaMet
+            : "YES"
+          : prev.isWorkCriteriaMet === "YES"
+            ? ""
+            : prev.isWorkCriteriaMet;
 
       if (nextWork !== prev.isWorkCriteriaMet) {
         updated.isWorkCriteriaMet = nextWork;
         changed = true;
       }
-
+console.log({
+  workVerified: isCategorySatisfied("WORK"),
+  workRejected: isCategoryRejected("WORK"),
+});
       // EDUCATION
-      const nextEducation = educationVerified
-        ? prev.isEducationCriteriaMet === "NO" ||
-          prev.isEducationCriteriaMet === "DISCREPANCY"
-          ? prev.isEducationCriteriaMet
-          : "YES"
-        : prev.isEducationCriteriaMet === "YES"
+      const nextEducation = educationRejected
+        ? prev.isEducationCriteriaMet === "YES"
           ? ""
-          : prev.isEducationCriteriaMet;
+          : prev.isEducationCriteriaMet
+        : educationVerified
+          ? prev.isEducationCriteriaMet === "NO" ||
+            prev.isEducationCriteriaMet === "DISCREPANCY"
+            ? prev.isEducationCriteriaMet
+            : "YES"
+          : prev.isEducationCriteriaMet === "YES"
+            ? ""
+            : prev.isEducationCriteriaMet;
 
       if (nextEducation !== prev.isEducationCriteriaMet) {
         updated.isEducationCriteriaMet = nextEducation;
@@ -2351,7 +2375,12 @@ const ApplicationForm = ({
 
                   <div className="criteria-radio mb-0">
                     {CRITERIA_OPTIONS.map((option) => (
-                      <label key={option} className={`radio-label`}>
+                      <label
+                        key={option}
+                        className={`radio-label ${
+                          isOptionDisabled(option, "WORK") ? "disabled" : ""
+                        }`}
+                      >
                         <input
                           type="radio"
                           name="workCriteria"

@@ -229,7 +229,7 @@ export default function Approval() {
       }
 
       toast.success(
-        res?.message ||
+       
           (actionType === "approve"
             ? "Approved Successfully"
             : "Rejected Successfully")

@@ -1184,7 +1184,7 @@ export default function CandidateScreening({ selectedJob }) {
       : activeTab === "INTERVIEW_POOL"
         ? allInterviewCandidatesForFilters.length > 0 &&
           allInterviewCandidatesForFilters.every((candidate) =>
-            ["QUALIFIED", "DISQUALIFIED", "ZONAL_REJECTED", "INTERVIEW_ABSENT"].includes(
+            ["QUALIFIED", "DISQUALIFIED", "ZONAL_REJECTED", "INTERVIEW_ABSENT", "ZONAL_ABSENT"].includes(
               candidate.interviewSchedules?.interviewStatus
             )
           )
