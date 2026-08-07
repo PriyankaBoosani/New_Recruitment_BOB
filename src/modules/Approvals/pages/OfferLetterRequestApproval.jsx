@@ -40,7 +40,7 @@ const OfferLetterRequestApproval = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const privileges = useSelector((state) => state.user.privileges);
-
+  const [searchText, setSearchText] = useState("");
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
 
@@ -138,6 +138,20 @@ const OfferLetterRequestApproval = () => {
   const selectableCandidates = candidates.filter(
     (c) => c.status === selectableStatus
   );
+useEffect(() => {
+  if (!selectedPosition?.value) return;
+
+  const timer = setTimeout(() => {
+    fetchCandidates({
+      positionId: selectedPosition.value,
+      searchText,
+      page: 0,
+      size: 10,
+    });
+  }, 500); // wait 500ms after user stops typing
+
+  return () => clearTimeout(timer);
+}, [searchText, selectedPosition, fetchCandidates]);
 
   const allSelected =
     selectableCandidates.length > 0 &&
@@ -178,6 +192,14 @@ const OfferLetterRequestApproval = () => {
             <p className="offer-page-subtitle">
               {t("offerLetterRequest:review_offer_letter_requests")}
             </p>
+          </Col>
+          <Col md={4}>
+          <Form.Control
+            type="text"
+            placeholder="Search Candidate"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
           </Col>
         </Row>
         {/* Filters */}
@@ -229,6 +251,7 @@ const OfferLetterRequestApproval = () => {
               menuPortalTarget={document.body}
             />
           </Col>
+          
         </Row>
         {/* Bulk Actions */}
         <Row className="offer-bulk-actions align-items-center mb-3">
