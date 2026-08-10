@@ -497,6 +497,7 @@ export default function ExaminationCutoffConfiguration() {
           setViewOnly(false);
         }}
         editData={editingData}
+        viewOnly={viewOnly}
         onSuccess={handleSuccess}
         refreshExamConfigs={() => loadConfigurations(selectedPositionId)}
         selectedRequisition={selectedRequisition}
