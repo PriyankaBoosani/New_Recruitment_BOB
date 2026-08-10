@@ -221,17 +221,26 @@ const CreateRequisition = () => {
 
         // NEW DRAFT CREATION
         else {
-          await requisitionApiService.editDraftRequisition(editId, positionIds);
-
+          const res = await requisitionApiService.editDraftRequisition(
+            editId,
+            positionIds
+          );
+          if (!res?.success) {
+            toast.error(res?.message || "Failed to create draft");
+            return;
+          }
           const draftPayload = {
             requisitionDescription: formData.description,
             endDate: formData.endDate,
             cutoffDate: formData.cutoffDate,
           };
 
-         const response =  await requisitionApiService.saveDraftDetails(editId, draftPayload);
+          const response = await requisitionApiService.saveDraftDetails(
+            editId,
+            draftPayload
+          );
           if (!response?.success) {
-            toast.error( "Failed to create draft");
+            toast.error("Failed to create draft");
             return;
           }
           toast.success("Draft created successfully");
@@ -494,7 +503,7 @@ const CreateRequisition = () => {
                                   {masterPositionsMap[pos.masterPositionId] ||
                                     "Unknown"}{" "}
                                   - ({pos.vacancies} vacancies)
-                                  <i
+                                  {/* <i
                                     className="bi bi-info-circle-fill ms-2"
                                     style={{
                                       color: "#4F67C1",
@@ -537,7 +546,7 @@ const CreateRequisition = () => {
                                         console.error(error);
                                       }
                                     }}
-                                  />
+                                  /> */}
                                 </span>
                               }
                             />

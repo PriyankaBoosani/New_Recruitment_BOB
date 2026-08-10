@@ -748,7 +748,7 @@ const JobPostingsList = () => {
                     </Badge>
                   )} */}
 
-                  {displayStatus === "OUTSTANDING" && (
+                  {/* {displayStatus === "OUTSTANDING" && (
                     <span
                       style={{
                         border: "1px solid #f26522",
@@ -764,12 +764,12 @@ const JobPostingsList = () => {
                     >
                       Outstanding
                     </span>
-                  )}
+                  )} */}
                   <Badge bg={req.statusType} className="ms-2">
                     {formatStatusLabel(req.status)}
                   </Badge>
 
-                  {req.status !== "CLOSED" &&
+                  {/* {req.status !== "CLOSED" &&
                     (req.isReinitialized || req.parentRequisitionId) && (
                       <span
                         className="ms-2"
@@ -834,7 +834,7 @@ const JobPostingsList = () => {
                       >
                         Re-Initiated
                       </span>
-                    )}
+                    )} */}
                   {/* {req.status !== "CLOSED" &&
                     (req.isReinitialized || req.parentRequisitionId) && (
                       <Badge bg="warning" text="dark" className="ms-2">
@@ -1150,9 +1150,9 @@ const JobPostingsList = () => {
                   </OverlayTrigger>
                 )} */}
 
-                {(req.status === "APPROVED" || req.status === "CLOSED") && (
+               {/* {(req.status === "APPROVED" || req.status === "CLOSED") && ( */}
                   <>
-                    <OverlayTrigger
+                    {/* <OverlayTrigger
                       placement="bottom"
                       overlay={
                         <Tooltip id={`tooltip-approved-${req.id}`}>
@@ -1205,7 +1205,7 @@ const JobPostingsList = () => {
                       >
                         <InfoCircle size={20} color="#4F67C1" />
                       </Button>
-                    </OverlayTrigger>
+                    </OverlayTrigger> */}
 
                     {/* {req.status === "APPROVED" && (
                       <OverlayTrigger
@@ -1230,8 +1230,8 @@ const JobPostingsList = () => {
                       </OverlayTrigger>
                     )} */}
                   </>
-                )}
-                {/* )} */}
+              {/* )}
+                )} */}
 
                 <Button
                   variant="none"
@@ -1322,7 +1322,7 @@ const JobPostingsList = () => {
                             >
                               <span>{pos.positionName}</span>
 
-                              {(req.isReinitialized ||
+                              {/* {(req.isReinitialized ||
                                 pos.parentPositionId) && (
                                 <span
                                   style={{
@@ -1384,7 +1384,7 @@ const JobPostingsList = () => {
                                     ? `${parentReqDetails[req.id].requisitionId} - ${parentReqDetails[req.id].code}`
                                     : `${req.requisitionId} - ${req.code}`}{" "}
                                 </span>
-                              )}
+                              )} */}
                             </div>
                             <div className="position-meta-inline">
                               <span>
@@ -1539,7 +1539,7 @@ const JobPostingsList = () => {
                                   : "NA"}
                               </div>
 
-                              {displayStatus === "OUTSTANDING" && (
+                              {/* {displayStatus === "OUTSTANDING" && (
                                 <span
                                   style={{
                                     border: "1px solid #f26522",
@@ -1554,7 +1554,7 @@ const JobPostingsList = () => {
                                 >
                                   Not Fulfilled
                                 </span>
-                              )}
+                              )} */}
                             </div>
                             {/* <div style={{ whiteSpace: "pre-line" }}>
                               <span>

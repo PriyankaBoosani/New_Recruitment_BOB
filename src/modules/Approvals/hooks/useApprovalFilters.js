@@ -125,7 +125,6 @@ const useApprovalFilters = () => {
         position.positionId,
         stage
       );
-      console.log("Candidate Summary:", summaryRes.data);
 
       setCandidateSummary(summaryRes.data);
     } catch (err) {
@@ -156,7 +155,6 @@ const useApprovalFilters = () => {
           : ["QUALIFIED", "DISQUALIFIED"],
       };
 
-      console.log("Download Payload:", payload);
 
       const res = await jobPositionApiService.downloadCandidateDetails(payload);
 

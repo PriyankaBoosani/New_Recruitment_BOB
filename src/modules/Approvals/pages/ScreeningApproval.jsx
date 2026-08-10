@@ -217,8 +217,6 @@ export default function Approval() {
         comments: comment,
       };
 
-      console.log("Approval Payload:", payload);
-
       const res =
         await candidateWorkflowServices.submitScreeningForApproval(payload);
 

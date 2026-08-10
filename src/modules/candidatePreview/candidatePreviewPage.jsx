@@ -83,9 +83,6 @@ const CandidatePreviewPage = ({ onHide }) => {
 const isApprovalLocked = LOCKED_APPROVAL_STATUSES.includes(
   String(state?.workflowStatus || "").toUpperCase()
 );
-  console.log("isApprovalLocked in preview page:", isApprovalLocked);
-  console.log("location.state", location.state);
-console.log("workflowStatus", location.state?.workflowStatus);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,13 +128,7 @@ console.log("workflowStatus", location.state?.workflowStatus);
           );
 
           setPreviewData(mapped);
-          console.log("previewData", previewData);
-          console.log(
-            "Application No:",
-            previewData?.personalDetails?.applicationNo
-          );
           setDynamicFormData(mapped?.additionalDetails?.dynamicFormData || []);
-          console.log("PreviewPage mapped ", mapped || []);
         }
       } catch (error) {
         console.error("Candidate preview load failed", error);

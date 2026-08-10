@@ -339,7 +339,6 @@ const Bulkcommunication = () => {
   };
 
   const handleSendCommunication = async () => {
-    console.log("Send bulk email submission pipeline initiated");
 
     // Validation
     const validationErrors = {
