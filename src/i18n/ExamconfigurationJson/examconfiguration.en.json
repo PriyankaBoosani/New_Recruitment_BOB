@@ -23,6 +23,7 @@
   "national_wise_cutoff_configuration": "National Wise Cutoff Configuration",
   "state_wise_cutoff_configuration": "State Wise Cutoff Configuration",
   "add": "Add",
+  "add_sections": "Add Sections",
   "save": "Save",
   "update": "Update",
   "saving": "Saving...",
@@ -57,5 +58,6 @@
   "failed_to_finalize": "Failed to finalize",
 
   "category_wise_reservation_state": "Category Wise Reservation (State-wise)",
-  "no_state_wise_summary_found": "No state-wise summary found"
+  "no_state_wise_summary_found": "No state-wise summary found",
+  "section_name": "Section Name"
 }

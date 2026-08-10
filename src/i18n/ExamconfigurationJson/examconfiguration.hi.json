@@ -27,6 +27,7 @@
   "national_wise_cutoff_configuration": "राष्ट्रीय स्तर कटऑफ कॉन्फ़िगरेशन",
   "state_wise_cutoff_configuration": "राज्यवार कटऑफ कॉन्फ़िगरेशन",
   "add": "जोड़ें",
+  "add_sections": "अनुभाग जोड़ें",
   "save": "सहेजें",
   "update": "अपडेट करें",
   "saving": "सहेजा जा रहा है...",
@@ -69,5 +70,6 @@
   "l1_rejected": "एल1 अस्वीकृत",
   "l2_rejected": "एल2 अस्वीकृत",
   "approved": "स्वीकृत",
-  "finalized": "अंतिम रूप से स्वीकृत"
+  "finalized": "अंतिम रूप से स्वीकृत",
+  "section_name": "अनुभाग का नाम"
 }

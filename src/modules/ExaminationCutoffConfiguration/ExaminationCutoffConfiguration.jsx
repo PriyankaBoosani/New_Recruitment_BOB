@@ -6,7 +6,6 @@ import "../../style/css/CandidateScreening.css";
 
 import { useTranslation } from "react-i18next";
 
-
 import { useLocation } from "react-router-dom";
 
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
@@ -20,7 +19,6 @@ import jobPositionApiService from "../jobPosting/services/jobPositionApiService"
 import { toast } from "react-toastify";
 
 export default function ExaminationCutoffConfiguration() {
-  
   const [showModal, setShowModal] = useState(false);
 
   const [editingData, setEditingData] = useState(null);
@@ -41,12 +39,13 @@ export default function ExaminationCutoffConfiguration() {
 
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
 
-  const [hasExistingConfiguration, setHasExistingConfiguration] = useState(false);
+  const [hasExistingConfiguration, setHasExistingConfiguration] =
+    useState(false);
 
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [configurations, setConfigurations] = useState([]);
 
-const { t } = useTranslation("examconfiguration");
+  const { t } = useTranslation("examconfiguration");
 
   useEffect(() => {
     fetchRequisitions();
@@ -158,32 +157,27 @@ const { t } = useTranslation("examconfiguration");
     fetchPositions(reqId);
   };
 
+  const validateExamConfiguration = async (positionId, hasConfiguration) => {
+    try {
+      const res =
+        await jobPositionApiService.validateExamConfiguration(positionId);
 
+      const isAllowed = res?.data === false;
 
-const validateExamConfiguration = async (
-  positionId,
-  hasConfiguration
-) => {
-  try {
-    const res =
-      await jobPositionApiService.validateExamConfiguration(positionId);
+      setCanAddConfiguration(isAllowed);
 
-    const isAllowed = res?.data === false;
+      // Show toast only when:
+      // 1. Interview process started (data === true)
+      // 2. No exam configuration exists
 
-    setCanAddConfiguration(isAllowed);
-
-    // Show toast only when:
-    // 1. Interview process started (data === true)
-    // 2. No exam configuration exists
-
-    if (res?.data === true && !hasConfiguration) {
-     toast.warning(t("interview_process_started"));
+      if (res?.data === true && !hasConfiguration) {
+        toast.warning(t("interview_process_started"));
+      }
+    } catch (error) {
+      console.error("Validation API failed", error);
+      setCanAddConfiguration(false);
     }
-  } catch (error) {
-    console.error("Validation API failed", error);
-    setCanAddConfiguration(false);
-  }
-};
+  };
 
   /* ================= POSITION CHANGE ================= */
 
@@ -195,31 +189,25 @@ const validateExamConfiguration = async (
   //   const configs = await loadConfigurations(formattedIds);
   // };
 
+  const handlePositionChange = async (ids) => {
+    const formattedIds = ids.map(String);
 
-const handlePositionChange = async (ids) => {
-  const formattedIds = ids.map(String);
+    setSelectedPositionId(formattedIds);
 
-  setSelectedPositionId(formattedIds);
+    const configs = await loadConfigurations(formattedIds);
 
-  const configs = await loadConfigurations(formattedIds);
+    const hasConfiguration = configs && configs.length > 0;
 
-  const hasConfiguration =
-    configs && configs.length > 0;
-
-  if (formattedIds.length > 0) {
-    await validateExamConfiguration(
-      formattedIds[0],
-      hasConfiguration
-    );
-  } else {
-    setCanAddConfiguration(false);
-  }
-};
+    if (formattedIds.length > 0) {
+      await validateExamConfiguration(formattedIds[0], hasConfiguration);
+    } else {
+      setCanAddConfiguration(false);
+    }
+  };
 
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
   );
-
 
   const normalizedRequisition = selectedRequisition
     ? {
@@ -246,7 +234,38 @@ const handlePositionChange = async (ids) => {
 
   const location = useLocation();
   const fromCandidateScreening = location.state?.fromCandidateScreening;
+  const handleSubmitForApproval = async () => {
+    if (!selectedPositionId?.length) {
+      toast.warning(t("please_select_position_first"));
+      return;
+    }
 
+    try {
+      const response =
+        await jobPositionApiService.finalizeExamConfiguration(
+          selectedPositionId
+        );
+
+      if (response?.success === false) {
+        toast.error(
+          response?.message || "Failed to submit configuration for approval"
+        );
+        return;
+      }
+
+      toast.success(
+        response?.message || "Configuration submitted for approval successfully"
+      );
+
+      await loadConfigurations(selectedPositionId);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          "Failed to submit configuration for approval"
+      );
+    }
+  };
   useEffect(() => {
     const state = location.state;
 
@@ -338,8 +357,6 @@ const handlePositionChange = async (ids) => {
 
   /* ================= PAGINATION DATA ================= */
 
-
-
   /* ================= EDIT ================= */
 
   const handleEdit = (row) => {
@@ -374,12 +391,12 @@ const handlePositionChange = async (ids) => {
 
       <div className="mb-4">
         <h2 className="exam-page-title">
-  {t("written_exam_section_cutoff_configuration")}
-</h2>
+          {t("written_exam_section_cutoff_configuration")}
+        </h2>
 
-       <p className="exam-page-subtitle">
-  {t("configure_written_exam_parameters")}
-</p>
+        <p className="exam-page-subtitle">
+          {t("configure_written_exam_parameters")}
+        </p>
       </div>
       <div className="card mb-4 border-0 exam-top-card">
         <div className="card-body p-0">
@@ -400,17 +417,17 @@ const handlePositionChange = async (ids) => {
             {/* BUTTONS */}
             <div className="col-md-6 col-12 text-md-end">
               <button
-               className={`btn fs-14 ${
-  hasExistingConfiguration || !canAddConfiguration
-    ? "btn-secondary"
-    : "text-white orange-bg"
-}`}
-            disabled={hasExistingConfiguration || !canAddConfiguration}
+                className={`btn fs-14 ${
+                  hasExistingConfiguration || !canAddConfiguration
+                    ? "btn-secondary"
+                    : "text-white orange-bg"
+                }`}
+                disabled={hasExistingConfiguration || !canAddConfiguration}
                 onClick={() => {
                   /* REQUISITION VALIDATION */
 
                   if (!selectedRequisitionId) {
-  toast.warning(t("please_select_requisition_first"));
+                    toast.info(t("please_select_requisition_first"));
 
                     return;
                   }
@@ -418,7 +435,7 @@ const handlePositionChange = async (ids) => {
                   /* POSITION VALIDATION */
 
                   if (!selectedPositionId.length) {
-    toast.warning(t("please_select_position_first"));
+                    toast.info(t("please_select_position_first"));
 
                     return;
                   }
@@ -430,7 +447,7 @@ const handlePositionChange = async (ids) => {
                   setShowModal(true);
                 }}
               >
-               + {t("add_configuration")}
+                + {t("add_configuration")}
               </button>
             </div>
           </div>
@@ -459,13 +476,14 @@ const handlePositionChange = async (ids) => {
         {/* ================= TABLE ================= */}
 
         <div className="exam-table-inner">
-       <ExaminationCutoffTable
-  rows={filteredConfigurations}
-  onView={handleView}
-  onEdit={handleEdit}
-  statusFilter={statusFilter}
-  setStatusFilter={setStatusFilter}
-/>
+          <ExaminationCutoffTable
+            rows={filteredConfigurations}
+            onView={handleView}
+            onEdit={handleEdit}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            onSubmitForApproval={handleSubmitForApproval}
+          />
         </div>
       </div>
 
@@ -480,7 +498,7 @@ const handlePositionChange = async (ids) => {
         }}
         editData={editingData}
         onSuccess={handleSuccess}
-        viewOnly={viewOnly}
+        refreshExamConfigs={() => loadConfigurations(selectedPositionId)}
         selectedRequisition={selectedRequisition}
         selectedPosition={selectedPosition}
         fromCandidateScreening={fromCandidateScreening}

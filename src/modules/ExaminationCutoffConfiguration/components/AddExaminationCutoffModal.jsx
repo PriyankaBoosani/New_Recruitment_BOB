@@ -31,7 +31,7 @@ export default function AddExaminationCutoffModal({
 
   const isL1 = privileges?.["L1 Approval"];
   const isL2 = privileges?.["L2 Approval"];
-  
+
   const { t } = useTranslation("examconfiguration");
 
   const [allCategories, setAllCategories] = useState([]);
@@ -114,8 +114,6 @@ export default function AddExaminationCutoffModal({
     }
   };
 
-
-
   const handleDeleteSection = async (indexToDelete) => {
     const section = formData.sections[indexToDelete];
 
@@ -132,15 +130,15 @@ export default function AddExaminationCutoffModal({
 
       // EDIT MODE -> API CALL
       if (editData && section?.examSectionId) {
-        const response =
-          await jobPositionApiService.deleteExamSection(
-            section.examSectionId
-          );
+        const response = await jobPositionApiService.deleteExamSection(
+          section.examSectionId
+        );
 
         if (response?.success === false) {
           toast.error(response?.message || "Failed to delete section");
           return;
         }
+        toast.success("Section deleted successfully");
       }
 
       // REMOVE FROM UI
@@ -148,29 +146,20 @@ export default function AddExaminationCutoffModal({
         (_, index) => index !== indexToDelete
       );
 
-      const updatedWeightageSections =
-        formData.selectedWeightageSections
-          .filter((index) => index !== indexToDelete)
-          .map((index) =>
-            index > indexToDelete ? index - 1 : index
-          );
+      const updatedWeightageSections = formData.selectedWeightageSections
+        .filter((index) => index !== indexToDelete)
+        .map((index) => (index > indexToDelete ? index - 1 : index));
 
       setFormData((prev) => ({
         ...prev,
         sections: updatedSections,
         numberOfSections:
-          updatedSections.length === 0
-            ? ""
-            : updatedSections.length,
+          updatedSections.length === 0 ? "" : updatedSections.length,
         selectedWeightageSections: updatedWeightageSections,
       }));
-
-      toast.success("Section deleted successfully");
+      await refreshExamConfigs?.();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-        "Failed to delete section"
-      );
+      toast.error(error?.response?.data?.message || "Failed to delete section");
     } finally {
       setLoading(false);
     }
@@ -436,12 +425,7 @@ export default function AddExaminationCutoffModal({
     }));
   };
 
-
-  const isFrozen =
-    editData?.isFrozen === true ||
-    editData?.isFrozen === "true";
-
-
+  const isFrozen = editData?.isFrozen === true || editData?.isFrozen === "true";
 
   useEffect(() => {
     console.log("===== DELETE BUTTON CHECK =====");
@@ -451,7 +435,6 @@ export default function AddExaminationCutoffModal({
     console.log("Calculated isFrozen:", isFrozen);
     console.log("===============================");
   }, [editData]);
-
 
   /* ================= GENERATE SECTIONS ================= */
 
@@ -649,7 +632,7 @@ export default function AddExaminationCutoffModal({
             for (const cat of reservationCategories) {
               const cutoff =
                 section?.stateCutoffs?.[stateItem.stateId]?.[
-                cat.reservationCategoriesId
+                  cat.reservationCategoriesId
                 ];
 
               if (
@@ -659,7 +642,8 @@ export default function AddExaminationCutoffModal({
                 Number(cutoff) <= 0
               ) {
                 toast.error(
-                  `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${i + 1
+                  `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
+                    i + 1
                   } (${getStateName(stateItem.stateId)})`
                 );
                 return;
@@ -678,7 +662,8 @@ export default function AddExaminationCutoffModal({
               Number(cutoff) <= 0
             ) {
               toast.error(
-                `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${i + 1
+                `${cat.categoryCode} Cutoff % must be greater than 0 for Section ${
+                  i + 1
                 }`
               );
               return;
@@ -739,43 +724,43 @@ export default function AddExaminationCutoffModal({
 
         categoryPassMarks: isStateWisePosition
           ? stateWiseDistributions.flatMap((stateItem) =>
-            reservationCategories.map((cat) => ({
+              reservationCategories.map((cat) => ({
+                examSectionId: section.examSectionId || "",
+
+                categoryId: cat.reservationCategoriesId,
+
+                passMark: Number(
+                  section?.stateCutoffs?.[stateItem.stateId]?.[
+                    cat.reservationCategoriesId
+                  ] || 0
+                ),
+
+                stateId: stateItem.stateId,
+
+                examSectionCategoryId:
+                  section.categoryPassMarks?.find(
+                    (item) =>
+                      item.categoryId === cat.reservationCategoriesId &&
+                      item.stateId === stateItem.stateId
+                  )?.examSectionCategoryId || "",
+              }))
+            )
+          : reservationCategories.map((cat) => ({
               examSectionId: section.examSectionId || "",
 
               categoryId: cat.reservationCategoriesId,
 
               passMark: Number(
-                section?.stateCutoffs?.[stateItem.stateId]?.[
-                cat.reservationCategoriesId
-                ] || 0
+                section?.nationalCutoffs?.[cat.reservationCategoriesId] || 0
               ),
 
-              stateId: stateItem.stateId,
+              stateId: null,
 
               examSectionCategoryId:
                 section.categoryPassMarks?.find(
-                  (item) =>
-                    item.categoryId === cat.reservationCategoriesId &&
-                    item.stateId === stateItem.stateId
+                  (item) => item.categoryId === cat.reservationCategoriesId
                 )?.examSectionCategoryId || "",
-            }))
-          )
-          : reservationCategories.map((cat) => ({
-            examSectionId: section.examSectionId || "",
-
-            categoryId: cat.reservationCategoriesId,
-
-            passMark: Number(
-              section?.nationalCutoffs?.[cat.reservationCategoriesId] || 0
-            ),
-
-            stateId: null,
-
-            examSectionCategoryId:
-              section.categoryPassMarks?.find(
-                (item) => item.categoryId === cat.reservationCategoriesId
-              )?.examSectionCategoryId || "",
-          })),
+            })),
 
         examSectionId: section.examSectionId || "",
       }));
@@ -813,17 +798,11 @@ export default function AddExaminationCutoffModal({
       /* SUCCESS */
 
       if (response?.success === true) {
-        if (!fromCandidateScreening) {
-          await jobPositionApiService.finalizeExamConfiguration(
-            selectedPosition.map((item) => item.positionId)
-          );
-        }
-
         toast.success(
           response?.message ||
-          (editData
-            ? "Configuration updated successfully"
-            : "Configuration saved successfully")
+            (editData
+              ? "Configuration updated successfully"
+              : "Configuration saved successfully")
         );
 
         onSuccess?.();
@@ -841,7 +820,7 @@ export default function AddExaminationCutoffModal({
           });
         }
       } else {
-        toast.error(response?.message || "Failed to submit configuration");
+        toast.error(response?.message || "Failed to save configuration");
       }
     } catch (err) {
       console.error("Failed to save configuration", err);
@@ -921,9 +900,7 @@ export default function AddExaminationCutoffModal({
                 : t("add_cutoff_configuration")}
           </h4>
 
-          <p className="modal-subtitle">
-             {t("configure_sections_marks")}
-          </p>
+          <p className="modal-subtitle">{t("configure_sections_marks")}</p>
         </div>
       </Modal.Header>
       <Modal.Body className="exammodalbody">
@@ -931,23 +908,23 @@ export default function AddExaminationCutoffModal({
           <Col md={4}>
             <Form.Group>
               <Form.Label>
-              {t("total_marks")}
+                {t("total_marks")}
                 <span className="required-star">*</span>
               </Form.Label>
-
               <Form.Control
-                type="number"
-                min={0}
+                type="text"
+                inputMode="numeric"
                 disabled={viewOnly}
-                onKeyDown={preventInvalidNumberInput}
                 placeholder={t("sum_of_all_sections")}
                 value={formData.totalMarks}
                 onChange={(e) => {
-                  const value = Number(e.target.value);
+                  const value = e.target.value;
 
-                  if (value < 0) return;
+                  if (!/^\d*$/.test(value)) return;
 
-                  handleChange("totalMarks", e.target.value);
+                  if (value.length > 4) return;
+
+                  handleChange("totalMarks", value === "" ? "" : Number(value));
                 }}
               />
             </Form.Group>
@@ -961,23 +938,27 @@ export default function AddExaminationCutoffModal({
               </Form.Label>
 
               <Form.Control
-                type="number"
-                min={0}
+                type="text"
+                inputMode="numeric"
                 disabled={viewOnly || disableSectionCount}
-                onKeyDown={preventInvalidNumberInput}
                 placeholder={t("example_sections")}
                 value={formData.numberOfSections}
                 onChange={(e) => {
-                  const value = Number(e.target.value);
+                  const value = e.target.value;
 
-                  if (value < 0) return;
+                  // Numbers only
+                  if (!/^\d*$/.test(value)) return;
 
-                  if (value > 5) {
-                    toast.warning("Maximum 5 sections allowed");
+                  // Maximum 5 sections
+                  if (value !== "" && Number(value) > 5) {
+                    toast.info("Maximum 5 sections allowed");
                     return;
                   }
 
-                  handleChange("numberOfSections", e.target.value);
+                  handleChange(
+                    "numberOfSections",
+                    value === "" ? "" : Number(value)
+                  );
                 }}
               />
             </Form.Group>
@@ -991,7 +972,7 @@ export default function AddExaminationCutoffModal({
                   viewOnly || !formData.totalMarks || !formData.numberOfSections
                 }
               >
-              + {t("add")}
+                + {t("add_sections")}
               </Button>
             </Col>
           )}
@@ -1011,10 +992,12 @@ export default function AddExaminationCutoffModal({
                   <div className="d-flex align-items-center gap-3">
                     <div className="section-header-content">
                       {/* SECTION NAME */}
-
+                      <span className="marks-label">{t("section_name")}</span>
                       <Form.Control
                         className="section-name-header-input"
-                       placeholder={t("section_placeholder", { number: index + 1 })}
+                        placeholder={t("section_placeholder", {
+                          number: index + 1,
+                        })}
                         value={section.sectionName || ""}
                         disabled={viewOnly}
                         onChange={(e) =>
@@ -1030,10 +1013,14 @@ export default function AddExaminationCutoffModal({
                       {/* TOTAL MARKS */}
 
                       <div className="section-marks-wrapper">
-                        <span className="marks-label"> {t("total_section_marks")}</span>
+                        <span className="marks-label">
+                          {" "}
+                          {t("total_section_marks")}
+                        </span>
 
                         <Form.Control
-                          type="number"
+                          type="text"
+                          inputMode="numeric"
                           min="0"
                           step="1"
                           className="section-marks-header-input"
@@ -1057,7 +1044,6 @@ export default function AddExaminationCutoffModal({
                             : t("national_wise_cutoff_configuration")}
                         </span>
 
-
                         {!viewOnly && !isFrozen && (
                           <button
                             type="button"
@@ -1072,8 +1058,9 @@ export default function AddExaminationCutoffModal({
                         )}
 
                         <i
-                          className={`bi bi-chevron-${isExpanded ? "up" : "down"
-                            } section-arrow-icon`}
+                          className={`bi bi-chevron-${
+                            isExpanded ? "up" : "down"
+                          } section-arrow-icon`}
                         />
                       </div>
                     </div>
@@ -1133,27 +1120,26 @@ export default function AddExaminationCutoffModal({
                                       {reservationCategories.map((cat) => (
                                         <td key={cat.reservationCategoriesId}>
                                           <Form.Control
-                                            type="number"
-                                            min={0}
-                                            max={100}
+                                            type="text"
+                                            inputMode="numeric"
                                             disabled={viewOnly}
-                                            onKeyDown={
-                                              preventInvalidNumberInput
-                                            }
                                             className="modern-cutoff-input"
                                             placeholder="0"
                                             value={
                                               formData.sections[index]
                                                 ?.stateCutoffs?.[
-                                              stateItem.stateId
+                                                stateItem.stateId
                                               ]?.[
-                                              cat.reservationCategoriesId
+                                                cat.reservationCategoriesId
                                               ] ?? ""
                                             }
                                             onChange={(e) => {
-                                              const value = validateCutoffValue(
-                                                e.target.value
-                                              );
+                                              const value = e.target.value;
+
+                                              if (!/^\d*$/.test(value)) return;
+
+                                              const validatedValue =
+                                                validateCutoffValue(value);
 
                                               const updatedSections = [
                                                 ...formData.sections,
@@ -1171,7 +1157,7 @@ export default function AddExaminationCutoffModal({
                                               if (
                                                 !updatedSections[index]
                                                   .stateCutoffs[
-                                                stateItem.stateId
+                                                  stateItem.stateId
                                                 ]
                                               ) {
                                                 updatedSections[
@@ -1185,7 +1171,7 @@ export default function AddExaminationCutoffModal({
                                                 index
                                               ].stateCutoffs[stateItem.stateId][
                                                 cat.reservationCategoriesId
-                                              ] = value;
+                                              ] = validatedValue;
 
                                               setFormData((prev) => ({
                                                 ...prev,
@@ -1195,10 +1181,6 @@ export default function AddExaminationCutoffModal({
                                           />
                                         </td>
                                       ))}
-
-                                      {/* DISABILITY */}
-
-                                      {/* DISABILITY */}
                                     </tr>
                                   )
                                 )}
@@ -1230,23 +1212,24 @@ export default function AddExaminationCutoffModal({
                                   {reservationCategories.map((cat) => (
                                     <td key={cat.reservationCategoriesId}>
                                       <Form.Control
-                                        type="number"
-                                        min={0}
-                                        max={100}
+                                        type="text"
+                                        inputMode="numeric"
                                         disabled={viewOnly}
                                         className="modern-cutoff-input"
-                                        onKeyDown={preventInvalidNumberInput}
                                         placeholder="0"
                                         value={
                                           formData.sections[index]
                                             ?.nationalCutoffs?.[
-                                          cat.reservationCategoriesId
+                                            cat.reservationCategoriesId
                                           ] ?? ""
                                         }
                                         onChange={(e) => {
-                                          const value = validateCutoffValue(
-                                            e.target.value
-                                          );
+                                          const value = e.target.value;
+
+                                          if (!/^\d*$/.test(value)) return;
+
+                                          const validatedValue =
+                                            validateCutoffValue(value);
 
                                           const updatedSections = [
                                             ...formData.sections,
@@ -1265,13 +1248,7 @@ export default function AddExaminationCutoffModal({
                                             index
                                           ].nationalCutoffs[
                                             cat.reservationCategoriesId
-                                          ] = value;
-
-                                          console.log(
-                                            "NATIONAL CUTOFFS",
-                                            updatedSections[index]
-                                              .nationalCutoffs
-                                          );
+                                          ] = validatedValue;
 
                                           setFormData((prev) => ({
                                             ...prev,
@@ -1315,10 +1292,11 @@ export default function AddExaminationCutoffModal({
                 {formData.sections.map((section, index) => (
                   <div
                     key={index}
-                    className={`weightage-chip ${formData.selectedWeightageSections.includes(index)
-                      ? "active"
-                      : ""
-                      }`}
+                    className={`weightage-chip ${
+                      formData.selectedWeightageSections.includes(index)
+                        ? "active"
+                        : ""
+                    }`}
                     onClick={() => {
                       if (viewOnly) return;
 
@@ -1335,9 +1313,9 @@ export default function AddExaminationCutoffModal({
                     />
 
                     <span>
-  {section.sectionName ||
-    t("section_placeholder", { number: index + 1 })}
-</span>
+                      {section.sectionName ||
+                        t("section_placeholder", { number: index + 1 })}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -1345,7 +1323,7 @@ export default function AddExaminationCutoffModal({
               <div className="weightage-input-wrapper">
                 <Form.Group>
                   <Form.Label>
-                      {t("written_exam_weightage")}
+                    {t("written_exam_weightage")}
                     <span className="required-star">*</span>
                   </Form.Label>
 
@@ -1384,7 +1362,7 @@ export default function AddExaminationCutoffModal({
         <div className="px-3 pb-3">
           <Form.Group>
             <Form.Label>
-            {t("comments")} <span className="text-danger">*</span>
+              {t("comments")} <span className="text-danger">*</span>
             </Form.Label>
 
             <Form.Control
@@ -1425,17 +1403,17 @@ export default function AddExaminationCutoffModal({
               onClick={handleApprove}
               disabled={loading || !canTakeAction}
             >
-               {t("accept")}
+              {t("accept")}
             </Button>
           </>
         ) : (
           <>
             <Button
-              variant="light"
+              variant="outline-secondary"
               className="cancel-btn"
               onClick={handleCloseAndBack}
             >
-            {t("cancel")}
+              {t("cancel")}
             </Button>
 
             {!viewOnly && (
@@ -1452,8 +1430,12 @@ export default function AddExaminationCutoffModal({
                 disabled={loading}
               >
                 {loading
-                  ? (editData ? t("updating") : t("saving"))
-                  : (editData ? t("update") : t("save"))}
+                  ? editData
+                    ? t("updating")
+                    : t("saving")
+                  : editData
+                    ? t("update")
+                    : t("save")}
               </Button>
             )}
           </>

@@ -16,6 +16,7 @@ export default function ExaminationCutoffTable({
   totalElements,
   statusFilter,
   setStatusFilter,
+  onSubmitForApproval,
 }) {
   const tableRows = rows || [];
   const { t } = useTranslation("examconfiguration");
@@ -27,8 +28,17 @@ export default function ExaminationCutoffTable({
         <h5 className="table-main-heading m-0">
           {t("position_wise_cutoff_configuration")}
         </h5>
-
-
+        <button
+          className="btn blue-bg text-white fs-14"
+          onClick={onSubmitForApproval}
+          disabled={
+            !tableRows.some((item) =>
+              ["PENDING", "L1_REJECTED", "L2_REJECTED"].includes(item.status)
+            )
+          }
+        >
+          Submit for Approval
+        </button>
       </div>
 
       {/* TABLE */}
@@ -64,17 +74,18 @@ export default function ExaminationCutoffTable({
 
                   <td>
                     <span
-                      className={`status-pill ${item.status === "APPROVED" ||
+                      className={`status-pill ${
+                        item.status === "APPROVED" ||
                         item.status === "L1_APPROVED"
-                        ? "approved"
-                        : item.status === "REJECTED" ||
-                          item.status === "L1_REJECTED" ||
-                          item.status === "L2_REJECTED"
-                          ? "rejected"
-                          : item.status === "FINALIZED"
-                            ? "finalized"
-                            : "pending"
-                        }`}
+                          ? "approved"
+                          : item.status === "REJECTED" ||
+                              item.status === "L1_REJECTED" ||
+                              item.status === "L2_REJECTED"
+                            ? "rejected"
+                            : item.status === "FINALIZED"
+                              ? "finalized"
+                              : "pending"
+                      }`}
                     >
                       {item.status?.replaceAll("_", " ")}
                     </span>
@@ -92,7 +103,7 @@ export default function ExaminationCutoffTable({
                       <button
                         className="icon-btn"
                         disabled={
-                          !["PENDING", "L1_REJECTED", "L2_REJECTED", "APPROVED"].includes(
+                          !["PENDING", "L1_REJECTED", "L2_REJECTED"].includes(
                             item.status
                           )
                         }
@@ -101,7 +112,6 @@ export default function ExaminationCutoffTable({
                             "PENDING",
                             "L1_REJECTED",
                             "L2_REJECTED",
-                            "APPROVED",
                           ].includes(item.status)
                             ? 0.5
                             : 1,
@@ -109,14 +119,13 @@ export default function ExaminationCutoffTable({
                             "PENDING",
                             "L1_REJECTED",
                             "L2_REJECTED",
-                            "APPROVED",
                           ].includes(item.status)
                             ? "not-allowed"
                             : "pointer",
                         }}
                         onClick={() => {
                           if (
-                            !["PENDING", "L1_REJECTED", "L2_REJECTED", "APPROVED"].includes(
+                            !["PENDING", "L1_REJECTED", "L2_REJECTED"].includes(
                               item.status
                             )
                           ) {
@@ -144,7 +153,6 @@ export default function ExaminationCutoffTable({
       </div>
 
       {/* PAGINATION */}
-
     </div>
   );
 }
