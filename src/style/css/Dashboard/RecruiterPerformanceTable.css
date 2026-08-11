@@ -249,18 +249,26 @@
 }
 
 .status-active {
-  background: #dcfce7;
-  color: #15803d;
+	background: #dcfce7;
+	color: #15803d;
+	padding: 3px;
+	border-radius: 10px;
 }
 
 .status-pending {
   background: #fef3c7;
   color: #b45309;
+  	padding: 3px;
+	border-radius: 10px;
+
 }
 
 .status-completed {
   background: #dbeafe;
   color: #2563eb;
+  	padding: 3px;
+	border-radius: 10px;
+
 }
 
 /* SCROLL */

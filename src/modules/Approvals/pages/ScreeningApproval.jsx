@@ -10,7 +10,7 @@ import ApprovalCommentModal from "../components/ApprovalCommentModal";
 import { useEffect } from "react";
 import useApprovalFilters from "../hooks/useApprovalFilters";
 import PdfViewerModal from "../../candidatePreview/components/PdfViewerModal";
-
+import { useTranslation } from "react-i18next";
 import "../../../style/css/ScreeningApproval.css";
 import "../../../style/css/CandidateScreening.css";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import masterApiService from "../../master/services/masterApiService";
 import candidateWorkflowServices from "../../candidatePreview/services/CandidateWorkflowServices";
 export default function Approval() {
+  const { t } = useTranslation("approvalHistory");
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
 
@@ -62,7 +63,7 @@ export default function Approval() {
   };
   const handleViewFile = async (candidate) => {
     if (!candidate.fileUrl) {
-      toast.error("candidateWorkflow:no_document_available");
+      toast.error(t("no_document_available"));
       return;
     }
 
@@ -222,15 +223,14 @@ export default function Approval() {
 
       // Check API success
       if (!res?.success) {
-        toast.error(res?.message || "Failed to process approval.");
+        toast.error(res?.message || t("failed_to_process_approval"));
         return;
       }
 
       toast.success(
-       
-          (actionType === "approve"
-            ? "Approved Successfully"
-            : "Rejected Successfully")
+        actionType === "approve"
+          ? t("approved_successfully")
+          : t("rejected_successfully")
       );
 
       setShowCommentModal(false);
@@ -246,7 +246,7 @@ export default function Approval() {
       toast.error(
         err?.response?.data?.message ||
           err?.message ||
-          "Failed to process approval."
+          t("failed_to_process_approval")
       );
     }
   };
@@ -288,7 +288,7 @@ export default function Approval() {
                     }}
                     type="button"
                   >
-                    Screening Approval
+                    {t("screening_approval")}
                   </button>
                 </li>
 
@@ -305,7 +305,7 @@ export default function Approval() {
                     }}
                     type="button"
                   >
-                    Interview Approval
+                    {t("interview_approval")}
                   </button>
                 </li>
               </ul>
@@ -330,11 +330,14 @@ export default function Approval() {
                   candidates.filter((c) => c.result === "Disqualified").length)
             }
             approvedLabel={
-              activeTab === "screening" ? "Shortlisted" : "Qualified"
+              activeTab === "screening" ? t("shortlisted") : t("qualified")
             }
             rejectedLabel={
-              activeTab === "screening" ? "Not Shortlisted" : "Disqualified"
+              activeTab === "screening"
+                ? t("not_shortlisted")
+                : t("disqualified")
             }
+            
             workflowStatus={candidateSummary?.workflowStatus}
             onApprove={handleApprove}
             onReject={handleReject}
@@ -387,7 +390,7 @@ export default function Approval() {
           }}
           fileUrl={pdfUrl}
           loading={loadingPdf}
-          title="candidateWorkflow:candidate_resume"
+          title={t("candidate_resume")}
         />
       </Container>
     </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Person, FileText } from "react-bootstrap-icons";
-
+import {useTranslation} from "react-i18next";
 export default function ScreeningApprovalTable({
   candidates = [],
   loading = false,
@@ -10,19 +10,20 @@ export default function ScreeningApprovalTable({
   workflowStatus,
 }) {
   const isBatchApproved = workflowStatus?.toUpperCase() === "APPROVED";
+  const {t} = useTranslation("approvalHistory");
 
   return (
     <div className="table-wrap">
       <table className="table table-hover align-middle">
         <thead className="table-light">
           <tr>
-            <th>Candidate</th>
-            <th>Application Number</th>
-            <th>Category</th>
-            <th>Experience</th>
-            <th>Screening Result</th>
-            {/* <th>Status</th> */}
-            <th className="text-center">Actions</th>
+            <th>{t("candidate")}</th>
+            <th>{t("application_number")}</th>
+            <th>{t("category")}</th>
+            <th>{t("experience")}</th>
+            <th>{t("screening_result")}</th>
+            {/* <th>{t("status")}</th> */}
+            <th className="text-center">{t("actions")}</th>
           </tr>
         </thead>
 
@@ -30,15 +31,15 @@ export default function ScreeningApprovalTable({
           {loading ? (
             <tr>
               <td colSpan="7" className="text-center py-4">
-                Loading candidates...
+                {t("loading_candidates")}
               </td>
             </tr>
           ) : candidates.length === 0 ? (
             <tr>
               <td colSpan="7" className="text-center py-4 text-muted">
                 {isBatchApproved
-                  ? "No screening candidates found. Shortlisted candidates are moved to the Interview Approval tab."
-                  : "No candidates found"}
+                  ? t("no_screening_candidates")
+                  : t("no_candidates_found")}
               </td>
             </tr>
           ) : (
@@ -64,7 +65,7 @@ export default function ScreeningApprovalTable({
                 {/* <td>{c.workflowStatus || "-"}</td> */}
 
                 <td className="text-center">
-                  <OverlayTrigger overlay={<Tooltip>View Profile</Tooltip>}>
+                  <OverlayTrigger overlay={<Tooltip>{t("view_profile")}</Tooltip>}>
                     <Person
                       size={17}
                       className="cursor-pointer me-3"
@@ -72,7 +73,7 @@ export default function ScreeningApprovalTable({
                     />
                   </OverlayTrigger>
 
-                  <OverlayTrigger overlay={<Tooltip>View Resume</Tooltip>}>
+                  <OverlayTrigger overlay={<Tooltip>{t("view_resume")}</Tooltip>}>
                     <FileText
                       size={17}
                       className="cursor-pointer"

@@ -2,6 +2,8 @@ import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
+
 
 export default function ApprovalStats({
   total,
@@ -55,12 +57,14 @@ export default function ApprovalStats({
 
   const status = getStatusConfig(workflowStatus);
   const isActionAllowed = workflowStatus === "L1_PENDING";
+  const { t } = useTranslation("approvalHistory");
+
 
   return (
     <div className="stats-row">
       <div className="stats-card">
         <div>
-          <div className="stat-label">Total Candidates in Position</div>
+          <div className="stat-label">{t("total_candidates_in_position")}</div>
           <div className="stat-value">{total}</div>
         </div>
 
@@ -86,7 +90,7 @@ export default function ApprovalStats({
       </div>
       <div className="stats-card">
         <div>
-          <div className="stat-label">Batch Status</div>
+          <div className="stat-label">{t("batch_status")}</div>
           <div className={`stat-value ${status.className}`}>{status.label}</div>
         </div>
 
@@ -99,12 +103,12 @@ export default function ApprovalStats({
         style={{ cursor: "pointer" }}
       >
         <div>
-          <div className="stat-label">Download</div>
-          <div className="stat-value">PDF</div>
+          <div className="stat-label">{t("download")}</div>
+          <div className="stat-value">{t("PDF")}</div>
         </div>
         <OverlayTrigger
           placement="bottom"
-          overlay={<Tooltip id="download-tooltip">Download PDF</Tooltip>}
+          overlay={<Tooltip id="download-tooltip">{t("download")} {t("PDF")}</Tooltip>}
         >
           <div className="stat-icon info">
             <FontAwesomeIcon icon={faDownload} />
@@ -118,7 +122,7 @@ export default function ApprovalStats({
           onClick={onReject}
           disabled={!isActionAllowed}
         >
-          Reject
+          {t("reject")}
         </button>
 
         <button
@@ -126,7 +130,7 @@ export default function ApprovalStats({
           onClick={onApprove}
           disabled={!isActionAllowed}
         >
-          Approve
+          {t("approve")}
         </button>
       </div>
     </div>

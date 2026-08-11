@@ -147,7 +147,7 @@ const RecruiterPerformanceTable = ({
               <tr>
                 <th>{t("requisition")}</th>
 
-                
+                <th>{t("position")}</th>
 
                 <th>{t("vacancy")}</th>
 
@@ -189,7 +189,7 @@ const RecruiterPerformanceTable = ({
                   <tr key={index}>
                     <td className="req-cell">{row.requisition}</td>
 
-                    
+                    <td className="position-cell">{row.position}</td>
                     <td>{row.vacancy}</td>
 
                     <td>

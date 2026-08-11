@@ -2,7 +2,7 @@ import React from "react";
 import { Row, Col, Form } from "react-bootstrap";
 import { Search } from "react-bootstrap-icons";
 import Select from "react-select";
-
+import { useTranslation } from "react-i18next";
 export default function ApprovalHeader({
   selectStyles,
 
@@ -21,14 +21,17 @@ export default function ApprovalHeader({
   searchText,
   onSearch,
 }) {
+  const { t } = useTranslation("approvalHistory");
   return (
+    
     <>
+    
       <Row className="mb-3 align-items-center">
         <Col>
-          <h5 className="page-title">Candidate Workflow Request</h5>
+          <h5 className="page-title">{t("candidate_selection_approval")}</h5>
 
           <p className="page-subtitle">
-            Review and approve candidate workflow requests
+            {t("review_and_approve_candidate_workflow_requests")}
           </p>
         </Col>
 
@@ -36,7 +39,7 @@ export default function ApprovalHeader({
           <div className="search-boxpost">
             <Search />
             <Form.Control
-              placeholder="Search Candidate..."
+              placeholder={t("search_candidate")}
               value={searchText}
               onChange={(e) => onSearch(e.target.value)}
             />
@@ -47,14 +50,14 @@ export default function ApprovalHeader({
       <Row className="mb-3 align-items-end filters-row">
         {/* Requisition */}
         <Col md={4}>
-          <div className="filter-label">Requisition</div>
+          <div className="filter-label"> {t("requisition")}</div>
 
           <Select
             styles={selectStyles}
             options={requisitionOptions}
             value={selectedRequisitionOption}
             isLoading={loadingRequisitions}
-            placeholder="Select Requisition"
+            placeholder={t("select_requisition")}
             classNamePrefix="filter-select"
             menuPortalTarget={document.body}
             onChange={(opt) => onRequisitionChange(opt?.raw || null)}
@@ -63,7 +66,7 @@ export default function ApprovalHeader({
 
         {/* Position */}
         <Col md={4}>
-          <div className="filter-label">Position</div>
+          <div className="filter-label"> {t("position")}</div>
 
           <Select
             styles={selectStyles}
@@ -71,7 +74,7 @@ export default function ApprovalHeader({
             value={selectedPositionOption}
             isLoading={loadingPositions}
             isDisabled={!selectedRequisitionOption}
-            placeholder="Select Position"
+            placeholder={t("select_position")}
             classNamePrefix="filter-select"
             menuPortalTarget={document.body}
             onChange={(opt) =>
