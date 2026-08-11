@@ -503,7 +503,8 @@ const CreateRequisition = () => {
                                   {masterPositionsMap[pos.masterPositionId] ||
                                     "Unknown"}{" "}
                                   - ({pos.vacancies} vacancies)
-                                  {/* <i
+                                  {isReinitializeMode && (
+                                  <i
                                     className="bi bi-info-circle-fill ms-2"
                                     style={{
                                       color: "#4F67C1",
@@ -546,7 +547,8 @@ const CreateRequisition = () => {
                                         console.error(error);
                                       }
                                     }}
-                                  /> */}
+                                  />
+                                  )}
                                 </span>
                               }
                             />

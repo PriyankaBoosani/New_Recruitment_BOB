@@ -449,7 +449,7 @@ const JobPostingsList = () => {
       );
 
       if (!response.success) {
-        toast.error( "Failed to publish");
+        toast.error("Failed to publish");
       }
 
       toast.success("Published successfully");
@@ -769,8 +769,9 @@ const JobPostingsList = () => {
                     {formatStatusLabel(req.status)}
                   </Badge>
 
-                  {/* {req.status !== "CLOSED" &&
-                    (req.isReinitialized || req.parentRequisitionId) && (
+                  {req.status !== "CLOSED" &&
+                    !req.isDraft &&
+                    req.parentRequisitionId && (
                       <span
                         className="ms-2"
                         style={{
@@ -834,7 +835,7 @@ const JobPostingsList = () => {
                       >
                         Re-Initiated
                       </span>
-                    )} */}
+                    )}
                   {/* {req.status !== "CLOSED" &&
                     (req.isReinitialized || req.parentRequisitionId) && (
                       <Badge bg="warning" text="dark" className="ms-2">
@@ -1150,9 +1151,9 @@ const JobPostingsList = () => {
                   </OverlayTrigger>
                 )} */}
 
-               {/* {(req.status === "APPROVED" || req.status === "CLOSED") && ( */}
-                  <>
-                    {/* <OverlayTrigger
+                {( req.status === "CLOSED") && (
+                <>
+                  <OverlayTrigger
                       placement="bottom"
                       overlay={
                         <Tooltip id={`tooltip-approved-${req.id}`}>
@@ -1205,9 +1206,9 @@ const JobPostingsList = () => {
                       >
                         <InfoCircle size={20} color="#4F67C1" />
                       </Button>
-                    </OverlayTrigger> */}
+                    </OverlayTrigger>
 
-                    {/* {req.status === "APPROVED" && (
+                  {/* {req.status === "APPROVED" && (
                       <OverlayTrigger
                         placement="bottom"
                         overlay={
@@ -1229,9 +1230,9 @@ const JobPostingsList = () => {
                         </Button>
                       </OverlayTrigger>
                     )} */}
-                  </>
-              {/* )}
-                )} */}
+                </>
+               )}
+                {/* )}  */}
 
                 <Button
                   variant="none"
@@ -1322,69 +1323,70 @@ const JobPostingsList = () => {
                             >
                               <span>{pos.positionName}</span>
 
-                              {/* {(req.isReinitialized ||
-                                pos.parentPositionId) && (
-                                <span
-                                  style={{
-                                    cursor: "pointer",
-                                    fontSize: "12px",
-                                    fontWeight: "400",
-                                    color: "#f26522",
-                                  }}
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
+                              {!req.isDraft &&
+                                req.parentRequisitionId &&
+                                pos.parentPositionId && (
+                                  <span
+                                    style={{
+                                      cursor: "pointer",
+                                      fontSize: "12px",
+                                      fontWeight: "400",
+                                      color: "#f26522",
+                                    }}
+                                    onClick={async (e) => {
+                                      e.stopPropagation();
 
-                                    try {
-                                      const res =
-                                        await jobPositionApiService.getVacancyBreakdownByPosition(
-                                          pos.parentPositionId
-                                        );
-
-                                      let parentReqData = {};
-
-                                      if (
-                                        req.parentRequisitionId &&
-                                        req.parentRequisitionId !== ""
-                                      ) {
-                                        const res1 =
-                                          await jobPositionApiService.getRequisitionById(
-                                            req.parentRequisitionId
+                                      try {
+                                        const res =
+                                          await jobPositionApiService.getVacancyBreakdownByPosition(
+                                            pos.parentPositionId
                                           );
 
-                                        parentReqData = {
-                                          requisitionId:
-                                            res1?.data?.requisitionCode,
-                                          code: res1?.data?.requisitionTitle,
-                                          startDate: res1?.data?.startDate,
-                                          endDate: res1?.data?.endDate,
-                                        };
-                                      }
-                                      const mappedData =
-                                        mapVacancyBreakdownByPosition(
-                                          res.data,
-                                          masterData
-                                        );
-                                      setSelectedReqForModal({
-                                        ...req,
-                                        ...parentReqData,
-                                      });
+                                        let parentReqData = {};
 
-                                      // setSelectedReqForModal(req);
-                                      setSelectedPositionInfo(mappedData);
-                                      setShowPositionModal(true);
-                                    } catch (error) {
-                                      console.error(error);
-                                      toast.error(
-                                        "Failed to load position details"
-                                      );
-                                    }
-                                  }}
-                                >
-                                  {parentReqDetails[req.id]
-                                    ? `${parentReqDetails[req.id].requisitionId} - ${parentReqDetails[req.id].code}`
-                                    : `${req.requisitionId} - ${req.code}`}{" "}
-                                </span>
-                              )} */}
+                                        if (
+                                          req.parentRequisitionId &&
+                                          req.parentRequisitionId !== ""
+                                        ) {
+                                          const res1 =
+                                            await jobPositionApiService.getRequisitionById(
+                                              req.parentRequisitionId
+                                            );
+
+                                          parentReqData = {
+                                            requisitionId:
+                                              res1?.data?.requisitionCode,
+                                            code: res1?.data?.requisitionTitle,
+                                            startDate: res1?.data?.startDate,
+                                            endDate: res1?.data?.endDate,
+                                          };
+                                        }
+                                        const mappedData =
+                                          mapVacancyBreakdownByPosition(
+                                            res.data,
+                                            masterData
+                                          );
+                                        setSelectedReqForModal({
+                                          ...req,
+                                          ...parentReqData,
+                                        });
+
+                                        // setSelectedReqForModal(req);
+                                        setSelectedPositionInfo(mappedData);
+                                        setShowPositionModal(true);
+                                      } catch (error) {
+                                        console.error(error);
+                                        toast.error(
+                                          "Failed to load position details"
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    {parentReqDetails[req.id]
+                                      ? `${parentReqDetails[req.id].requisitionId} - ${parentReqDetails[req.id].code}`
+                                      : `${req.requisitionId} - ${req.code}`}{" "}
+                                  </span>
+                                )}
                             </div>
                             <div className="position-meta-inline">
                               <span>
