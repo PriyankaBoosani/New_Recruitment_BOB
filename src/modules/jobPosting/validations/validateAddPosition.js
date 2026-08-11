@@ -223,14 +223,6 @@ const validateDistribution = ({
   nationalExServicemen,
   errors,
 }) => {
-  console.log("nationalExServicemen", nationalExServicemen);
-  console.log(
-    "exServicemenTotal",
-    Object.values(nationalExServicemen || {}).reduce(
-      (sum, v) => sum + Number(v || 0),
-      0
-    )
-  );
   if (formData.enableStateDistribution) {
     const activeStates = stateDistributions.filter((s) => !s.__deleted);
 

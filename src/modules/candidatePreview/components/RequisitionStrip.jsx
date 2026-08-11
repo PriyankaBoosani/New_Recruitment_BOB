@@ -190,7 +190,6 @@ const RequisitionStrip = ({
       return `${name}: ${exp || "0 months"}`;
     });
   };
-  console.log("Requisition passed to strip:", requisition);
 
   return (
     <>

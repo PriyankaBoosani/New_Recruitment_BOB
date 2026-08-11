@@ -16,11 +16,10 @@ export const useUpdateJobPosition = () => {
 
       const dto = mapAddPositionToUpdateDto(payload);
 
-      console.log("Update Position DTO:DDDDDDDDDDDDDDDDDDDD", dto);
       let res;
 
       // ================================
-      // 🔥 DRAFT FLOW
+      //  DRAFT FLOW
       // ================================
       if (payload.isDraft) {
         if (!payload.parentRequisitionId) {

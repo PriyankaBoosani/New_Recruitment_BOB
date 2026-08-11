@@ -56,28 +56,33 @@ const OfferPool = ({
   offerSelectAll,
   setOfferSelectAll,
   excludedOfferIds,
-  setExcludedOfferIds
+  setExcludedOfferIds,
   // allOffersForFilters,
 }) => {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
-
-  const OFFER_STATUS_LABEL_MAP = useMemo(() => ({
-    OFFER_AWAITED: t("candidateWorkflow:offer_awaited") || "Offer Awaited",
-    OFFER_SENT: t("candidateWorkflow:offer_sent") || "Offer Sent",
-    // OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended",
-    OFFER_EXTENDED: t("candidateWorkflow:offer_extended") || "Offer Extended",
-    OFFER_REJECTED: t("candidateWorkflow:offer_rejected") || "Offer Rejected",
-    OFFER_CANCELLED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled",
-    OFFER_CANCELED: t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", // 👈 Fixes single 'L' API variant
-    OFFER_ACCEPTED: t("candidateWorkflow:offer_accepted") || "Offer Accepted",
-    L1_PENDING: t("candidateWorkflow:l1_pending") || "L1 Pending",
-    L2_PENDING: t("candidateWorkflow:l2_pending") || "L2 Pending",
-    L1_REJECTED: t("candidateWorkflow:l1_rejected") || "L1 Rejected",
-    L2_REJECTED: t("candidateWorkflow:l2_rejected") || "L2 Rejected",
-    OFFER_GENERATED: t("candidateWorkflow:offer_generated") || "Offer Generated",
-    APPROVED: t("candidateWorkflow:approved") || "Approved",
-  }), [t]);
+  const OFFER_STATUS_LABEL_MAP = useMemo(
+    () => ({
+      OFFER_AWAITED: t("candidateWorkflow:offer_awaited") || "Offer Awaited",
+      OFFER_SENT: t("candidateWorkflow:offer_sent") || "Offer Sent",
+      // OFFER_EXTENDED: t("candidateWorkflow:offer_extended_date") || "Offer Extended",
+      OFFER_EXTENDED: t("candidateWorkflow:offer_extended") || "Offer Extended",
+      OFFER_REJECTED: t("candidateWorkflow:offer_rejected") || "Offer Rejected",
+      OFFER_CANCELLED:
+        t("candidateWorkflow:offer_cancelled") || "Offer Cancelled",
+      OFFER_CANCELED:
+        t("candidateWorkflow:offer_cancelled") || "Offer Cancelled", // 👈 Fixes single 'L' API variant
+      OFFER_ACCEPTED: t("candidateWorkflow:offer_accepted") || "Offer Accepted",
+      L1_PENDING: t("candidateWorkflow:l1_pending") || "L1 Pending",
+      L2_PENDING: t("candidateWorkflow:l2_pending") || "L2 Pending",
+      L1_REJECTED: t("candidateWorkflow:l1_rejected") || "L1 Rejected",
+      L2_REJECTED: t("candidateWorkflow:l2_rejected") || "L2 Rejected",
+      OFFER_GENERATED:
+        t("candidateWorkflow:offer_generated") || "Offer Generated",
+      APPROVED: t("candidateWorkflow:approved") || "Approved",
+    }),
+    [t]
+  );
   const [offers, setOffers] = useState([]);
   //  const [selectAllActive, setSelectAllActive] = useState(false);
   // const [excludedOfferIds, setExcludedOfferIds] = useState([]);
@@ -108,13 +113,9 @@ const OfferPool = ({
     setShowSingleExtendModal(true);
   };
 
-
-
-
-
-
   // 1. State for controlling the history modal & loading
-  const [showExtensionHistoryModal, setShowExtensionHistoryModal] = useState(false);
+  const [showExtensionHistoryModal, setShowExtensionHistoryModal] =
+    useState(false);
   const [extensionHistoryData, setExtensionHistoryData] = useState([]);
   const [loadingExtensionHistory, setLoadingExtensionHistory] = useState(false);
 
@@ -122,23 +123,16 @@ const OfferPool = ({
   // Handler function to fetch and map extension history based on backend response
   // Handler function to fetch and map extension history based on backend response
   const handleViewExtensionHistory = async (offerId) => {
-    console.log("=== Fetching Extension History ===");
-    console.log("Offer ID:", offerId);
-
     try {
       setLoadingExtensionHistory(true);
       setExtensionHistoryData([]);
 
       const res = await jobPositionApiService.getOfferExtensionHistory(offerId);
 
-      console.log("Raw API Response:", res);
-
       const apiPayload = res?.data || res;
 
       // 1. CHECK FOR API FAILURE BEFORE OPENING MODAL
       if (apiPayload?.success === false) {
-        console.log("Backend validation error detected:", apiPayload);
-
         const errorMessage =
           (typeof apiPayload.data === "string" && apiPayload.data.trim()) ||
           (typeof res?.data?.data === "string" && res.data.data.trim()) ||
@@ -146,7 +140,6 @@ const OfferPool = ({
           res?.message ||
           "No offer extension history found";
 
-        console.log("Showing Toast Error:", errorMessage);
         toast.error(errorMessage);
         return; // Stop here, modal never opens!
       }
@@ -157,8 +150,6 @@ const OfferPool = ({
         : Array.isArray(apiPayload)
           ? apiPayload
           : [];
-
-      console.log("Raw List Extracted:", rawList);
 
       if (rawList.length === 0) {
         toast.error("No offer extension history found");
@@ -176,10 +167,8 @@ const OfferPool = ({
         actionDate: item.changedDate || null,
         status: item.status || "OFFER_EXTENDED",
         comments: item.comment || "-",
-        extensionDate: item.extensionDate || "-"
+        extensionDate: item.extensionDate || "-",
       }));
-
-      console.log("Mapped History Data for Modal UI:", mappedHistory);
 
       // 4. OPEN MODAL ONLY WHEN DATA IS VALID AND READY
       setExtensionHistoryData(mappedHistory);
@@ -194,10 +183,9 @@ const OfferPool = ({
         typeof backendErrorData === "string" && backendErrorData.trim() !== ""
           ? backendErrorData
           : backendErrorMessage ||
-          t("candidateWorkflow:failed_load_history") ||
-          "Failed to load history";
+            t("candidateWorkflow:failed_load_history") ||
+            "Failed to load history";
 
-      console.log("Showing Catch Error Toast:", toastMessage);
       toast.error(toastMessage);
     } finally {
       setLoadingExtensionHistory(false);
@@ -305,7 +293,7 @@ const OfferPool = ({
   // Extract IDs safely from allOffersForFilters or fall back to the currently loaded offers array
   // Filter only IDs for candidates whose status actually permits selection
   const selectableCandidateIds = useMemo(() => {
-    return offers.map(c => c.id);
+    return offers.map((c) => c.id);
   }, [offers]);
 
   const allSelected = offerSelectAll;
@@ -327,7 +315,7 @@ const OfferPool = ({
     if (!filters?.status?.length) {
       toast.error(
         t("candidateWorkflow:select_status_filter_first") ||
-        "Please select the status filter first"
+          "Please select the status filter first"
       );
       return;
     }
@@ -344,26 +332,16 @@ const OfferPool = ({
   };
 
   const toggleRow = (id) => {
-
     if (offerSelectAll) {
-
-      setExcludedOfferIds(prev =>
-
-        prev.includes(id)
-          ? prev.filter(x => x !== id)
-          : [...prev, id]
-
+      setExcludedOfferIds((prev) =>
+        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
       );
 
       return;
     }
 
-    setSelectedIds(prev =>
-
-      prev.includes(id)
-        ? prev.filter(x => x !== id)
-        : [...prev, id]
-
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
@@ -480,7 +458,8 @@ const OfferPool = ({
 
       const payload = {
         positionId: selectedPositionId,
-        offerStatusList: filters?.status && filters.status.length > 0 ? filters.status : [],
+        offerStatusList:
+          filters?.status && filters.status.length > 0 ? filters.status : [],
         page: page,
         size: pageSize,
       };
@@ -488,7 +467,8 @@ const OfferPool = ({
       const res = await jobPositionApiService.getOffersByPosition(payload);
       const apiData = res?.data;
 
-      const rawList = apiData?.content || (Array.isArray(apiData) ? apiData : []);
+      const rawList =
+        apiData?.content || (Array.isArray(apiData) ? apiData : []);
       const mapped = rawList.map((item) => {
         const offer = item.candidateOffersDTO || {};
         return {
@@ -528,13 +508,17 @@ const OfferPool = ({
           joiningDate: formatDate(offer.joiningDate),
           extendedOfferDate: formatDate(offer.extendedOfferDate),
           extensionDate: formatDate(offer.extensionDate),
-          rawAcceptBeforeDate: offer.acceptBeforeDate ? offer.acceptBeforeDate.split("T")[0] : "",
-          rawExtendedOfferDate: offer.extendedOfferDate ? offer.extendedOfferDate.split("T")[0] : "",
+          rawAcceptBeforeDate: offer.acceptBeforeDate
+            ? offer.acceptBeforeDate.split("T")[0]
+            : "",
+          rawExtendedOfferDate: offer.extendedOfferDate
+            ? offer.extendedOfferDate.split("T")[0]
+            : "",
           historyId: item.offerApprovalId,
           cutOffDate: "-",
           shortlisted: "-",
           postingLocation: offer.postingLocation,
-          reportingAlpha: item.reportingAlpha
+          reportingAlpha: item.reportingAlpha,
         };
       });
 
@@ -554,7 +538,6 @@ const OfferPool = ({
     }
   };
 
-
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyData, setHistoryData] = useState([]);
 
@@ -572,7 +555,7 @@ const OfferPool = ({
     fetchExamConfiguration();
   }, [selectedPositionId, refreshKey, page, pageSize, filters?.status]);
 
-  // ❌ REMOVED filteredOffers, paginatedOffers, and local totalElements calculation 
+  // ❌ REMOVED filteredOffers, paginatedOffers, and local totalElements calculation
   // because the server handles filtering and pagination now.
 
   const InfoField = ({ label, value }) => (
@@ -591,7 +574,8 @@ const OfferPool = ({
   useEffect(() => {
     setPage(0);
     setSelectedIds([]);
-    setOfferSelectAll(false); setExcludedOfferIds([]);
+    setOfferSelectAll(false);
+    setExcludedOfferIds([]);
   }, [filters?.status]);
 
   // Ensure page index doesn't exceed total server pages if page size or items drop
@@ -623,7 +607,9 @@ const OfferPool = ({
                   type="checkbox"
                   checked={allSelected}
                   onChange={toggleSelectAll}
-                  disabled={!selectedPositionId || selectableCandidateIds.length === 0}
+                  disabled={
+                    !selectedPositionId || selectableCandidateIds.length === 0
+                  }
                 />
               </th>
               <th
@@ -748,7 +734,8 @@ const OfferPool = ({
                 scope="col"
                 style={{ paddingLeft: "1.25rem" }}
               >
-                {t("candidateWorkflow:offer_extended_date") || "Extended Offer Date"}
+                {t("candidateWorkflow:offer_extended_date") ||
+                  "Extended Offer Date"}
               </th>
               <th
                 className="fs-14 fw-normal py-3 border-top"
@@ -774,210 +761,56 @@ const OfferPool = ({
                   {t("loading_candidates")}
                 </td>
               </tr>
-            ) : offers.length === 0 ? (  // 👈 Change paginatedOffers to offers
+            ) : offers.length === 0 ? ( // 👈 Change paginatedOffers to offers
               <tr>
                 <td colSpan="18" className="text-center py-4">
                   {t("no_candidates_found")}
                 </td>
               </tr>
             ) : (
-              offers.map((c) => (         // 👈 Change paginatedOffers to offers
-                <tr key={c.id}>
-                  <td
-                    className="sticky-col-checkbox"
-                    style={{
-                      width: "50px",
-                      minWidth: "50px",
-                      paddingLeft: "1.5rem",
-                    }}
-                  >
-                    {/* ✅ UPDATED: Added OFFER_SENT and OFFER_EXTENDED to allowed selection statuses */}
-                    <input
-                      type="checkbox"
-                      style={{ marginTop: "0.75rem" }}
-                      checked={
-                        offerSelectAll
-                          ? !excludedOfferIds.includes(c.id)
-                          : selectedIds.includes(c.id)
-                      }
-                      onChange={() => toggleRow(c.id)}
-
-                    />
-                  </td>
-                  <td
-                    className="align-content-center sticky-col-1"
-                    style={{
-                      paddingLeft: "1rem",
-                      width: "200px",
-                      minWidth: "200px",
-                    }}
-                  >
-                    <div className="d-flex align-items-center gap-2 py-2">
-                      <p className="fw-normal fs-14 mb-0 text-muted">
-                        {c.name}
-                      </p>
-
-                      {c.status !== "OFFER_AWAITED" && (
-                        <button
-                          type="button"
-                          className="history-btn border-0 bg-transparent p-0"
-                          onClick={() => handleViewHistory(c.historyId)}
-                        >
-                          <img
-                            src={history_icon}
-                            alt="History"
-                            width={14}
-                            height={14}
-                          />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                  <td className="align-content-center">
-                    <p
-                      className="fw-normal fs-14 mb-0 py-2 text-muted"
+              offers.map(
+                (
+                  c // 👈 Change paginatedOffers to offers
+                ) => (
+                  <tr key={c.id}>
+                    <td
+                      className="sticky-col-checkbox"
                       style={{
-                        paddingLeft: "0.5rem",
-                        width: "160px",
-                        minWidth: "160px",
+                        width: "50px",
+                        minWidth: "50px",
+                        paddingLeft: "1.5rem",
                       }}
                     >
-                      {c.applicationNo}
-                    </p>
-                  </td>
-                  <td className="align-content-center">
-                    <p
-                      className="fw-normal fs-14 mb-0 py-2 text-muted"
-                      style={{ paddingLeft: "1.5rem" }}
+                      {/* ✅ UPDATED: Added OFFER_SENT and OFFER_EXTENDED to allowed selection statuses */}
+                      <input
+                        type="checkbox"
+                        style={{ marginTop: "0.75rem" }}
+                        checked={
+                          offerSelectAll
+                            ? !excludedOfferIds.includes(c.id)
+                            : selectedIds.includes(c.id)
+                        }
+                        onChange={() => toggleRow(c.id)}
+                      />
+                    </td>
+                    <td
+                      className="align-content-center sticky-col-1"
+                      style={{
+                        paddingLeft: "1rem",
+                        width: "200px",
+                        minWidth: "200px",
+                      }}
                     >
-                      {c.categoryName || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.score || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.qnq || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem", alignContent: "center" }}
-                  >
-                    <span
-                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
-                        }`}
-                    >
-                      {OFFER_STATUS_LABEL_MAP[c.status] || c.status}
-                    </span>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.selectList || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.waitList || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.state || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.location || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.reportingAlpha || "-"}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.postingLocation || "-"}
-                    </p>
-                  </td>
+                      <div className="d-flex align-items-center gap-2 py-2">
+                        <p className="fw-normal fs-14 mb-0 text-muted">
+                          {c.name}
+                        </p>
 
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.letterNumber || "-"}
-                    </p>
-                  </td>
-
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.offerReleaseDate}
-                    </p>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.acceptBeforeDate}
-                    </p>
-                  </td>
-
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <div className="d-flex align-items-center gap-2 py-2">
-                      <p className="fw-normal fs-14 mb-0 text-muted">
-                        {c.extensionDate || "-"}
-                      </p>
-
-                      {/* Show history icon when extension date exists */}
-                      {c.extensionDate && c.extensionDate !== "-" && (
-                        <OverlayTrigger
-                          placement="bottom"
-                          overlay={
-                            <Tooltip id={`tooltip-ext-history-${c.id}`}>
-                              {t("candidateWorkflow:view_history") || "View History"}
-                            </Tooltip>
-                          }
-                        >
+                        {c.status !== "OFFER_AWAITED" && (
                           <button
                             type="button"
-                            className="history-btn border-0 bg-transparent p-0 cursor-pointer"
-                            onClick={() => handleViewExtensionHistory(c.candidateOfferId || c.id)}
+                            className="history-btn border-0 bg-transparent p-0"
+                            onClick={() => handleViewHistory(c.historyId)}
                           >
                             <img
                               src={history_icon}
@@ -986,79 +819,246 @@ const OfferPool = ({
                               height={14}
                             />
                           </button>
-                        </OverlayTrigger>
-                      )}
-                    </div>
-                  </td>
-                  <td
-                    className="align-content-center"
-                    style={{ paddingLeft: "1.25rem" }}
-                  >
-                    <p className="fw-normal fs-14 mb-0 py-2 text-muted">
-                      {c.joiningDate}
-                    </p>
-                  </td>
-
-                  <td
-                    className="align-content-center sticky-col-action"
-                    style={{ paddingLeft: "1.5rem" }}
-                  >
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={
-                        <Tooltip id={`tooltip-file-${c.id}`}>
-                          {t("common:view_file")}
-                        </Tooltip>
-                      }
+                        )}
+                      </div>
+                    </td>
+                    <td className="align-content-center">
+                      <p
+                        className="fw-normal fs-14 mb-0 py-2 text-muted"
+                        style={{
+                          paddingLeft: "0.5rem",
+                          width: "160px",
+                          minWidth: "160px",
+                        }}
+                      >
+                        {c.applicationNo}
+                      </p>
+                    </td>
+                    <td className="align-content-center">
+                      <p
+                        className="fw-normal fs-14 mb-0 py-2 text-muted"
+                        style={{ paddingLeft: "1.5rem" }}
+                      >
+                        {c.categoryName || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
                     >
-                      <button
-                        className="btn btn-sm btn-outline-secondary border-0 me-2"
-                        onClick={() => {
-                          if (c.offerFileUrl) {
-                            handleCandidateOfferPreview(c.offerFileUrl);
-                          } else {
-                            if (!offerTemplateId) {
-                              toast.error(t("candidateWorkflow:OfferTemplate"));
-                              return;
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.score || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.qnq || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem", alignContent: "center" }}
+                    >
+                      <span
+                        className={`round_badge px-3 py-1 fs-12 rounded text-white ${
+                          OFFER_STATUS_CLASS_MAP[c.status] || "bg-secondary"
+                        }`}
+                      >
+                        {OFFER_STATUS_LABEL_MAP[c.status] || c.status}
+                      </span>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.selectList || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.waitList || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.state || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.location || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.reportingAlpha || "-"}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.postingLocation || "-"}
+                      </p>
+                    </td>
+
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.letterNumber || "-"}
+                      </p>
+                    </td>
+
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.offerReleaseDate}
+                      </p>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.acceptBeforeDate}
+                      </p>
+                    </td>
+
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
+                    >
+                      <div className="d-flex align-items-center gap-2 py-2">
+                        <p className="fw-normal fs-14 mb-0 text-muted">
+                          {c.extensionDate || "-"}
+                        </p>
+
+                        {/* Show history icon when extension date exists */}
+                        {c.extensionDate && c.extensionDate !== "-" && (
+                          <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                              <Tooltip id={`tooltip-ext-history-${c.id}`}>
+                                {t("candidateWorkflow:view_history") ||
+                                  "View History"}
+                              </Tooltip>
                             }
-
-                            handleCandidatePreview(
-                              offerTemplateId,
-                              c.applicationId
-                            );
-                          }
-                        }}
-                        style={{ backgroundColor: "#eff6ff" }}
-                      >
-                        <i
-                          className="bi bi-file-text"
-                          style={{ color: "black" }}
-                        ></i>
-                      </button>
-                    </OverlayTrigger>
-
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={
-                        <Tooltip id={`tooltip-${c.id}`}>
-                          {t("common:view_details")}
-                        </Tooltip>
-                      }
+                          >
+                            <button
+                              type="button"
+                              className="history-btn border-0 bg-transparent p-0 cursor-pointer"
+                              onClick={() =>
+                                handleViewExtensionHistory(
+                                  c.candidateOfferId || c.id
+                                )
+                              }
+                            >
+                              <img
+                                src={history_icon}
+                                alt="History"
+                                width={14}
+                                height={14}
+                              />
+                            </button>
+                          </OverlayTrigger>
+                        )}
+                      </div>
+                    </td>
+                    <td
+                      className="align-content-center"
+                      style={{ paddingLeft: "1.25rem" }}
                     >
-                      <button
-                        className="btn btn-sm btn-outline-secondary border-0 me-2"
-                        onClick={() => {
-                          setSelectedOffer(c);
-                          setShowModal(true);
-                        }}
-                        style={{ backgroundColor: "#eff6ff" }}
-                      >
-                        <i className="bi bi-eye" style={{ color: "black" }}></i>
-                      </button>
-                    </OverlayTrigger>
+                      <p className="fw-normal fs-14 mb-0 py-2 text-muted">
+                        {c.joiningDate}
+                      </p>
+                    </td>
 
-                    {/* ✅ UPDATED: Action icon enabled for OFFER_SENT & OFFER_EXTENDED candidates */}
-                    {/* {["OFFER_SENT", "OFFER_EXTENDED"].includes(c.status) && (
+                    <td
+                      className="align-content-center sticky-col-action"
+                      style={{ paddingLeft: "1.5rem" }}
+                    >
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id={`tooltip-file-${c.id}`}>
+                            {t("common:view_file")}
+                          </Tooltip>
+                        }
+                      >
+                        <button
+                          className="btn btn-sm btn-outline-secondary border-0 me-2"
+                          onClick={() => {
+                            if (c.offerFileUrl) {
+                              handleCandidateOfferPreview(c.offerFileUrl);
+                            } else {
+                              if (!offerTemplateId) {
+                                toast.error(
+                                  t("candidateWorkflow:OfferTemplate")
+                                );
+                                return;
+                              }
+
+                              handleCandidatePreview(
+                                offerTemplateId,
+                                c.applicationId
+                              );
+                            }
+                          }}
+                          style={{ backgroundColor: "#eff6ff" }}
+                        >
+                          <i
+                            className="bi bi-file-text"
+                            style={{ color: "black" }}
+                          ></i>
+                        </button>
+                      </OverlayTrigger>
+
+                      <OverlayTrigger
+                        placement="bottom"
+                        overlay={
+                          <Tooltip id={`tooltip-${c.id}`}>
+                            {t("common:view_details")}
+                          </Tooltip>
+                        }
+                      >
+                        <button
+                          className="btn btn-sm btn-outline-secondary border-0 me-2"
+                          onClick={() => {
+                            setSelectedOffer(c);
+                            setShowModal(true);
+                          }}
+                          style={{ backgroundColor: "#eff6ff" }}
+                        >
+                          <i
+                            className="bi bi-eye"
+                            style={{ color: "black" }}
+                          ></i>
+                        </button>
+                      </OverlayTrigger>
+
+                      {/* ✅ UPDATED: Action icon enabled for OFFER_SENT & OFFER_EXTENDED candidates */}
+                      {/* {["OFFER_SENT", "OFFER_EXTENDED"].includes(c.status) && (
                       <OverlayTrigger
                         placement="bottom"
                         overlay={<Tooltip>Extend / Reject Offer</Tooltip>}
@@ -1072,9 +1072,10 @@ const OfferPool = ({
                         </button>
                       </OverlayTrigger>
                     )} */}
-                  </td>
-                </tr>
-              ))
+                    </td>
+                  </tr>
+                )
+              )
             )}
           </tbody>
         </table>
@@ -1245,7 +1246,9 @@ const OfferPool = ({
           setShowSingleExtendModal(false);
           setSingleExtendCandidate(null);
         }}
-        selectedCandidates={singleExtendCandidate ? [singleExtendCandidate] : []}
+        selectedCandidates={
+          singleExtendCandidate ? [singleExtendCandidate] : []
+        }
         isSingleMode={true}
         onExtendSuccess={() => fetchOffers()}
         onRejectSuccess={() => fetchOffers()}
@@ -1306,7 +1309,6 @@ const OfferPool = ({
         </Modal.Body>
       </Modal>
 
-
       {/*  Extension Approval History Modal */}
       {/* Extension Approval History Modal */}
       {/* Extension Approval History Modal */}
@@ -1315,8 +1317,14 @@ const OfferPool = ({
         onClose={() => setShowExtensionHistoryModal(false)}
         historyData={extensionHistoryData}
         loading={loadingExtensionHistory}
-        title={t("candidateWorkflow:accept_date_extension_history") || "Accept date extension history"}
-        subtitle={t("candidateWorkflow:track_date_extension_history") || "Track date extension history"}
+        title={
+          t("candidateWorkflow:accept_date_extension_history") ||
+          "Accept date extension history"
+        }
+        subtitle={
+          t("candidateWorkflow:track_date_extension_history") ||
+          "Track date extension history"
+        }
       />
 
       {/* Regular Approval History Modal */}

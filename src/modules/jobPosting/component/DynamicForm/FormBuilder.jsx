@@ -136,8 +136,6 @@ const FormBuilder = ({
       fields: validatedFields,
     };
 
-    console.log("Generated Form JSON:", schema);
-
     onSave(schema);
   };
   useEffect(() => {

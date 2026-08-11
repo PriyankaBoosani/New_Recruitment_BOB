@@ -679,7 +679,6 @@ const JobPostingsList = () => {
       )}
 
       {requisitions.map((req) => {
-        // console.log("req ---1", req);
         // const positions = positionsByReq[req.id] || [];
         const key = `${req.isDraft ? req.parentRequisitionId : req.id}_${req.isDraft}`;
         const positions = positionsByReq[key] || [];

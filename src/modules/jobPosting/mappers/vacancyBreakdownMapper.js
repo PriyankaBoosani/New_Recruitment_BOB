@@ -13,10 +13,6 @@ export const mapVacancyBreakdown = (
         exServiceMap[item.groupId] = item.exsCategoryCode;
     });
 
-
-    console.log("Master Ex Service Categoriesssssssss", masterData.exServiceCategories);
-    console.log("Ex Service Mapsssss", exServiceMap);
-
     (masterData?.reservationCategories || []).forEach((item) => {
         reservationMap[item.id] = item.code;
     });
@@ -102,18 +98,7 @@ export const mapVacancyBreakdown = (
 
 
                 (position.nationalBreakdown || []).forEach((cat) => {
-
-                    // console.log("National Category Debug", {
-                    //     reservationCategoryId: cat.reservationCategoryId,
-                    //     reservationCode:
-                    //         reservationMap[cat.reservationCategoryId],
-                    //     vacancyCount: cat.vacancyCount,
-                    //     isDisability: cat.isDisability,
-                    // });
                     if (!cat.isDisability) {
-
-
-
                         // Temporary handling for backend records without ids
                         if (cat.isExServiceman) {
                             const code = exServiceMap[cat.exServicemanGroupId];
@@ -203,26 +188,11 @@ export const mapVacancyBreakdown = (
                     }
                 });
 
-                console.log("National Reservation Row", row);
-                console.log(
-                    "contractYears:",
-                    position.contractYears,
-                    "contractPeriod:",
-                    position.contractYears ?? "-"
-                );
-
-
-                console.log("Position Employment Type:", position.employmentType);
-                console.log("Master Employment Types:", masterData?.employmentTypes);
-
                 const emp = masterData?.employmentTypes?.find(
                     (item) =>
                         String(item.id).trim() ===
                         String(position.employmentType).trim()
                 );
-
-                console.log("Matched Employment Type", emp);
-
                 return row;
             })(),
 

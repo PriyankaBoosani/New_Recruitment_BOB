@@ -57,10 +57,7 @@ export function mapEduRulesToModalData(
       })),
     }));
   };
-  console.log(
-  "mandatoryEduRulesJson:",
-  JSON.stringify(eduRulesJson, null, 2)
-);
+ 
   // Mandatory
   if (
     eduRulesJson.mandatoryEducations &&

@@ -55,7 +55,7 @@ export const mapCandidatePipeline = (data = {}) => {
       offerAccepted: item.offer_accepted || 0,
       candidatesJoined: item.candidates_joined || 0,
     })) || [];
-  console.log(data?.pipelineDetails);
+ 
   return {
     totalVacancies: Number(pipeline.total_vacancies || 0).toLocaleString(
       "en-IN"

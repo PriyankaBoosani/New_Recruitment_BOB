@@ -270,10 +270,6 @@ const SinglePositionInfoModal = ({
                                 className="approved-info-toggle-input form-check-input"
                                 type="checkbox"
                                 id="remaining-switch" checked={showRemaining} onChange={(e) => {
-
-
-                                    // console.log(position?.stateWiseReservation);
-                                    // console.log(position?.stateWiseOnboarded);
                                     setShowRemaining(e.target.checked)
                                 }
                                 }

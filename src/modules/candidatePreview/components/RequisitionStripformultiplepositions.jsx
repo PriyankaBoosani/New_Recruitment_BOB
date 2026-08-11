@@ -137,7 +137,6 @@ const RequisitionStripformultiplepositions = ({
 
         mapped.isAgeRelWdsWomen = res.data?.isAgeRelWdsWomen || false;
 
-        console.log("Mapped Exclusions:", mapped.exclusionNames);
 
         setJob(mapped);
       } catch (err) {

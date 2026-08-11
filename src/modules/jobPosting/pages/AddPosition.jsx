@@ -213,9 +213,6 @@ const AddPosition = () => {
       try {
         const res = await masterApiService.getExclusions();
 
-        console.log("FULL RESPONSE", res);
-        console.log("RESPONSE DATA", res.data);
-
         if (res?.success) {
           setExclusions(res.data || []);
         }
@@ -377,9 +374,6 @@ const AddPosition = () => {
       specializations,
       certifications
     );
-    console.log("Mapped Mandatory:", JSON.stringify(mandatory, null, 2));
-
-    console.log("Mapped Preferred:", JSON.stringify(preferred, null, 2));
     setEducationData({
       mandatory: {
         ...mandatory,
@@ -915,16 +909,6 @@ const AddPosition = () => {
       errors.vacancies = "validation:vacancies_must_be_greater_than_zero";
     }
 
-    console.log("Selected Exclusions:", selectedExclusions);
-    console.log(
-      "existingPosition exclusions",
-      existingPosition?.jobPositionExclusions
-    );
-
-    console.log("positionId from URL =", positionId);
-    console.log("existingPosition =", existingPosition);
-    console.log("existingPosition.positionId =", existingPosition?.positionId);
-
     const currentPositionId =
       existingPosition?.positionId || positionId || null;
 
@@ -964,7 +948,6 @@ const AddPosition = () => {
         };
       }),
     };
-    console.log("Payload to be submitted:", payload);
     try {
       if (isEditMode) {
         // await updatePosition({ ...payload, positionId, existingPosition });
@@ -1080,10 +1063,7 @@ const AddPosition = () => {
               onPositionSelect={onPositionSelect}
               educationData={educationData}
               onEducationClick={(m) => {
-                 console.log(
-    "Opening Modal Data:",
-    JSON.stringify(educationData[m], null, 2)
-  );
+
                 if (isViewMode) return;
 
                 setEduMode(m);

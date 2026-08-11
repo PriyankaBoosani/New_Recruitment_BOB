@@ -1332,10 +1332,7 @@ const ApplicationForm = ({
         updated.isWorkCriteriaMet = nextWork;
         changed = true;
       }
-console.log({
-  workVerified: isCategorySatisfied("WORK"),
-  workRejected: isCategoryRejected("WORK"),
-});
+
       // EDUCATION
       const nextEducation = educationRejected
         ? prev.isEducationCriteriaMet === "YES"

@@ -70,12 +70,7 @@ export default function EducationModal({
     );
     setEquivalentQualification(initialData?.equivalentQualification || false);
   }, [show, initialData, mode]);
-  useEffect(() => {
-    console.log(
-      "EducationModal isIntermediateRequired:",
-      isIntermediateRequired
-    );
-  }, [isIntermediateRequired]);
+
 
   useEffect(() => {
     const fetchEducationGroups = async () => {
@@ -1247,7 +1242,6 @@ export default function EducationModal({
               text: cleanText,
               equivalentQualification,
             };
-            console.log("Education Payload", JSON.stringify(payload, null, 2));
             onSave({
               ...payload,
               equivalentQualification,

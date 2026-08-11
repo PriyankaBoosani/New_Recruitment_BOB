@@ -427,15 +427,6 @@ export default function AddExaminationCutoffModal({
 
   const isFrozen = editData?.isFrozen === true || editData?.isFrozen === "true";
 
-  useEffect(() => {
-    console.log("===== DELETE BUTTON CHECK =====");
-    console.log("editData:", editData);
-    console.log("isFrozen:", editData?.isFrozen);
-    console.log("typeof isFrozen:", typeof editData?.isFrozen);
-    console.log("Calculated isFrozen:", isFrozen);
-    console.log("===============================");
-  }, [editData]);
-
   /* ================= GENERATE SECTIONS ================= */
 
   const handleGenerateSections = () => {
@@ -490,8 +481,6 @@ export default function AddExaminationCutoffModal({
 
     if (existingSections.length > count) {
       const originalSectionCount = Number(editData?.numberOfSections || 0);
-
-      console.log("Original Section Count:", originalSectionCount);
 
       if (editData && count < originalSectionCount) {
         toast.warning(

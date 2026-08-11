@@ -23,7 +23,6 @@ const useDashboardDetails = (filters = {}) => {
 
       const response = await dashboardService.getDashboardDetails(payload);
 
-      console.log("FULL RESPONSE", response);
 
       if (!response?.success) {
         toast.error(

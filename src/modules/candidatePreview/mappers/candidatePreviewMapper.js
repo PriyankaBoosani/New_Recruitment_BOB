@@ -35,9 +35,6 @@ const getInterviewCentreName = (masters, id) =>
 ================================ */
 
 export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
-  console.log("========== API DATA ==========");
-  console.log(apiData);
-  console.log("applicationNo:", apiData?.applicationNo);
   const profile = apiData?.basicDetails?.candidateProfile || {};
   const languagesKnown = apiData?.basicDetails?.languagesKnown || [];
   const address = apiData?.addressDetails || {};

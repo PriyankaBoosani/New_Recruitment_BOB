@@ -299,10 +299,6 @@ const ApprovedInfoStrip = ({
                                                 id={`remaining-switch-${index}`}
                                                 checked={showRemaining[index] || false}
                                                 onChange={(e) => {
-
-
-                                                    // console.log(position?.stateWiseReservation);
-                                                    // console.log(position?.stateWiseOnboarded);
                                                     setShowRemaining((prev) => ({
                                                         ...prev,
                                                         [index]: e.target.checked,

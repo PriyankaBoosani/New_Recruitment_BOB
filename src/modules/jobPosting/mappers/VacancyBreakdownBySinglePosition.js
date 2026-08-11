@@ -13,11 +13,6 @@ export const mapVacancyBreakdownByPosition = (
     exServiceMap[item.groupId] = item.exsCategoryCode;
   });
 
-
-  console.log("Master Ex Service Categories", masterData.exServiceCategories);
-
-  console.log("Ex Service Map", exServiceMap);
-
   (masterData?.reservationCategories || []).forEach((item) => {
     reservationMap[item.id] = item.code;
   });
@@ -117,25 +112,12 @@ export const mapVacancyBreakdownByPosition = (
 
       (data.nationalBreakdown || []).forEach((cat) => {
 
-        // console.log("National Category Debug", {
-        //     reservationCategoryId: cat.reservationCategoryId,
-        //     reservationCode:
-        //         reservationMap[cat.reservationCategoryId],
-        //     vacancyCount: cat.vacancyCount,
-        //     isDisability: cat.isDisability,
-        // });
+      
         if (!cat.isDisability) {
 
           // Temporary mapping for EXS & DXS until backend provides IDs
           if (cat.isExServiceman) {
             const code = exServiceMap[cat.exServicemanGroupId];
-
-            console.log("EX SERVICE DEBUG", {
-              groupId: cat.exServicemanGroupId,
-              code,
-              vacancy: cat.vacancyCount,
-              map: exServiceMap
-            });
 
             switch (code) {
               case "EXS":
@@ -145,6 +127,8 @@ export const mapVacancyBreakdownByPosition = (
               case "DXS":
               case "DDXS":
                 row.dxs += cat.vacancyCount || 0;
+                break;
+                default:
                 break;
             }
 

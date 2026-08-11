@@ -372,9 +372,7 @@ setBulkSaveClicked(false);
       end.setHours(23, 59, 59, 999);
 
       isWithinDateRange = today >= start && today <= end;
-    } else {
-      console.log("DATE CHECK FAILED -> startDate or endDate missing");
-    }
+    } 
 
     // ===== FINAL DECISION =====
 
@@ -387,15 +385,7 @@ setBulkSaveClicked(false);
     } else if (isRecruiter && !isUserInPanel) {
       setShowRecruiterModal(true);
     } else {
-      console.log({
-        userEmail,
-        userRole,
-        isRecruiter,
-        isCommitteeMember,
-        isUserInPanel,
-        isWithinDateRange,
-        canCompensationPool,
-      });
+     
 
       console.warn("No matching condition for modal");
     }
@@ -750,9 +740,7 @@ setBulkSaveClicked(false);
                         onClick={() => {
                           if (onViewFile) {
                             onViewFile(c);
-                          } else {
-                            console.log("Resume clicked", c);
-                          }
+                          } 
                         }}
                       />
                     </OverlayTrigger>
