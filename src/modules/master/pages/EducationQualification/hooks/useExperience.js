@@ -134,10 +134,6 @@ export const useExperience = () => {
 
     setFormData(updated);
 
-    if (field === "educationLevel") {
-      console.log("Selected ID:", value);
-    }
-
     let fieldError = null;
 
     if (field === "educationLevel") {
@@ -444,9 +440,6 @@ export const useExperience = () => {
         },
         specializations,
       };
-
-      console.log("Payload:", payload);
-
       const res = await masterApiService.saveEducation(payload);
 
       if (isEditMode) {
