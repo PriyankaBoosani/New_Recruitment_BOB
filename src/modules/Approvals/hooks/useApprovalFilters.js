@@ -3,8 +3,9 @@ import { toast } from "react-toastify";
 import committeeManagementService from "../../committeeManagement/services/committeeManagementService";
 import jobPositionApiService from "../../jobPosting/services/jobPositionApiService";
 import { mapWorkflowApprovalCandidates } from "../mapper/candidateWorkflowApprovalMapper";
-
+import { useTranslation } from "react-i18next";
 const useApprovalFilters = () => {
+  const { t } = useTranslation("approvalHistory");
   const [requisitionOptions, setRequisitionOptions] = useState([]);
   const [positionOptions, setPositionOptions] = useState([]);
 
@@ -129,7 +130,7 @@ const useApprovalFilters = () => {
       setCandidateSummary(summaryRes.data);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load candidates");
+      toast.error(t("failed_to_load_candidates"));
     } finally {
       setLoadingCandidates(false);
     }
@@ -137,7 +138,7 @@ const useApprovalFilters = () => {
   const handleDownload = async (stage = "SCREENING") => {
     try {
       if (!selectedPosition?.positionId) {
-        toast.error("Please select a position");
+        toast.info(t("please_select_position_to_download"));
         return;
       }
 
@@ -175,7 +176,7 @@ const useApprovalFilters = () => {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to download PDF");
+      toast.error(t("failed_to_download_pdf"));
     }
   };
   const selectedRequisitionOption = selectedRequisition

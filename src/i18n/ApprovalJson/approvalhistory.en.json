@@ -81,5 +81,8 @@
   "failed_to_process_approval": "Failed to process approval.",
   "candidate_resume": "Candidate Resume",
   "no_document_available": "No document available",
-  "failed_open_document": "Failed to open document"
+  "failed_open_document": "Failed to open document",
+  "please_select_position_to_download": "Please select a position to download",
+  "failed_to_load_candidates": "Failed to load candidates",
+  "failed_to_download_pdf": "Failed to download PDF"
 }

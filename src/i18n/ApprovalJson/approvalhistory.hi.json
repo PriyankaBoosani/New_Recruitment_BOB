@@ -78,9 +78,11 @@
   "interview_result": "साक्षात्कार परिणाम",
   "approved_successfully": "सफलतापूर्वक स्वीकृत",
   "rejected_successfully": "सफलतापूर्वक अस्वीकृत",
-  "failed_to_process_approval": "स्वीकृति को संसाधित करने में विफल। कृपया बाद में पुनः प्रयास करें।",
+  "failed_to_process_approval": "स्वीकृति को संसाधित करने में विफल।",
   "candidate_resume": "उम्मीदवार रेज़्यूमे",
   "no_document_available": "कोई दस्तावेज़ उपलब्ध नहीं है",
-  "failed_open_document": "दस्तावेज़ खोलने में विफल। कृपया बाद में पुनः प्रयास करें।"
-
+  "failed_open_document": "दस्तावेज़ खोलने में विफल। कृपया बाद में पुनः प्रयास करें।",
+  "please_select_position_to_download": "डाउनलोड करने के लिए कृपया एक पद चुनें",
+  "failed_to_load_candidates": "उम्मीदवारों को लोड करने में विफल।",
+"failed_to_download_pdf": "पीडीएफ डाउनलोड करने में विफल"
 }

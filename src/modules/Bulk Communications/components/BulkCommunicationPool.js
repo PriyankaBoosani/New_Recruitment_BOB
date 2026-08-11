@@ -242,7 +242,7 @@ const toggleSelectAll = () => {
 
           {/* Action Trigger Button floated smoothly to the right margin */}
           <button 
-            className="btn btn-primary py-2 px-4 fs-14"
+            className="btn orange-bg text-white py-2 px-4 fs-14"
             disabled={selectedIds.length === 0}
             onClick={onTriggerCommunication}
             style={{ borderRadius: "6px", minWidth: "180px" }}

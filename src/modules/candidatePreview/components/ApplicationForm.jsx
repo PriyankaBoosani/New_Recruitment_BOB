@@ -861,7 +861,36 @@ const ApplicationForm = ({
 
   const validateForm = () => {
     const newErrors = {};
+    const criteria = [
+      {
+        value: screeningForm.isWorkCriteriaMet,
+        category: "WORK",
+        label: "Work",
+      },
+      {
+        value: screeningForm.isAgeCriteriaMet,
+        category: "AGE",
+        label: "Age",
+      },
+      {
+        value: screeningForm.isEducationCriteriaMet,
+        category: "EDUCATION",
+        label: "Education",
+      },
+    ];
 
+    const hasUnverifiedRequiredDocument = criteria.some(
+      ({ value, category }) => {
+        const categorySatisfied = isCategorySatisfied(category);
+
+        return !value && !categorySatisfied;
+      }
+    );
+
+    if (hasUnverifiedRequiredDocument) {
+      toast.error("Please verify the required documents before submitting.");
+      return false;
+    }
     // Criteria validations
     if (!screeningForm.isWorkCriteriaMet) {
       newErrors.isWorkCriteriaMet = t("please_select_option");
@@ -954,7 +983,6 @@ const ApplicationForm = ({
     }
 
     setErrors(newErrors);
-
     // valid if no errors
     return Object.keys(newErrors).length === 0;
   };
@@ -1038,14 +1066,12 @@ const ApplicationForm = ({
     setSubmitting(true);
 
     const isValid = validateForm();
-
     if (!isValid) {
       submitRef.current = false;
       setSubmitting(false);
       return;
     }
-
-    // ✅ Validation 2: Check document satisfaction for shortlist logic
+   
     const isAgeValid = isCategorySatisfied("AGE");
     const isWorkValid = isCategorySatisfied("WORK");
     const isEducationValid = isCategorySatisfied("EDUCATION");
@@ -1069,23 +1095,22 @@ const ApplicationForm = ({
         .map((doc) => doc.documentName?.trim())
         .filter(Boolean),
     };
-    submitRef.current = true;
+
     try {
       await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
-      // toast.success("Screening submitted successfully");
+
       toast.success(t("screening_submitted_success"));
 
       navigate("/candidate-workflow", {
         state: {
           requisitionId,
-
           positionIds: Array.isArray(positionIds)
             ? positionIds.map((item) => item.positionId)
             : positionId
               ? [positionId]
               : [],
-          page: page,
-          pageSize: pageSize,
+          page,
+          pageSize,
         },
       });
     } catch (err) {
@@ -1238,29 +1263,31 @@ const ApplicationForm = ({
     );
   });
   const isCategoryRejected = (category) => {
-  const docs = groupedDocs[category] || [];
+    const docs = groupedDocs[category] || [];
 
-  if (category === "AGE") {
-    // If any AGE document is VERIFIED, don't treat AGE as rejected
-    const hasVerified = docs.some((doc) => {
-      const status = docStatusMap[doc.candidateDocumentId]?.status;
-      return status === "VERIFIED";
-    });
+    if (category === "AGE") {
+      // If any AGE document is VERIFIED, don't treat AGE as rejected
+      const hasVerified = docs.some((doc) => {
+        const status = docStatusMap[doc.candidateDocumentId]?.status;
+        return status === "VERIFIED";
+      });
 
-    if (hasVerified) {
-      return false;
+      if (hasVerified) {
+        return false;
+      }
     }
-  }
 
-  return docs.some((doc) => {
-    const status = docStatusMap[doc.candidateDocumentId]?.status;
-    return status === "REJECTED";
-  });
-};
+    return docs.some((doc) => {
+      const status = docStatusMap[doc.candidateDocumentId]?.status;
+      return status === "REJECTED";
+    });
+  };
   const isOptionDisabled = (option, category) => {
     const categorySatisfied = isCategorySatisfied(category);
     const categoryRejected = isCategoryRejected(category);
-
+    if ((option === "NO" || option === "DISCREPANCY") && !categorySatisfied) {
+      return true;
+    }
     // Disable YES whenever any document of that category is rejected
     if (option === "YES" && categoryRejected) {
       return true;
