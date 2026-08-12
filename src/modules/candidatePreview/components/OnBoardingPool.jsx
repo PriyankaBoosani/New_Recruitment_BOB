@@ -57,7 +57,7 @@ const OnBoardingPool = ({
             </th>
             <th className="fs-14 fw-normal py-3 border-top">Joining Date</th>
             <th className="fs-14 fw-normal py-3 border-top">
-              Onboarding Status
+               Status
             </th>
             <th className="fs-14 fw-normal py-3 border-top">Medical Status</th>
             <th className="fs-14 fw-normal py-3 border-top text-center">

@@ -30,6 +30,8 @@ export const mapOnboardingPoolCandidates = (content = []) => {
 
     onboardingStatus: candidate.applicationStatus || "-",
 
-    medicalStatus: candidate.medicalStatus || "-",
+  //  medicalStatus: candidate.medicalStatus || "-",
+        medicalStatus: "-" || "-",
+
   }));
 };

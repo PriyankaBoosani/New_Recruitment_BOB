@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import candidateWorkflowServices from "../services/CandidateWorkflowServices";
 import { mapOnboardingPoolCandidates } from "../mappers/onboardingPoolMapper";
 
@@ -12,6 +12,8 @@ const useOnboardingPool = ({
   const [onboardingCandidates, setOnboardingCandidates] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const searchTimeoutRef = useRef(null);
 
   const fetchOnboardingPool = useCallback(async () => {
     if (!enabled || !positionId?.length) {
@@ -37,7 +39,6 @@ const useOnboardingPool = ({
       console.log("ONBOARDING POOL RESPONSE:", res);
 
       const apiData = res?.data;
-
       const content = apiData?.content || [];
 
       setOnboardingCandidates(
@@ -64,8 +65,37 @@ const useOnboardingPool = ({
   ]);
 
   useEffect(() => {
-    fetchOnboardingPool();
-  }, [fetchOnboardingPool]);
+    if (!enabled || !positionId?.length) {
+      return;
+    }
+
+    // Don't debounce pagination/position changes.
+    // Debounce only when search text changes.
+    if (searchText) {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      searchTimeoutRef.current = setTimeout(() => {
+        fetchOnboardingPool();
+      }, 500);
+    } else {
+      fetchOnboardingPool();
+    }
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [
+    searchText,
+    page,
+    pageSize,
+    positionId,
+    enabled,
+    fetchOnboardingPool,
+  ]);
 
   return {
     onboardingCandidates,
