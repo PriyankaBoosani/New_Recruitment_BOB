@@ -1073,7 +1073,6 @@ const ApplicationForm = ({
 
   // NO option is disabled if shortlist section is disabled
 const disableNoOption = disableShortlistedSection;
-  const allowExpiredDocumentRejection = canRejectAfterSubmitBeforeExpiry;
   const handleFinalSubmit = async () => {
     if (isApprovalLocked) {
       toast.warning(
@@ -1332,9 +1331,13 @@ const disableNoOption = disableShortlistedSection;
   const isOptionDisabled = (option, category) => {
     const categorySatisfied = isCategorySatisfied(category);
     const categoryRejected = isCategoryRejected(category);
-    if ((option === "NO" || option === "DISCREPANCY") && !categorySatisfied) {
-      return true;
-    }
+     if (
+    (option === "NO" || option === "DISCREPANCY") &&
+    !categorySatisfied &&
+    !categoryRejected
+  ) {
+    return true;
+  }
     // Disable YES whenever any document of that category is rejected
     if (option === "YES" && categoryRejected) {
       return true;
@@ -1354,7 +1357,13 @@ const disableNoOption = disableShortlistedSection;
     if (option === "DISCREPANCY" && allDocsAreVerified) {
       return true;
     }
-
+ if (
+    option === "DISCREPANCY" &&
+    categorySatisfied &&
+    !categoryRejected
+  ) {
+    return true;
+  }
     return false;
   };
   useEffect(() => {
