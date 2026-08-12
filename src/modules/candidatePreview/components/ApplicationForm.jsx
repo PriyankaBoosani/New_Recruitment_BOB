@@ -115,6 +115,7 @@ const ApplicationForm = ({
   }, [lptType]);
   const [submitting, setSubmitting] = useState(false);
   const [zonalSubmitting, setZonalSubmitting] = useState(false);
+  const [allowExpiredRejection, setAllowExpiredRejection] = useState(false);
   const formatDate = (date) => {
     if (!date) return "-";
 
@@ -653,7 +654,8 @@ const ApplicationForm = ({
           await jobPositionApiService.getCandidateDiscrepancyDetails(
             applicationId
           );
-
+        console.log("DISCREPANCY API FULL RESPONSE:", res);
+        console.log("DISCREPANCY API res.data:", res?.data);
         const data = res?.data;
 
         if (!data) return; // no record → fresh form
@@ -726,6 +728,10 @@ const ApplicationForm = ({
       if (field === "isAgeCriteriaMet") updated.ageCriteriaRemark = "";
       if (field === "isEducationCriteriaMet")
         updated.educationCriteriaRemark = "";
+      if (value === "DISCREPANCY") {
+        updated.isShortlisted = "";
+        updated.finalScreeningRemark = "";
+      }
 
       return updated;
     });
@@ -934,7 +940,7 @@ const ApplicationForm = ({
       }
     }
 
-    if (hasMissingUploads) {
+    if (hasMissingUploads && !canRejectAfterSubmitBeforeExpiry) {
       toast.error("All mandatory documents must be uploaded");
       return false;
     }
@@ -954,7 +960,7 @@ const ApplicationForm = ({
     }
 
     // Submit before date validation
-    if (shouldShowSubmitBefore) {
+    if (shouldShowSubmitBefore && !canRejectAfterSubmitBeforeExpiry) {
       if (!screeningForm.submitBeforeDate) {
         newErrors.submitBeforeDate = t("please_select_date");
       } else {
@@ -1018,6 +1024,21 @@ const ApplicationForm = ({
 
   const hasMissingUploads = documentRows.some((doc) => !doc?.url);
 
+  const isSubmitBeforeExpired = (() => {
+    if (!screeningForm.submitBeforeDate) return false;
+
+    const submitBefore = new Date(screeningForm.submitBeforeDate);
+    submitBefore.setHours(0, 0, 0, 0);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return submitBefore < today;
+  })();
+
+  const canRejectAfterSubmitBeforeExpiry =
+    hasMissingUploads && isSubmitBeforeExpired;
+
   const disableEligibleCheckbox =
     !areAllCriteriaYes() ||
     // hasShortlistSelection ||
@@ -1044,19 +1065,37 @@ const ApplicationForm = ({
     !areAllCriteriaSelected ||
     hasAnyDiscrepancy ||
     // disableShortlistBecauseEligible ||
-    hasMissingUploads;
+    (hasMissingUploads && !canRejectAfterSubmitBeforeExpiry);
 
   // 2. NOT all criteria are marked as YES
-  const disableYesOption = disableShortlistedSection || !areAllCriteriaYes();
+  const disableYesOption =
+    disableShortlistedSection || !areAllCriteriaYes() || hasMissingUploads;
 
   // NO option is disabled if shortlist section is disabled
-  const disableNoOption = disableShortlistedSection;
-
+const disableNoOption = disableShortlistedSection;
+  const allowExpiredDocumentRejection = canRejectAfterSubmitBeforeExpiry;
   const handleFinalSubmit = async () => {
     if (isApprovalLocked) {
       toast.warning(
         "Candidate cannot be modified while approval is in progress."
       );
+      return;
+    }
+    const hasCriteriaDiscrepancy =
+      screeningForm.isWorkCriteriaMet === "DISCREPANCY" ||
+      screeningForm.isAgeCriteriaMet === "DISCREPANCY" ||
+      screeningForm.isEducationCriteriaMet === "DISCREPANCY";
+
+    if (hasCriteriaDiscrepancy && isSubmitBeforeExpired) {
+      toast.warning(
+        "Submit Before date is expired. Please change the criteria selection from DISCREPANCY to NO."
+      );
+
+      setAllowExpiredRejection(true);
+
+      submitRef.current = false;
+      setSubmitting(false);
+
       return;
     }
 
@@ -1071,7 +1110,7 @@ const ApplicationForm = ({
       setSubmitting(false);
       return;
     }
-   
+
     const isAgeValid = isCategorySatisfied("AGE");
     const isWorkValid = isCategorySatisfied("WORK");
     const isEducationValid = isCategorySatisfied("EDUCATION");
@@ -1097,7 +1136,12 @@ const ApplicationForm = ({
     };
 
     try {
-      await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
+      const response =
+        await jobPositionApiService.saveCandidateDiscrepancyDetails(payload);
+      if (!response?.success) {
+        toast.error(response?.message || t("submission_failed"));
+        return;
+      }
 
       toast.success(t("screening_submitted_success"));
 
@@ -1173,6 +1217,7 @@ const ApplicationForm = ({
 
   useEffect(() => {
     if (!disableShortlistedSection || hasAnyDiscrepancy) return;
+    if (canRejectAfterSubmitBeforeExpiry) return;
     if (screeningForm.isScreeningCompleted) return;
     setScreeningForm((prev) => ({
       ...prev,
@@ -1185,6 +1230,7 @@ const ApplicationForm = ({
     }));
   }, [
     disableShortlistedSection,
+    canRejectAfterSubmitBeforeExpiry,
     screeningForm.isScreeningCompleted,
     hasAnyDiscrepancy,
   ]);
@@ -1214,7 +1260,7 @@ const ApplicationForm = ({
 
   useEffect(() => {
     if (!disableShortlistedSection) return;
-
+    if (screeningForm.isScreeningCompleted) return;
     if (screeningForm.isShortlisted || screeningForm.finalScreeningRemark) {
       setScreeningForm((prev) => ({
         ...prev,
@@ -1232,6 +1278,7 @@ const ApplicationForm = ({
 
   useEffect(() => {
     if (!hasMissingUploads) return;
+    if (screeningForm.isScreeningCompleted) return;
 
     // clear eligible
     if (isEligible) {
@@ -2553,7 +2600,10 @@ const ApplicationForm = ({
                 {/* FINAL REMARK */}
                 <div
                   className={`criteria-card ${
-                    disableShortlistedSection ? "criteria-disabled" : ""
+                    disableShortlistedSection &&
+                    !canRejectAfterSubmitBeforeExpiry
+                      ? "criteria-disabled"
+                      : ""
                   }`}
                 >
                   <label className="criteria-title">{t("shortlisted")}</label>

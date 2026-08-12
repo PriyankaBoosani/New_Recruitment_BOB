@@ -25,6 +25,27 @@ const OnBoardingPool = ({
       setSelectAll(false);
     }
   };
+  const getOnboardingStatusClass = (status) => {
+    switch (status) {
+      case "OFFERED":
+        return "bg-primary-subtle text-primary";
+
+      case "OFFER_ACCEPTED":
+        return "bg-success-subtle text-success";
+
+      case "PRE_ONBOARDING_PENDING":
+        return "bg-warning-subtle text-warning";
+
+      case "PRE_ONBOARDING_COMPLETED":
+        return "bg-info-subtle text-info";
+
+      case "ONBOARDED":
+        return "bg-success-subtle text-success";
+
+      default:
+        return "bg-secondary-subtle text-secondary";
+    }
+  };
 
   return (
     <div className="card-body p-0">
@@ -56,9 +77,7 @@ const OnBoardingPool = ({
               Offer Extended Date
             </th>
             <th className="fs-14 fw-normal py-3 border-top">Joining Date</th>
-            <th className="fs-14 fw-normal py-3 border-top">
-               Status
-            </th>
+            <th className="fs-14 fw-normal py-3 border-top">Status</th>
             <th className="fs-14 fw-normal py-3 border-top">Medical Status</th>
             <th className="fs-14 fw-normal py-3 border-top text-center">
               Action
@@ -85,7 +104,15 @@ const OnBoardingPool = ({
                 <td>{row.acceptBeforeDate}</td>
                 <td>{row.offerExtendedDate}</td>
                 <td>{row.joiningDate}</td>
-                <td>{row.onboardingStatus}</td>
+                <td>
+                  <span
+                    className={`badge rounded-pill px-3 py-2 ${getOnboardingStatusClass(
+                      row.onboardingStatusCode
+                    )}`}
+                  >
+                    {row.onboardingStatus}
+                  </span>
+                </td>
                 <td>{row.medicalStatus}</td>
 
                 <td>

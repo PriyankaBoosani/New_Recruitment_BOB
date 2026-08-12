@@ -64,6 +64,7 @@ const useOnboardingPool = ({
     enabled,
   ]);
 
+
   useEffect(() => {
     if (!enabled || !positionId?.length) {
       return;

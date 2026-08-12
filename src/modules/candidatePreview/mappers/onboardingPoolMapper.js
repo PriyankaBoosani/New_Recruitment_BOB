@@ -10,6 +10,18 @@ const formatDate = (date) => {
   });
 };
 
+const formatStatusLabel = (status) => {
+  if (!status) return "-";
+
+  return status
+    .toLowerCase()
+    .split("_")
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join(" ");
+};
+
 export const mapOnboardingPoolCandidates = (content = []) => {
   return content.map((candidate, index) => ({
     id: `${candidate.applicationNo}-${index}`,
@@ -28,10 +40,13 @@ export const mapOnboardingPoolCandidates = (content = []) => {
 
     joiningDate: formatDate(candidate.joiningDate),
 
-    onboardingStatus: candidate.applicationStatus || "-",
+    // Display value
+    onboardingStatus:
+      formatStatusLabel(candidate.applicationStatus),
 
-  //  medicalStatus: candidate.medicalStatus || "-",
-        medicalStatus: "-" || "-",
+    // Keep original backend value for badge color
+    onboardingStatusCode: candidate.applicationStatus || "",
 
+    medicalStatus:  "-",
   }));
 };
