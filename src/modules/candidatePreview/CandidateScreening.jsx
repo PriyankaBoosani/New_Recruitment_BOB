@@ -14,6 +14,7 @@ import searchIcon from "../../assets/search-icon.png";
 import RequisitionStripformultiplepositions from "./components/RequisitionStripformultiplepositions";
 import CandidatePool from "./components/CandidatePool";
 import InterviewPool from "./components/InterviewPool";
+import OnBoardingPool from "./components/OnBoardingPool";
 import ScheduleInterviewModal from "./components/ScheduleInterviewModal";
 import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
 import DropdownStripMultipleposition from "./components/DropdownStripMultipleposition";
@@ -58,6 +59,7 @@ import DigitalSignatureModal from "./modal/DigitalSignatureModal";
 import Loader from "../../shared/components/Loader";
 import committeeManagementService from "../committeeManagement/services/committeeManagementService";
 import ApprovalHistoryModal from "../Approvals/components/ApprovalHistoryModal";
+import useOnboardingPool from "./hooks/useOnboardingPool";
 export default function CandidateScreening({ selectedJob }) {
   const { t } = useTranslation(["candidateWorkflow", "common"]);
 
@@ -264,6 +266,8 @@ export default function CandidateScreening({ selectedJob }) {
   const [previewUrl, setPreviewUrl] = useState("");
 
   const [examConfigMap, setExamConfigMap] = useState({});
+  const [onboardingPage, setOnboardingPage] = useState(0);
+  const [onboardingPageSize, setOnboardingPageSize] = useState(10);
 
   const fetchExamConfigByPositions = async (positionIds = []) => {
     try {
@@ -308,12 +312,7 @@ export default function CandidateScreening({ selectedJob }) {
     (id) => examConfigMap[id]?.hasConfig && examConfigMap[id]?.isFrozen === true
   );
 
-  console.log("Selected Positions:", selectedPositionId);
-  console.log("Exam Config Map:", examConfigMap);
-  console.log("Has Exam Configuration:", hasExamConfiguration);
-  console.log("Can Show Exam Actions:", canShowExamActions);
   const privileges = useSelector((state) => state.user.privileges || {});
-
   const canUpdateCandidateScore = selectedPositionId?.some(
     (id) => examConfigMap[id]?.status !== "FINALIZED"
   );
@@ -603,13 +602,25 @@ export default function CandidateScreening({ selectedJob }) {
       (isCommitteeMember || selectedPositionId.length > 0),
     refreshKey: compRefreshKey,
   });
-
+  const {
+    onboardingCandidates,
+    totalElements: onboardingTotalElements,
+    loading: loadingOnboarding,
+    refetch: refetchOnboardingPool,
+  } = useOnboardingPool({
+    positionId: selectedPositionId,
+    searchText: filters.searchText,
+    page: onboardingPage,
+    pageSize: onboardingPageSize,
+    enabled: activeTab === "ONBOARDING_POOL" && selectedPositionId.length > 0,
+  });
   const TAB_PRIVILEGE_MAP = {
     CANDIDATE_POOL: "Candidate Pool",
     INTERVIEW_POOL: "Interview Pool",
     SCHEDULE_POOL: "Schedule Pool",
     COMPENSATION_POOL: "Compensation Pool",
     OFFER_POOL: "Offer Pool",
+    ONBOARDING_POOL: "Onboarding Pool",
     // ONBOARDING_POOL: "Compensation Pool", // assuming onboarding is compensation
   };
 
@@ -953,6 +964,7 @@ export default function CandidateScreening({ selectedJob }) {
     return tabs.filter((tab) => {
       // Compensation only for contract positions
       // show compensation based ONLY on privilege
+
       if (tab.key === "COMPENSATION_POOL") {
         // Committee member -> always show if privilege exists
         if (isCommitteeMember) {
@@ -1164,7 +1176,6 @@ export default function CandidateScreening({ selectedJob }) {
       : activeTab === "INTERVIEW_POOL"
         ? interviewCandidates?.[0]?.workflowStatus
         : "";
-  console.log(workflowStatus, "workflowStatus");
   const isWorkflowPublished = workflowStatus === "Published";
   const hasCandidatesInPool =
     activeTab === "CANDIDATE_POOL"
@@ -1184,9 +1195,13 @@ export default function CandidateScreening({ selectedJob }) {
       : activeTab === "INTERVIEW_POOL"
         ? allInterviewCandidatesForFilters.length > 0 &&
           allInterviewCandidatesForFilters.every((candidate) =>
-            ["QUALIFIED", "DISQUALIFIED", "ZONAL_REJECTED", "INTERVIEW_ABSENT", "ZONAL_ABSENT"].includes(
-              candidate.interviewSchedules?.interviewStatus
-            )
+            [
+              "QUALIFIED",
+              "DISQUALIFIED",
+              "ZONAL_REJECTED",
+              "INTERVIEW_ABSENT",
+              "ZONAL_ABSENT",
+            ].includes(candidate.interviewSchedules?.interviewStatus)
           )
         : false;
   const disableSendForApproval =
@@ -2102,8 +2117,6 @@ export default function CandidateScreening({ selectedJob }) {
         applicationIds,
       };
 
-      console.log(payload);
-
       const res = await jobPositionApiService.generateRankListdownload(payload);
 
       const blob = new Blob([res.data], {
@@ -2546,13 +2559,6 @@ export default function CandidateScreening({ selectedJob }) {
     excludedOfferIds,
     effectiveSelectedOffers,
   ]);
-
-  console.log("offerSelectAll:", offerSelectAll);
-  console.log("offerSelectedIds:", offerSelectedIds);
-  console.log("excludedOfferIds:", excludedOfferIds);
-  console.log("offerData:", offerData.length);
-  console.log("effectiveSelectedOffers:", effectiveSelectedOffers.length);
-  console.log("canGenerateOffer:", canGenerateOffer);
 
   const canSendOfferForApproval = useMemo(() => {
     if (offerSelectAll) {
@@ -3541,6 +3547,7 @@ export default function CandidateScreening({ selectedJob }) {
             {(activeTab === "INTERVIEW_POOL" ||
               activeTab === "COMPENSATION_POOL" ||
               activeTab === "SCHEDULE_POOL" ||
+              activeTab === "ONBOARDING_POOL" ||
               activeTab === "OFFER_POOL") && (
               <div className="col-md-4 d-none d-md-block" />
             )}
@@ -3659,7 +3666,6 @@ export default function CandidateScreening({ selectedJob }) {
                   style={{ minHeight: "39px" }}
                   onClick={handleBulkExtendClick}
                 >
-                  <i className="bi bi-calendar-plus me-1"></i>
                   {t("candidateWorkflow:Manager_offer") || "Manager offer"}
                 </button>
                 <button
@@ -3923,13 +3929,13 @@ export default function CandidateScreening({ selectedJob }) {
                     onClick={() => setShowRankListModal(true)}
                     disabled={!rankListGenerated}
                   >
-                    <img
+                    {/* <img
                       className="me-2"
                       src={locationIcon}
                       alt="location"
                       width={16}
                       style={{ filter: "brightness(0) invert(1)" }}
-                    />
+                    /> */}
                     {t("candidateWorkflow:assign_locations")}
                   </button>
                   {/* Download */}
@@ -4296,7 +4302,31 @@ export default function CandidateScreening({ selectedJob }) {
             setExcludedOfferIds={setExcludedOfferIds}
           />
         )}
+        {/* {activeTab === "ONBOARDING_POOL" && (
+          <OnBoardingPool
+            selectedPositionId={selectedPositionId}
+            selectedRequisitionId={selectedRequisitionId}
+            filters={filters}
+            page={page}
+            pageSize={pageSize}
+          />
+        )} */}
 
+        {activeTab === "ONBOARDING_POOL" && (
+          <OnBoardingPool
+            selectedPositionId={selectedPositionId}
+            selectedRequisitionId={selectedRequisitionId}
+            filters={filters}
+            data={onboardingCandidates}
+            totalElements={onboardingTotalElements}
+            loading={loadingOnboarding}
+            page={onboardingPage}
+            pageSize={onboardingPageSize}
+            onPageChange={setOnboardingPage}
+            onPageSizeChange={setOnboardingPageSize}
+            refetchOnboardingPool={refetchOnboardingPool}
+          />
+        )}
         <ExtendOfferModal
           show={showExtendModal}
           onHide={() => setShowExtendModal(false)}
@@ -4362,7 +4392,6 @@ export default function CandidateScreening({ selectedJob }) {
         setSelectedIds={setOfferSelectedIds}
         offerData={offerData}
         onUploadSuccess={() => {
-          console.log("Incrementing refreshKey");
           setOfferRefreshKey((prev) => prev + 1);
         }}
         offerSelectAll={offerSelectAll}
@@ -4482,9 +4511,6 @@ export default function CandidateScreening({ selectedJob }) {
             t={t}
             positionIds={selectedPositionId}
             onClose={() => setShowImportCandidatesModal(false)}
-            onSuccess={() => {
-              console.log("IMPORT SUCCESS");
-            }}
             fetchCandidates={fetchCandidates}
           />
         </Modal.Body>

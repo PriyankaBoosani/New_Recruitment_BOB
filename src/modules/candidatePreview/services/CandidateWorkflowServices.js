@@ -174,7 +174,13 @@ const candidateWorkflowServices = {
   return api.get(
     `/recruiter/position-stage/get-workflow-history/${posStageWorkflowId}`
   );
-  }
+  },
+  getOnboardingPool (payload)  {
+    return api.post(
+      "/recruiter/onboarding-pool/onboarding-pool",
+      payload
+    );
+  },
 };
 
 export default candidateWorkflowServices;
