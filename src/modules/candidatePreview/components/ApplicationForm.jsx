@@ -553,7 +553,7 @@ const ApplicationForm = ({
     }
 
     // WORK
-    if (/^work[_\s]?experience/i.test(name) || /^payslips?/i.test(name)) {
+    if (/^work[_\s]?experience/i.test(name)) {
       categories.push("WORK");
     }
 
