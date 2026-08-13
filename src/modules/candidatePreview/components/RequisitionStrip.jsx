@@ -475,7 +475,7 @@ const RequisitionStrip = ({
               )}
 
               {(job?.isAgeRelRiotVictimFamily || job?.isAgeRelWdsWomen) && (
-                <div className="info-card">
+                <div className="info-card mt-3">
                   <div className="section-title">
                     {t("addPosition:age_relaxation_for")}:
                   </div>
@@ -495,7 +495,7 @@ const RequisitionStrip = ({
               )}
 
               {job?.exclusionNames?.length > 0 && (
-                <div className="info-card">
+                <div className="info-card mt-3">
                   <div className="section-title">
                     {t("addPosition:Exclusions")}:
                   </div>

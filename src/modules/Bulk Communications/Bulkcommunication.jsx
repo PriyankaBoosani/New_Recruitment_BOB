@@ -1,6 +1,14 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import DropdownStripMultipleposition from "../candidatePreview/components/DropdownStripMultipleposition";
+import DropdownStrip from "../candidatePreview/components/DropdownStrip";
 import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
+import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
 import masterApiService from "../master/services/masterApiService";
 import BulkCommunicationPool from "./components/BulkCommunicationPool";
@@ -19,8 +27,7 @@ const Bulkcommunication = () => {
   const [loadingRequisitions, setLoadingRequisitions] = useState(false);
   const [loadingPositions, setLoadingPositions] = useState(false);
   const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
-  const [selectedPositionId, setSelectedPositionId] = useState([]);
-
+  const [selectedPositionId, setSelectedPositionId] = useState("");
 
   // Data Loading, Master Frameworks & Pagination States
   const [candidates, setCandidates] = useState([]);
@@ -31,7 +38,6 @@ const Bulkcommunication = () => {
   const [allCandidatesForFilters, setAllCandidatesForFilters] = useState([]);
   const [masterData, setMasterData] = useState(null);
   const [reservationCategories, setReservationCategories] = useState([]);
-
 
   const [errors, setErrors] = useState({
     subject: "",
@@ -81,8 +87,6 @@ const Bulkcommunication = () => {
     }
   };
 
-
-
   const resetCommunicationForm = () => {
     setEmailSubject("");
     setEmailBody("");
@@ -121,31 +125,37 @@ const Bulkcommunication = () => {
     return map;
   }, [masterData]);
 
-  const formatCandidateData = useCallback((apiData) => {
-    const formatStatus = (status = "") =>
-      status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+  const formatCandidateData = useCallback(
+    (apiData) => {
+      const formatStatus = (status = "") =>
+        status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 
-    return (apiData?.content || []).map((c) => ({
-      id: c.candidateApplications.id,
-      name: c.fullName,
-      rank: c.rank,
-      totalMarksObtained: Number(c.totalMarksObtained) > 0 ? c.totalMarksObtained : "-",
-      examQualificationStatus: c.examQualificationStatus ? c.examQualificationStatus.replaceAll("_", " ") : "-",
-      experienceMonths: c.totalMonths || 0,
-      status: formatStatus(c.candidateApplications.applicationStatus),
-      location: stateMap[c.stateId] || "-",
-      state: stateMap[c.stateId] || "-",
-      stateId: c.stateId,
-      categoryId: c.categoryId,
-      categoryName: categoryMap[c.categoryId] || "-",
-      applicationNo: c.candidateApplications.applicationNo,
-      candidateId: c.candidateApplications.candidateId,
-      positionId: c.candidateApplications.positionId,
-      fileUrl: c.resumeUrl,
-      email: c.email || "-",
-      positionName: c.positionName || "-",
-    }));
-  }, [categoryMap, stateMap]);
+      return (apiData?.content || []).map((c) => ({
+        id: c.candidateApplications.id,
+        name: c.fullName,
+        rank: c.rank,
+        totalMarksObtained:
+          Number(c.totalMarksObtained) > 0 ? c.totalMarksObtained : "-",
+        examQualificationStatus: c.examQualificationStatus
+          ? c.examQualificationStatus.replaceAll("_", " ")
+          : "-",
+        experienceMonths: c.totalMonths || 0,
+        status: formatStatus(c.candidateApplications.applicationStatus),
+        location: stateMap[c.stateId] || "-",
+        state: stateMap[c.stateId] || "-",
+        stateId: c.stateId,
+        categoryId: c.categoryId,
+        categoryName: categoryMap[c.categoryId] || "-",
+        applicationNo: c.candidateApplications.applicationNo,
+        candidateId: c.candidateApplications.candidateId,
+        positionId: c.candidateApplications.positionId,
+        fileUrl: c.resumeUrl,
+        email: c.email || "-",
+        positionName: c.positionName || "-",
+      }));
+    },
+    [categoryMap, stateMap]
+  );
 
   // ---------------- Network API Interaction Handlers ----------------
 
@@ -162,38 +172,66 @@ const Bulkcommunication = () => {
   };
 
   const handleRequisitionSearch = useCallback((inputValue) => {
-    if (requisitionSearchTimeout.current) clearTimeout(requisitionSearchTimeout.current);
+    if (requisitionSearchTimeout.current)
+      clearTimeout(requisitionSearchTimeout.current);
     requisitionSearchTimeout.current = setTimeout(() => {
       fetchRequisitions(inputValue);
     }, 400);
   }, []);
 
-  const CANDIDATE_POOL_STATUSES = useMemo(() => [
-    "PENDING", "APPLIED", "RESCHEDULED", "NOT_SCHEDULED", "SCHEDULED",
-    "SELECTED_FOR_NEXT_ROUND", "NOT_AVAILABLE", "SELECTED", "REJECTED",
-    "DISQUALIFIED", "CANCELLED", "SHORTLISTED", "ELIGIBLE", "OFFERED",
-    "OFFER_REJECTED", "OFFER_ACCEPTED", "DISCREPANCY", "PROVISIONALLY_APPROVED",
-    "OFFER_AWAITED", "OFFER_SENT", "ZONAL_REJECTED", "ZONAL_ABSENT",
-    "INTERVIEW_ABSENT", "COMPENSATION_PENDING", "COMPENSATION_APPROVED",
-    "COMPENSATION_REJECTED", "COMPENSATION_RENEGOTITATE", "SCHEDULE_PENDING",
-    "RESCHEDULE_PENDING", "PRE_ONBOARDING_PENDING", "PRE_ONBOARDING_COMPLETED",
-    "ONBOARDED"
-  ], []);
+  const CANDIDATE_POOL_STATUSES = useMemo(
+    () => [
+      "PENDING",
+      "APPLIED",
+      "RESCHEDULED",
+      "NOT_SCHEDULED",
+      "SCHEDULED",
+      "SELECTED_FOR_NEXT_ROUND",
+      "NOT_AVAILABLE",
+      "SELECTED",
+      "REJECTED",
+      "DISQUALIFIED",
+      "CANCELLED",
+      "SHORTLISTED",
+      "ELIGIBLE",
+      "OFFERED",
+      "OFFER_REJECTED",
+      "OFFER_ACCEPTED",
+      "DISCREPANCY",
+      "PROVISIONALLY_APPROVED",
+      "OFFER_AWAITED",
+      "OFFER_SENT",
+      "ZONAL_REJECTED",
+      "ZONAL_ABSENT",
+      "INTERVIEW_ABSENT",
+      "COMPENSATION_PENDING",
+      "COMPENSATION_APPROVED",
+      "COMPENSATION_REJECTED",
+      "COMPENSATION_RENEGOTITATE",
+      "SCHEDULE_PENDING",
+      "RESCHEDULE_PENDING",
+      "PRE_ONBOARDING_PENDING",
+      "PRE_ONBOARDING_COMPLETED",
+      "ONBOARDED",
+    ],
+    []
+  );
 
   const fetchCandidates = async () => {
-    if (!selectedPositionId.length) return;
+    if (!selectedPositionId) return;
     try {
       setLoadingCandidates(true);
 
-      const normalizedStatus = filters.status.length === 0
-        ? CANDIDATE_POOL_STATUSES
-        : filters.status.map((s) => s.toUpperCase());
+      const normalizedStatus =
+        filters.status.length === 0
+          ? CANDIDATE_POOL_STATUSES
+          : filters.status.map((s) => s.toUpperCase());
 
       const res = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
         page,
         size: pageSize,
-        positionIds: selectedPositionId,
+        positionIds: [selectedPositionId],
         status: normalizedStatus,
         stateId: filters.stateId,
         categoryId: filters.categoryId,
@@ -211,20 +249,21 @@ const Bulkcommunication = () => {
   };
 
   const fetchAllCandidatesForFilters = async () => {
-    if (!selectedPositionId.length) {
+    if (!selectedPositionId) {
       setAllCandidatesForFilters([]);
       return;
     }
     try {
-      const normalizedStatus = filters.status.length === 0
-        ? CANDIDATE_POOL_STATUSES
-        : filters.status.map((s) => s.toUpperCase());
+      const normalizedStatus =
+        filters.status.length === 0
+          ? CANDIDATE_POOL_STATUSES
+          : filters.status.map((s) => s.toUpperCase());
 
       const firstRes = await jobPositionApiService.getCandidatesByPosition({
         searchText: filters.searchText,
         page: 0,
         size: pageSize,
-        positionIds: selectedPositionId,
+        positionIds: [selectedPositionId],
         status: normalizedStatus,
         stateId: "",
         categoryId: "",
@@ -240,7 +279,7 @@ const Bulkcommunication = () => {
         searchText: filters.searchText,
         page: 0,
         size: totalElements,
-        positionIds: selectedPositionId,
+        positionIds: [selectedPositionId],
         status: normalizedStatus,
         stateId: "",
         categoryId: "",
@@ -248,14 +287,17 @@ const Bulkcommunication = () => {
 
       setAllCandidatesForFilters(formatCandidateData(finalRes?.data));
     } catch (err) {
-      console.error("Failed to build virtual contextual lookups alignment", err);
+      console.error(
+        "Failed to build virtual contextual lookups alignment",
+        err
+      );
     }
   };
 
   // ---------------- Synchronization Run Cycles ----------------
 
   useEffect(() => {
-    if (!selectedPositionId.length) return;
+    if (!selectedPositionId) return;
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
     searchTimeoutRef.current = setTimeout(() => {
@@ -267,10 +309,18 @@ const Bulkcommunication = () => {
   }, [filters.searchText]);
 
   useEffect(() => {
-    if (selectedPositionId.length > 0 && reservationCategories.length > 0) {
+    if (selectedPositionId && reservationCategories.length > 0) {
       fetchCandidates();
     }
-  }, [selectedPositionId, page, pageSize, filters.status, filters.stateId, filters.categoryId, masterData]);
+  }, [
+    selectedPositionId,
+    page,
+    pageSize,
+    filters.status,
+    filters.stateId,
+    filters.categoryId,
+    masterData,
+  ]);
 
   useEffect(() => {
     fetchAllCandidatesForFilters();
@@ -279,7 +329,7 @@ const Bulkcommunication = () => {
   useEffect(() => {
     if (!selectedRequisitionId) {
       setPositions([]);
-      setSelectedPositionId([]);
+      setSelectedPositionId("");
       return;
     }
     const fetchPositions = async () => {
@@ -302,17 +352,18 @@ const Bulkcommunication = () => {
 
   const handleRequisitionChange = (e) => {
     setSelectedRequisitionId(e.target.value);
-    setSelectedPositionId([]);
+    setSelectedPositionId("");
     setCandidates([]);
     setSelectedCandidateIds([]);
     setPage(0);
     setTotalElements(0);
   };
 
-  const handlePositionChange = (ids) => {
-    setSelectedPositionId(ids);
+  const handlePositionChange = (id) => {
+    setSelectedPositionId(id);
     setSelectedCandidateIds([]);
-    if (!ids || ids.length === 0) {
+
+    if (!id) {
       setCandidates([]);
       setTotalElements(0);
       setAllCandidatesForFilters([]);
@@ -320,17 +371,17 @@ const Bulkcommunication = () => {
     }
   };
 
-  const handleRemovePosition = (removeId) => {
-    const updatedIds = selectedPositionId.filter((id) => id !== removeId);
-    setPage(0);
-    setSelectedPositionId(updatedIds);
-    if (updatedIds.length === 0) {
-      setCandidates([]);
-      setTotalElements(0);
-      setSelectedCandidateIds([]);
-      setAllCandidatesForFilters([]);
-    }
-  };
+  // const handleRemovePosition = (removeId) => {
+  //   const updatedIds = selectedPositionId.filter((id) => id !== removeId);
+  //   setPage(0);
+  //   setSelectedPositionId(updatedIds);
+  //   if (updatedIds.length === 0) {
+  //     setCandidates([]);
+  //     setTotalElements(0);
+  //     setSelectedCandidateIds([]);
+  //     setAllCandidatesForFilters([]);
+  //   }
+  // };
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -339,7 +390,6 @@ const Bulkcommunication = () => {
   };
 
   const handleSendCommunication = async () => {
-
     // Validation
     const validationErrors = {
       subject: "",
@@ -378,7 +428,7 @@ const Bulkcommunication = () => {
         selectAll:
           allCandidatesForFilters.length === selectedCandidateIds.length,
         applicationIds: selectedCandidateIds,
-        positionIds: selectedPositionId,
+        positionIds: [selectedPositionId], 
         statusList: activeStatuses,
         subject: emailSubject,
         body: emailBody,
@@ -399,14 +449,11 @@ const Bulkcommunication = () => {
 
       const response = await jobPositionApiService.sendBulkEmail(formData);
 
-      if (
-        response?.data?.success === false ||
-        response?.success === false
-      ) {
+      if (response?.data?.success === false || response?.success === false) {
         toast.error(
           response?.data?.message ||
-          response?.message ||
-          t("failed_to_send_communication")
+            response?.message ||
+            t("failed_to_send_communication")
         );
         return;
       }
@@ -435,8 +482,7 @@ const Bulkcommunication = () => {
       console.error("Communication transmission pipeline failure:", err);
 
       const errorMessage =
-        err?.response?.data?.message ||
-       t("submission_failed")
+        err?.response?.data?.message || t("submission_failed");
 
       toast.error(errorMessage);
     } finally {
@@ -445,25 +491,37 @@ const Bulkcommunication = () => {
     }
   };
 
-  const selectedRequisition = requisitions.find((r) => r.id === selectedRequisitionId);
-  const normalizedRequisition = selectedRequisition ? {
-    requisition_id: selectedRequisition.id,
-    requisition_code: selectedRequisition.requisitionCode,
-    requisition_title: selectedRequisition.requisitionTitle,
-    registration_start_date: selectedRequisition.startDate,
-    registration_end_date: selectedRequisition.endDate,
-  } : null;
+  const selectedRequisition = requisitions.find(
+    (r) => r.id === selectedRequisitionId
+  );
+  const normalizedRequisition = selectedRequisition
+    ? {
+        requisition_id: selectedRequisition.id,
+        requisition_code: selectedRequisition.requisitionCode,
+        requisition_title: selectedRequisition.requisitionTitle,
+        registration_start_date: selectedRequisition.startDate,
+        registration_end_date: selectedRequisition.endDate,
+      }
+    : null;
 
-  const selectedPosition = positions
-    .filter((p) => selectedPositionId.includes(p.jobPositions?.positionId))
-    .map((p) => ({
-      positionId: p.jobPositions?.positionId,
-      positionName: p?.masterPositions?.positionName,
-    }));
+  const selectedPosition = positions.find(
+    (p) => p.jobPositions?.positionId === selectedPositionId
+  );
+
+  const normalizedPosition = selectedPosition
+    ? {
+        positionId: selectedPosition.jobPositions?.positionId,
+        positionName: selectedPosition?.masterPositions?.positionName,
+      }
+    : null;
 
   const hasLocationData = useMemo(() => {
-    return positions.some(
-      (p) => selectedPositionId.includes(p.jobPositions?.positionId) && (p.jobPositions?.positionStateDistributions?.length || 0) > 0
+    const position = positions.find(
+      (p) => p.jobPositions?.positionId === selectedPositionId
+    );
+
+    return (
+      (position?.jobPositions?.positionStateDistributions?.length || 0) > 0
     );
   }, [positions, selectedPositionId]);
 
@@ -471,18 +529,19 @@ const Bulkcommunication = () => {
     <div className="container-fluid px-5 py-4">
       {/* --- Dynamic Page Heading Section Matching Bank of Baroda UX --- */}
       <div className="mb-4 text-start">
-        <h4 className="font-weight-bold mb-1" style={{ color: '#1e3a8a', fontWeight: '500' }}>
+        <h4
+          className="font-weight-bold mb-1"
+          style={{ color: "#1e3a8a", fontWeight: "500" }}
+        >
           {t("bulk_communication")}
         </h4>
-        <p className="text-muted small mb-0">
-          {t("heading_description")}
-        </p>
+        <p className="text-muted small mb-0">{t("heading_description")}</p>
       </div>
 
       <div className="card mb-4 border-0">
         <div className="card-body p-0">
           <div className="row g-2 align-items-end border-bottom pb-4 px-3 py-3">
-            <DropdownStripMultipleposition
+            <DropdownStrip
               requisitions={requisitions}
               positions={positions}
               selectedRequisitionId={selectedRequisitionId}
@@ -496,15 +555,23 @@ const Bulkcommunication = () => {
           </div>
 
           <div className="mt-2 pt-1 pb-3">
-            {normalizedRequisition && selectedPosition?.length > 0 && (
-              <RequisitionStripformultiplepositions
+            {normalizedRequisition && normalizedPosition && (
+              // <RequisitionStripformultiplepositions
+              //   requisition={normalizedRequisition}
+              //   position={selectedPosition}
+              //   isCardBg={false}
+              //   isSaveEnabled={false}
+              //   isSaveBtn={false}
+              //   saveButton={false}
+              //   onRemovePosition={handleRemovePosition}
+              // />
+              <RequisitionStrip
                 requisition={normalizedRequisition}
-                position={selectedPosition}
+                position={normalizedPosition}
                 isCardBg={false}
                 isSaveEnabled={false}
                 isSaveBtn={false}
                 saveButton={false}
-                onRemovePosition={handleRemovePosition}
               />
             )}
           </div>
@@ -533,11 +600,23 @@ const Bulkcommunication = () => {
       />
 
       {isModalOpen && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
-          <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '900px' }}>
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div
+            className="modal-dialog modal-dialog-centered"
+            style={{ maxWidth: "900px" }}
+          >
             <div className="modal-content border-0 shadow rounded-3 overflow-hidden">
               <div className="modal-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
-                <h5 className="modal-title font-weight-bold mb-0 text-dark" style={{ fontSize: '1.25rem' }}>{t("bulk_communication")}</h5>
+                <h5
+                  className="modal-title font-weight-bold mb-0 text-dark"
+                  style={{ fontSize: "1.25rem" }}
+                >
+                  {t("bulk_communication")}
+                </h5>
                 <button
                   type="button"
                   className="btn-close border-0 bg-transparent p-0 text-muted"
@@ -555,16 +634,21 @@ const Bulkcommunication = () => {
                 </button>
               </div>
 
-              <div className="modal-body p-4 bg-white overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+              <div
+                className="modal-body p-4 bg-white overflow-auto"
+                style={{ maxHeight: "calc(100vh - 200px)" }}
+              >
                 <div className="mb-4">
                   <label className="form-label small font-weight-bold mb-1">
-                    {t("subject")}<span className="text-danger">*</span>
+                    {t("subject")}
+                    <span className="text-danger">*</span>
                   </label>
 
                   <input
                     type="text"
-                    className={`form-control rounded-2 py-2 px-3 ${errors.subject ? "is-invalid" : ""
-                      }`}
+                    className={`form-control rounded-2 py-2 px-3 ${
+                      errors.subject ? "is-invalid" : ""
+                    }`}
                     value={emailSubject}
                     onChange={(e) => {
                       setEmailSubject(e.target.value);
@@ -593,8 +677,9 @@ const Bulkcommunication = () => {
 
                   <textarea
                     rows="12"
-                    className={`form-control rounded-2 p-3 ${errors.body ? "is-invalid" : ""
-                      }`}
+                    className={`form-control rounded-2 p-3 ${
+                      errors.body ? "is-invalid" : ""
+                    }`}
                     value={emailBody}
                     onChange={(e) => {
                       setEmailBody(e.target.value);
@@ -610,9 +695,7 @@ const Bulkcommunication = () => {
                   />
 
                   {errors.body && (
-                    <div className="text-danger mt-1 small">
-                      {errors.body}
-                    </div>
+                    <div className="text-danger mt-1 small">{errors.body}</div>
                   )}
                 </div>
 
@@ -622,7 +705,6 @@ const Bulkcommunication = () => {
                   </label>
 
                   <div className="d-flex align-items-center gap-3">
-
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -666,7 +748,6 @@ const Bulkcommunication = () => {
                         </div>
 
                         <div className="d-flex align-items-center gap-2">
-
                           <button
                             type="button"
                             className="icon-btn"
@@ -706,21 +787,31 @@ const Bulkcommunication = () => {
                           >
                             ✕
                           </button>
-
                         </div>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="p-3 border rounded-3 d-flex align-items-start gap-3" style={{ backgroundColor: '#fff5f2', borderColor: '#ffe2da' }}>
-                  <span className="fs-5 text-secondary" style={{ marginTop: '-2px' }}>👥</span>
+                <div
+                  className="p-3 border rounded-3 d-flex align-items-start gap-3"
+                  style={{ backgroundColor: "#fff5f2", borderColor: "#ffe2da" }}
+                >
+                  <span
+                    className="fs-5 text-secondary"
+                    style={{ marginTop: "-2px" }}
+                  >
+                    👥
+                  </span>
                   <div>
-                    <div className="font-weight-bold text-dark small" style={{ fontWeight: '600', fontSize: '0.95rem' }}>
+                    <div
+                      className="font-weight-bold text-dark small"
+                      style={{ fontWeight: "600", fontSize: "0.95rem" }}
+                    >
                       {/* {selectedCandidateIds.length} Selected Candidates */}
                       {selectedCandidateIds.length} {t("selected_candidates")}
                     </div>
-                    <div className="text-muted" style={{ fontSize: '0.82rem' }}>
+                    <div className="text-muted" style={{ fontSize: "0.82rem" }}>
                       {t("communication_selected_candidates")}
                     </div>
                   </div>
@@ -735,7 +826,7 @@ const Bulkcommunication = () => {
                     resetCommunicationForm();
                     setIsModalOpen(false);
                   }}
-                  style={{ fontSize: '0.95rem', color: '#333' }}
+                  style={{ fontSize: "0.95rem", color: "#333" }}
                 >
                   {t("cancel")}
                 </button>
@@ -744,11 +835,19 @@ const Bulkcommunication = () => {
                   className="btn px-4 py-2 rounded-2 text-white font-weight-bold shadow-sm d-flex align-items-center gap-2"
                   disabled={sendingCommunication}
                   onClick={handleSendCommunication}
-                  style={{ backgroundColor: '#e95420', border: 'none', fontSize: '0.95rem' }}
+                  style={{
+                    backgroundColor: "#e95420",
+                    border: "none",
+                    fontSize: "0.95rem",
+                  }}
                 >
                   {sendingCommunication ? (
                     <>
-                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
                       {t("sending")}
                     </>
                   ) : (
