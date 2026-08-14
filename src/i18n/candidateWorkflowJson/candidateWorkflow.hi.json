@@ -19,12 +19,13 @@
   "managing_offer_for": "के लिए ऑफर प्रबंधित किया जा रहा है",
   "select_status_filter_first": "कृपया पहले स्थिति फ़िल्टर चुनें।",
   "comments": "टिप्पणियाँ",
+  "enter_reason": "ऑफ़र रद्द करने का कारण दर्ज करें",
   "comments_required_for_rejection": "अस्वीकृति के लिए टिप्पणियाँ अनिवार्य हैं",
   "remarks_reason": "टिप्पणी / कारण",
+  "cancel_offer": "ऑफ़र रद्द करें",
   "enter_remarks": "टिप्पणियाँ दर्ज करें (ऑफ़र रद्द करने के लिए अनिवार्य)",
   "enter_remarks_optional": "टिप्पणी दर्ज करें (वैकल्पिक)",
-  "remarks_required_for_rejection": "ऑफ़र अस्वीकृति के लिए टिप्पणी / कारण अनिवार्य है",
-  "enter_comments": "टिप्पणियाँ दर्ज करें (अस्वीकृति के लिए अनिवार्य)",
+  "remarks_required_for_rejection": "ऑफ़र रद्द करने के लिए टिप्पणियाँ / कारण अनिवार्य हैं",
   "key_responsibilities": "मुख्य जिम्मेदारियां",
   "failed_load_position_details": "पद विवरण लोड करने में विफल",
   "category_wise_reservation": "श्रेणीवार आरक्षण",
@@ -376,5 +377,6 @@
   "publish": "प्रकाशित करें",
   "approvalstatus": "स्वीकृति स्थिति",
   "candidate_approval_screening": "उम्मीदवार स्वीकृति स्क्रीनिंग",
-  "manage_candidate_approvals": "उम्मीदवारों के परिणामों की समीक्षा करें और उन्हें स्वीकृत करें"
+  "manage_candidate_approvals": "उम्मीदवारों के परिणामों की समीक्षा करें और उन्हें स्वीकृत करें",
+  "remarks_required_for_extension": "ऑफ़र बढ़ाने के लिए टिप्पणियाँ अनिवार्य हैं"
 }

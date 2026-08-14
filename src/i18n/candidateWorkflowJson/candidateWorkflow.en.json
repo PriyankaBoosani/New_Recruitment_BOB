@@ -25,8 +25,10 @@
   "remarks_reason": "Remarks / Reason",
   "enter_remarks": "Enter comments (mandatory for rejection)",
   "enter_remarks_optional": "Enter remarks (optional)",
-  "remarks_required_for_rejection": "Remarks / Reason are mandatory for rejection",
-  "enter_comments": "Enter comments (mandatory for rejection)",
+  "remarks_required_for_rejection": "Comments / Reason are mandatory for cancelling the offer",
+  "enter_comments": "Enter comments",
+  "enter_reason": "Enter reason for cancelling the offer",
+  "cancel_offer": "Cancel Offer",
   "category": "Category",
   "disability": "Disability",
   "gen": "GEN",
@@ -370,4 +372,6 @@
   "publish": "Publish",
   "approvalstatus": "Approval Status",
   "candidate_approval_screening": "Candidate Approval Screening",
-"manage_candidate_approvals": "Review and approve candidate results"}
+  "manage_candidate_approvals": "Review and approve candidate results",
+  "remarks_required_for_extension": "Comments are mandatory for extending the offer"
+}
