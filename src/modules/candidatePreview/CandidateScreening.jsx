@@ -316,6 +316,11 @@ export default function CandidateScreening({ selectedJob }) {
   const canUpdateCandidateScore = selectedPositionId?.some(
     (id) => examConfigMap[id]?.status !== "FINALIZED"
   );
+ const isCandidateScoreUploadDisabled = !selectedPositionId?.some(
+  (id) =>
+    examConfigMap[id]?.isFrozen === true &&
+    examConfigMap[id]?.status === "APPROVED"
+);
 
   const canAccessExamActions = isRecruiter;
 
@@ -3175,6 +3180,7 @@ export default function CandidateScreening({ selectedJob }) {
                       variant="outline-primary"
                       size="sm"
                       onClick={() => setShowImportCandidatesModal(true)}
+                      disabled={isCandidateScoreUploadDisabled}
                       className="d-flex align-items-center gap-2 bulk-import-btn"
                       style={{ height: "38px" }}
                     >
@@ -4524,6 +4530,7 @@ export default function CandidateScreening({ selectedJob }) {
         handleEditExaminationScore={handleEditExaminationScore}
         reservationCategories={reservationCategories}
         examConfigMap={examConfigMap}
+        fetchExamConfigByPositions={fetchExamConfigByPositions}
       />
       {/* Render Loader when generating Offer OR Rank List */}
       {/* Render Loader when generating Offer, Rank List, or Moving Candidates */}

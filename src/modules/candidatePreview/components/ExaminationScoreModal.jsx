@@ -164,6 +164,7 @@ const ExaminationScoreModal = ({
   handleEditExaminationScore,
   reservationCategories = [],
   examConfigMap = {},
+  fetchExamConfigByPositions,
 }) => {
 
   const { t } = useTranslation("candidateWorkflow");
@@ -361,56 +362,60 @@ const getStatusLabel = (status) => {
                     </button>
                   )}
                   {hasConfig &&
-                    hasQualifiedWithoutRelaxation &&
-                    !isRejected &&
-                    !isFinalized && (
-                      <button
-                        className="btn rank-finalize-btn"
-                        onClick={async (e) => {
-                          e.stopPropagation();
+  hasQualifiedWithoutRelaxation &&
+  !isRejected &&
+  !isFinalized && (
+    <button
+      className="btn rank-finalize-btn"
+      onClick={async (e) => {
+        e.stopPropagation();
 
-                          try {
-                            const payload = [item.positionId || item.id];
+        try {
+          const positionId = item.positionId || item.id;
 
-                            const res =
-                              await jobPositionApiService.finalizeExamConfiguration(
-                                payload
-                              );
+          const res =
+            await jobPositionApiService.finalizeExamConfiguration([
+              positionId,
+            ]);
 
-                            if (res?.success) {
-                              toast.success(
-                                res?.message ||
-                                "Position finalized successfully"
-                              );
+          if (res?.success) {
+            toast.success(
+              res?.message || "Position finalized successfully"
+            );
 
-                              // OPTIONAL UI UPDATE
-                              setExaminationScoreData((prev) =>
-                                prev.map((p) =>
-                                  (p.positionId || p.id) ===
-                                    (item.positionId || item.id)
-                                    ? {
-                                      ...p,
-                                      isFinalized: true,
-                                    }
-                                    : p
-                                )
-                              );
-                            } else {
-                              toast.error(res?.message || "Failed to finalize");
-                            }
-                          } catch (err) {
-                            console.error("FINALIZE ERROR", err);
+            // Update modal UI immediately
+            setExaminationScoreData((prev) =>
+              prev.map((p) =>
+                (p.positionId || p.id) === positionId
+                  ? {
+                      ...p,
+                      isFinalized: true,
+                    }
+                  : p
+              )
+            );
 
-                            toast.error(
-                              err?.response?.data?.message ||
-                              "Failed to finalize"
-                            );
-                          }
-                        }}
-                      >
-                       {t("finalize")}
-                      </button>
-                    )}
+            // IMPORTANT:
+            // Fetch latest status + isFrozen from backend
+            await fetchExamConfigByPositions([positionId]);
+          } else {
+            toast.error(
+              res?.message || "Failed to finalize"
+            );
+          }
+        } catch (err) {
+          console.error("FINALIZE ERROR", err);
+
+          toast.error(
+            err?.response?.data?.message ||
+              "Failed to finalize"
+          );
+        }
+      }}
+    >
+      {t("finalize")}
+    </button>
+  )}
 
                   {/* CHEVRON */}
 
