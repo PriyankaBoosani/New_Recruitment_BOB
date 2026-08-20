@@ -33,67 +33,63 @@ export const validateCourse = (value) => {
   }
 
   if (!validTextForm(course)) {
-    return i18n.t(
-      "education:invalid_characters",
-      "Invalid characters"
-    );
+    return i18n.t("education:invalid_characters", "Invalid characters");
   }
 
   // '+' cannot be at the beginning
   if (/^\+/.test(course)) {
-    return i18n.t(
-      "education:invalid_course",
-      "Course cannot start with +"
-    );
+    return i18n.t("education:invalid_course", "Course cannot start with +");
   }
 
   // '+' cannot be at the end
   if (/\+$/.test(course)) {
-    return i18n.t(
-      "education:invalid_course",
-      "Course cannot end with +"
-    );
+    return i18n.t("education:invalid_course", "Course cannot end with +");
   }
 
   // Multiple consecutive '+' not allowed
   if (/\+{2,}/.test(course)) {
-    return i18n.t(
-      "education:invalid_course",
-      "Invalid course format"
-    );
+    return i18n.t("education:invalid_course", "Invalid course format");
   }
 
   return null;
 };
 
-export const validateCourseCode = (value, existing = [], currentId = null) => {
+export const validateCourseCode = (
+  value,
+  existing = [],
+  currentId = null,
+  educationLevel = ""
+) => {
   // REQUIRED
   let error = requiredField(value);
+
   if (error) {
     return i18n.t("education:course_code_required", "Course code is required");
   }
 
-  // DUPLICATE CHECK
   const normalized = normalize(value);
+  const normalizedEducationLevel = normalize(educationLevel);
 
   const isDuplicate = existing.some((item) => {
     const sameCode = normalize(item.qualificationCode) === normalized;
 
+    const sameEducationLevel =
+      normalize(item.educationLevel) === normalizedEducationLevel;
+
     const isSameId = item.educationQualificationsId === currentId;
 
-    return sameCode && !isSameId;
+    return sameCode && sameEducationLevel && !isSameId;
   });
 
   if (isDuplicate) {
     return i18n.t(
       "education:duplicate_course_code",
-      "Course code already exists"
+      "Course code already exists for this education level"
     );
   }
 
   return null;
 };
-
 export const validateSpecializationTest = (list = []) => {
   const seen = new Set();
   const seenCodes = new Set();
@@ -216,13 +212,15 @@ export const validateEducationForm = (formData = {}, options = {}) => {
     const { existing = [], currentId = null } = options;
 
     const isDuplicate = existing.some((item) => {
-      const sameCourse =
-        item.course?.trim().toLowerCase() ===
-        formData.course?.trim().toLowerCase();
+      const sameCourse = normalize(item.course) === normalize(formData.course);
+
+      const sameEducationLevel =
+        normalize(item.educationLevel) ===
+        normalize(options.educationLevelName);
 
       const isSameId = item.educationQualificationsId === currentId;
 
-      return sameCourse && !isSameId;
+      return sameCourse && sameEducationLevel && !isSameId;
     });
 
     if (isDuplicate) {
@@ -237,11 +235,12 @@ export const validateEducationForm = (formData = {}, options = {}) => {
    COURSE CODE VALIDATION
 ========================= */
 
-  const courseCodeError = validateCourseCode(
-    formData.courseCode,
-    existing,
-    currentId
-  );
+ const courseCodeError = validateCourseCode(
+  formData.courseCode,
+  existing,
+  currentId,
+  options.educationLevelName
+);
 
   if (courseCodeError) {
     errors.courseCode = courseCodeError;

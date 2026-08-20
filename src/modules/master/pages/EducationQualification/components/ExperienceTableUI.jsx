@@ -71,14 +71,19 @@ const EducationTable = ({
                     {item.course}({item.qualificationCode})
                   </td>
 
-               <td>
-  {item.specialization
-    .map(
-      (s) =>
-        `${s.name} (${s.code})${s.groupName ? ` - ${s.groupName}` : ""}`
-    )
-    .join(", ")}
-</td>
+                  <td>
+                    {item.specialization?.length
+                      ? item.specialization
+                          .map((s) =>
+                            item.course?.trim().toLowerCase() === "others"
+                              ? `${s.name} -`
+                              : `${s.name} (${s.code})${
+                                  s.groupName ? ` - ${s.groupName}` : ""
+                                }`
+                          )
+                          .join(", ")
+                      : "-"}
+                  </td>
                   <td>
                     <div className="action-buttons">
                       {/* VIEW */}
@@ -91,16 +96,20 @@ const EducationTable = ({
                       </Button>
 
                       {/* EDIT */}
-                        {/* EDIT */}
-                     {!["Any Graduation", "Any Post-Graduation"].includes(item.course) && (
-  <Button
-    variant="link"
-    className="action-btn edit-btn"
-    onClick={() => onEdit(item, idx)}
-  >
-    <img src={editIcon} alt="Edit" className="icon-16" />
-  </Button>
-)}
+                      {/* EDIT */}
+                      {![
+                        "Any Graduation",
+                        "Any Post-Graduation",
+                        "Others",
+                      ].includes(item.course) && (
+                        <Button
+                          variant="link"
+                          className="action-btn edit-btn"
+                          onClick={() => onEdit(item, idx)}
+                        >
+                          <img src={editIcon} alt="Edit" className="icon-16" />
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>

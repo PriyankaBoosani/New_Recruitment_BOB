@@ -135,7 +135,8 @@ body {
 
 /* Dropdown items */
 .navbar .dropdown-item {
-  padding: 0.5rem 1.5rem;
+	padding: .5rem 1.5rem;
+	white-space: normal !important;
 }
 
 /* Add a subtle separator between main nav items */

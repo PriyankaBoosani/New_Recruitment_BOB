@@ -59,7 +59,25 @@ const ExperienceModal = ({
       duplicateCodes,
     };
   };
+  const filteredSpecializations = (specializations = []) =>
+    specializations.filter((s) => {
+      const name =
+        typeof s === "string" ? s : s?.specializationName || s?.name || "";
 
+      const normalizedName = name.trim().toLowerCase();
+
+      return !["other related fields", "others"].includes(normalizedName);
+    });
+  const shouldShowSpecialization = (val) => {
+    const name =
+      typeof val === "string"
+        ? val
+        : val?.specializationName || val?.name || "";
+
+    return !["other related fields", "others"].includes(
+      name.trim().toLowerCase()
+    );
+  };
   return (
     <Modal
       show={show}
@@ -436,233 +454,190 @@ const ExperienceModal = ({
                           }}
                         >
                           <div className="row">
-                            {form.specializationOthers.map((val, i) => (
-                              <div key={i} className="col-md-12 mb-2">
-                                <div className="row g-2 align-items-start">
-                                  {/* SPECIALIZATION NAME */}
-                                  <div className="col-md-4">
-                                    <input
-                                      type="text"
-                                      className={`form-control ${
-                                        duplicateNames.has(i) ||
-                                        errors[formIndex]?.specialization?.[i]
-                                          ?.name
-                                          ? "is-invalid"
-                                          : ""
-                                      }`}
-                                      value={val?.name || ""}
-                                      placeholder={t(
-                                        "education:specialization_name"
-                                      )}
-                                      onChange={(e) =>
-                                        onChange(
-                                          formIndex,
-                                          "specialization",
-                                          e.target.value,
-                                          i
-                                        )
-                                      }
-                                    />
-                                  </div>
+                            {form.specializationOthers.map((val, i) => {
+                              const specializationName =
+                                val?.specializationName || val?.name || "";
 
-                                  {/* SPECIALIZATION CODE */}
-                                  {/* SPECIALIZATION CODE */}
-                                  <div className="col-md-4">
-                                    <input
-                                      type="text"
-                                      className={`form-control ${
-                                        duplicateCodes.has(i) ||
-                                        (val?.name?.trim() &&
-                                          !val?.code?.trim())
-                                          ? "is-invalid"
-                                          : ""
-                                      }`}
-                                      readOnly={readOnlyCodes && !!val?.id}
-                                      style={{
-                                        backgroundColor:
-                                          readOnlyCodes && !!val?.id
-                                            ? "#f8f9fa"
-                                            : "#fff",
-                                        cursor:
-                                          readOnlyCodes && !!val?.id
-                                            ? "not-allowed"
-                                            : "text",
-                                        color:
-                                          readOnlyCodes && !!val?.id
-                                            ? "#6c757d"
-                                            : "#212529",
-                                      }}
-                                      value={val?.code || ""}
-                                      placeholder={t(
-                                        "education:specialization_code"
-                                      )}
-                                      onChange={(e) =>
-                                        onChange(
-                                          formIndex,
-                                          "specializationCode",
-                                          e.target.value,
-                                          i
-                                        )
-                                      }
-                                    />
-                                  </div>
+                              const isSystemSpecialization = [
+                                "other related fields",
+                                "others",
+                              ].includes(
+                                specializationName.trim().toLowerCase()
+                              );
 
-                                  {/* GROUP */}
-                                  {/* <div className="col-md-3">
-  <select
-    className="form-select"
-    value={val?.group || ""}
-    onChange={(e) =>
-      onChange(
-        formIndex,
-        "specializationGroup",
-        e.target.value,
-        i
-      )
-    }
-  >
-    <option value="">{t("common:select")}</option>
+                              // Hide only existing system specializations.
+                              // Keep newly added/blank rows visible.
+                              if (isSystemSpecialization && val?.id) {
+                                return null;
+                              }
 
-    {groupOptions?.map((item) => (
-      <option key={item.value} value={item.value}>
-        {item.label}
-      </option>
-    ))}
-  </select>
-</div> */}
-
-                                  {/* GROUP */}
-                                  {!hideGroup && (
-                                    <div className="col-md-3">
-                                      <Select
-                                        classNamePrefix="react-select"
-                                        className={
-                                          val?.name?.trim() &&
-                                          !val?.group?.trim()
-                                            ? "react-select-invalid"
+                              return (
+                                <div key={i} className="col-md-12 mb-2">
+                                  <div className="row g-2 align-items-start">
+                                    {/* SPECIALIZATION NAME */}
+                                    <div className="col-md-4">
+                                      <input
+                                        type="text"
+                                        className={`form-control ${
+                                          duplicateNames.has(i) ||
+                                          errors[formIndex]?.specialization?.[i]
+                                            ?.name
+                                            ? "is-invalid"
                                             : ""
-                                        }
-                                        options={groupOptions}
-                                        value={
-                                          groupOptions.find(
-                                            (option) =>
-                                              option.value === val?.group
-                                          ) || null
-                                        }
-                                        onChange={(option) =>
+                                        }`}
+                                        value={val?.name || ""}
+                                        placeholder={t(
+                                          "education:specialization_name"
+                                        )}
+                                        onChange={(e) =>
                                           onChange(
                                             formIndex,
-                                            "specializationGroup",
-                                            option?.value || "",
+                                            "specialization",
+                                            e.target.value,
                                             i
                                           )
                                         }
-                                        placeholder={t("common:select")}
-                                        menuPlacement="bottom"
-                                        menuPosition="fixed"
-                                        menuShouldScrollIntoView={false}
-                                        styles={{
-                                          control: (base, state) => ({
-                                            ...base,
-                                            minHeight: "40px",
-                                            borderRadius: "0.375rem",
-                                            border: `1px solid ${
-                                              val?.name?.trim() &&
-                                              !val?.group?.trim()
-                                                ? "#dc3545"
-                                                : state.isFocused
-                                                  ? "#86b7fe"
-                                                  : "#ced4da"
-                                            }`,
-                                            boxShadow: "none",
-                                            "&:hover": {
-                                              borderColor:
+                                      />
+                                    </div>
+
+                                    {/* SPECIALIZATION CODE */}
+                                    {/* SPECIALIZATION CODE */}
+                                    <div className="col-md-4">
+                                      <input
+                                        type="text"
+                                        className={`form-control ${
+                                          duplicateCodes.has(i) ||
+                                          (val?.name?.trim() &&
+                                            !val?.code?.trim())
+                                            ? "is-invalid"
+                                            : ""
+                                        }`}
+                                        readOnly={readOnlyCodes && !!val?.id}
+                                        style={{
+                                          backgroundColor:
+                                            readOnlyCodes && !!val?.id
+                                              ? "#f8f9fa"
+                                              : "#fff",
+                                          cursor:
+                                            readOnlyCodes && !!val?.id
+                                              ? "not-allowed"
+                                              : "text",
+                                          color:
+                                            readOnlyCodes && !!val?.id
+                                              ? "#6c757d"
+                                              : "#212529",
+                                        }}
+                                        value={val?.code || ""}
+                                        placeholder={t(
+                                          "education:specialization_code"
+                                        )}
+                                        onChange={(e) =>
+                                          onChange(
+                                            formIndex,
+                                            "specializationCode",
+                                            e.target.value,
+                                            i
+                                          )
+                                        }
+                                      />
+                                    </div>
+
+                                    {/* GROUP */}
+                                    {!hideGroup && (
+                                      <div className="col-md-3">
+                                        <Select
+                                          classNamePrefix="react-select"
+                                          className={
+                                            val?.name?.trim() &&
+                                            !val?.group?.trim()
+                                              ? "react-select-invalid"
+                                              : ""
+                                          }
+                                          options={groupOptions}
+                                          value={
+                                            groupOptions.find(
+                                              (option) =>
+                                                option.value === val?.group
+                                            ) || null
+                                          }
+                                          onChange={(option) =>
+                                            onChange(
+                                              formIndex,
+                                              "specializationGroup",
+                                              option?.value || "",
+                                              i
+                                            )
+                                          }
+                                          placeholder={t("common:select")}
+                                          menuPlacement="bottom"
+                                          menuPosition="fixed"
+                                          menuShouldScrollIntoView={false}
+                                          styles={{
+                                            control: (base, state) => ({
+                                              ...base,
+                                              minHeight: "40px",
+                                              borderRadius: "0.375rem",
+                                              border: `1px solid ${
                                                 val?.name?.trim() &&
                                                 !val?.group?.trim()
                                                   ? "#dc3545"
                                                   : state.isFocused
                                                     ? "#86b7fe"
-                                                    : "#ced4da",
-                                            },
-                                          }),
-                                          menu: (base) => ({
-                                            ...base,
-                                            zIndex: 9999,
-                                          }),
-                                        }}
-                                      />
-                                    </div>
-                                  )}
-
-                                  {/* DELETE BUTTON */}
-                                  <div className="col-md-1 d-flex align-items-center justify-content-center">
-                                    {" "}
-                                    {(!isEditing ||
-                                      (isEditing && !val?.id)) && (
-                                      <Button
-                                        type="button"
-                                        variant="link"
-                                        className="action-btn delete-btn"
-                                        onClick={() =>
-                                          onRemoveSpec(formIndex, i)
-                                        }
-                                      >
-                                        <img
-                                          src={deleteIcon}
-                                          alt="Delete"
-                                          className="icon-16"
+                                                    : "#ced4da"
+                                              }`,
+                                              boxShadow: "none",
+                                              "&:hover": {
+                                                borderColor:
+                                                  val?.name?.trim() &&
+                                                  !val?.group?.trim()
+                                                    ? "#dc3545"
+                                                    : state.isFocused
+                                                      ? "#86b7fe"
+                                                      : "#ced4da",
+                                              },
+                                            }),
+                                            menu: (base) => ({
+                                              ...base,
+                                              zIndex: 9999,
+                                            }),
+                                          }}
                                         />
-                                      </Button>
+                                      </div>
                                     )}
+
+                                    {/* DELETE BUTTON */}
+                                    <div className="col-md-1 d-flex align-items-center justify-content-center">
+                                      {" "}
+                                      {(!isEditing ||
+                                        (isEditing && !val?.id)) && (
+                                        <Button
+                                          type="button"
+                                          variant="link"
+                                          className="action-btn delete-btn"
+                                          onClick={() =>
+                                            onRemoveSpec(formIndex, i)
+                                          }
+                                        >
+                                          <img
+                                            src={deleteIcon}
+                                            alt="Delete"
+                                            className="icon-16"
+                                          />
+                                        </Button>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                                <div
-                                  className="row"
-                                  style={{
-                                    marginTop: "2px",
-                                    minHeight: "18px",
-                                  }}
-                                >
-                                  {/* NAME ERROR */}
-                                  <div className="col-md-4">
-                                    {/* Duplicate Name */}
-                                    {duplicateNames.has(i) && (
-                                      <small
-                                        className="text-danger"
-                                        style={{
-                                          fontSize: "12px",
-                                          lineHeight: "14px",
-                                          marginTop: "2px",
-                                          display: "block",
-                                        }}
-                                      >
-                                        {t(
-                                          "education:duplicate_specialization"
-                                        )}
-                                      </small>
-                                    )}
-
-                                    {errors[formIndex]?.specialization?.[i]
-                                      ?.name && (
-                                      <small
-                                        className="text-danger"
-                                        style={{
-                                          fontSize: "12px",
-                                          lineHeight: "14px",
-                                          marginTop: "2px",
-                                          display: "block",
-                                        }}
-                                      >
-                                        {
-                                          errors[formIndex].specialization[i]
-                                            .name
-                                        }
-                                      </small>
-                                    )}
-
-                                    {/* Name Required */}
-                                    {val?.code?.trim() &&
-                                      !val?.name?.trim() && (
+                                  <div
+                                    className="row"
+                                    style={{
+                                      marginTop: "2px",
+                                      minHeight: "18px",
+                                    }}
+                                  >
+                                    {/* NAME ERROR */}
+                                    <div className="col-md-4">
+                                      {/* Duplicate Name */}
+                                      {duplicateNames.has(i) && (
                                         <small
                                           className="text-danger"
                                           style={{
@@ -673,38 +648,13 @@ const ExperienceModal = ({
                                           }}
                                         >
                                           {t(
-                                            "education:specialization_required",
-                                            "Specialization name is required"
+                                            "education:duplicate_specialization"
                                           )}
                                         </small>
                                       )}
-                                  </div>
 
-                                  {/* CODE ERROR */}
-                                  <div className="col-md-4">
-                                    {/* Duplicate Code */}
-                                    {duplicateCodes.has(i) && (
-                                      <small
-                                        className="text-danger"
-                                        style={{
-                                          fontSize: "12px",
-                                          lineHeight: "14px",
-                                          marginTop: "2px",
-                                          display: "block",
-                                        }}
-                                      >
-                                        {t(
-                                          "education:duplicate_specialization_code",
-                                          "Duplicate specialization code"
-                                        )}
-                                      </small>
-                                    )}
-
-                                    {/* Code Required */}
-
-                                    {val?.name?.trim() &&
-                                      !val?.code?.trim() &&
-                                      !duplicateCodes.has(i) && (
+                                      {errors[formIndex]?.specialization?.[i]
+                                        ?.name && (
                                         <small
                                           className="text-danger"
                                           style={{
@@ -714,17 +664,16 @@ const ExperienceModal = ({
                                             display: "block",
                                           }}
                                         >
-                                          {t(
-                                            "education:specialization_code_required",
-                                            "Specialization code is required"
-                                          )}
+                                          {
+                                            errors[formIndex].specialization[i]
+                                              .name
+                                          }
                                         </small>
                                       )}
-                                  </div>
-                                  {!hideGroup && (
-                                    <div className="col-md-3">
-                                      {val?.name?.trim() &&
-                                        !val?.group?.trim() && (
+
+                                      {/* Name Required */}
+                                      {val?.code?.trim() &&
+                                        !val?.name?.trim() && (
                                           <small
                                             className="text-danger"
                                             style={{
@@ -734,16 +683,79 @@ const ExperienceModal = ({
                                               display: "block",
                                             }}
                                           >
-                                            {t("education:group_required")}
+                                            {t(
+                                              "education:specialization_required",
+                                              "Specialization name is required"
+                                            )}
                                           </small>
                                         )}
                                     </div>
-                                  )}
 
-                                  <div className="col-md-1"></div>
+                                    {/* CODE ERROR */}
+                                    <div className="col-md-4">
+                                      {/* Duplicate Code */}
+                                      {duplicateCodes.has(i) && (
+                                        <small
+                                          className="text-danger"
+                                          style={{
+                                            fontSize: "12px",
+                                            lineHeight: "14px",
+                                            marginTop: "2px",
+                                            display: "block",
+                                          }}
+                                        >
+                                          {t(
+                                            "education:duplicate_specialization_code",
+                                            "Duplicate specialization code"
+                                          )}
+                                        </small>
+                                      )}
+
+                                      {/* Code Required */}
+
+                                      {val?.name?.trim() &&
+                                        !val?.code?.trim() &&
+                                        !duplicateCodes.has(i) && (
+                                          <small
+                                            className="text-danger"
+                                            style={{
+                                              fontSize: "12px",
+                                              lineHeight: "14px",
+                                              marginTop: "2px",
+                                              display: "block",
+                                            }}
+                                          >
+                                            {t(
+                                              "education:specialization_code_required",
+                                              "Specialization code is required"
+                                            )}
+                                          </small>
+                                        )}
+                                    </div>
+                                    {!hideGroup && (
+                                      <div className="col-md-3">
+                                        {val?.name?.trim() &&
+                                          !val?.group?.trim() && (
+                                            <small
+                                              className="text-danger"
+                                              style={{
+                                                fontSize: "12px",
+                                                lineHeight: "14px",
+                                                marginTop: "2px",
+                                                display: "block",
+                                              }}
+                                            >
+                                              {t("education:group_required")}
+                                            </small>
+                                          )}
+                                      </div>
+                                    )}
+
+                                    <div className="col-md-1"></div>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}

@@ -213,6 +213,18 @@ export const useExperience = () => {
     setShowModal(false);
     setIsEditMode(false);
     setEditIndex(null);
+    setErrors([]);
+
+    setFormData([
+      {
+        educationLevel: "",
+        course: "",
+        courseCode: "",
+        group: "",
+        educationQualificationsId: "",
+        specializationOthers: [],
+      },
+    ]);
   };
 
   //   const saveExperience = async () => {
@@ -320,12 +332,21 @@ export const useExperience = () => {
   //   };
 
   const saveExperience = async () => {
-    try {
-      const { valid, errors: newErrors } = validateEducationForm(formData[0], {
+   
+      try {
+    const selectedEducation = educationOptions.find(
+      (item) => item.documentTypeId === formData[0].educationLevel
+    );
+
+    const { valid, errors: newErrors } = validateEducationForm(
+      formData[0],
+      {
         existing: experienceList,
         currentId: formData[0].educationQualificationsId,
         editMode: isEditMode,
-      });
+        educationLevelName: selectedEducation?.documentName || "",
+      }
+    );
 
       const readOnlyCodes =
         isEditMode &&
@@ -336,11 +357,7 @@ export const useExperience = () => {
           "Any Post-Graduation",
         ].includes(formData[0].course?.trim());
 
-      // ===== Group Validation =====
-      const selectedEducation = educationOptions.find(
-        (item) => item.documentTypeId === formData[0].educationLevel
-      );
-
+      
       const hideGroup =
         ["Any Graduation", "Any Post-Graduation"].includes(
           formData[0].course?.trim()
@@ -490,7 +507,11 @@ export const useExperience = () => {
         courseCode: item.qualificationCode || "",
         educationQualificationsId: item.educationQualificationsId || null,
 
-        specializationOthers: hasSpecialization ? item.specialization : [],
+        specializationOthers: hasSpecialization
+          ? item.specialization.map((spec) => ({
+              ...spec,
+            }))
+          : [],
 
         group: !hasSpecialization ? item.group?.educationGroupId || "" : "",
       },
