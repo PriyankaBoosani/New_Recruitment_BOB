@@ -4035,7 +4035,7 @@ export default function CandidateScreening({ selectedJob }) {
                     {(activeTab === "CANDIDATE_POOL" ||
                       activeTab === "INTERVIEW_POOL") && (
                       <>
-                        {hasCandidatesInPool && (
+                        {hasCandidatesInPool && isRecruiter && (
                           <button
                             className="btn blue-bg text-white fs-14"
                             disabled={disableSendForApproval}
@@ -4044,7 +4044,7 @@ export default function CandidateScreening({ selectedJob }) {
                             {t("candidateWorkflow:send_for_approval")}
                           </button>
                         )}
-                        {hasCandidatesInPool && (
+                        {hasCandidatesInPool && isRecruiter &&  (
                           <button
                             className="btn btn-success text-white fs-14"
                             type="button"

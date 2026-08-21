@@ -48,10 +48,10 @@
   "disability": "दिव्यांगता",
   "no_position_data": "कोई पद डेटा उपलब्ध नहीं है",
   "ex_servicemen": "पूर्व सैनिक",
-  "disabled_ex_servicemen": "दिव्यांग पूर्व सैनिक", 
+  "disabled_ex_servicemen": "दिव्यांग पूर्व सैनिक",
   "total": "कुल",
   "candidate_selection_approval": "उम्मीदवार चयन स्वीकृति",
-  "review_and_approve_candidate_workflow_requests": "उम्मीदवार चयन अनुरोधों की समीक्षा और स्वीकृति करें",
+  "review_and_approve_candidate_workflow_requests": "उम्मीदवार चयन अनुरोधों की समीक्षा करें और स्वीकृत/अस्वीकृत करें",
   "search_candidate": "उम्मीदवार खोजें...",
   "total_candidates_in_position": "पद में कुल उम्मीदवार",
   "batch_status": "बैच स्थिति",
@@ -84,5 +84,5 @@
   "failed_open_document": "दस्तावेज़ खोलने में विफल। कृपया बाद में पुनः प्रयास करें।",
   "please_select_position_to_download": "डाउनलोड करने के लिए कृपया एक पद चुनें",
   "failed_to_load_candidates": "उम्मीदवारों को लोड करने में विफल।",
-"failed_to_download_pdf": "पीडीएफ डाउनलोड करने में विफल"
+  "failed_to_download_pdf": "पीडीएफ डाउनलोड करने में विफल"
 }

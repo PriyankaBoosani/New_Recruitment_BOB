@@ -51,7 +51,7 @@
   "disabled_ex_servicemen": "Disabled Ex Servicemen",
   "total": "Total",
   "candidate_selection_approval": "Candidate Selection Approval",
-  "review_and_approve_candidate_workflow_requests": "Review and Approve Candidate Selection Requests",
+  "review_and_approve_candidate_workflow_requests": "Review and Approve/Reject Candidate Selection Requests",
   "search_candidate": "Search Candidate...",
   "total_candidates_in_position": "Total Candidates in Position",
   "batch_status": "Batch Status",
