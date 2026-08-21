@@ -117,7 +117,6 @@ const RequisitionStripformultiplepositions = ({
         const res = await candidateWorkflowServices.getJobPositionById(
           selectedPositionIdForModal
         );
-
         const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
 
         //  Correct property name from API

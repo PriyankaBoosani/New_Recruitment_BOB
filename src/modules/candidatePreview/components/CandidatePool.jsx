@@ -623,6 +623,7 @@ export default function CandidatePool({
                   className="me-3 cursor-pointer"
                   onClick={() =>
                     navigate("/candidate-preview", {
+                      
                       state: {
                         from: "/candidate-workflow",
                         isRankEnabled,
@@ -649,6 +650,7 @@ export default function CandidatePool({
                           ? {
                               positionId: position.positionId,
                               positionName: position.positionName,
+                              isLocationWise: position.isLocationWise,
                             }
                           : null,
                       },

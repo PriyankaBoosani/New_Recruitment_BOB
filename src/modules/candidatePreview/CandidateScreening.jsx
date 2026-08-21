@@ -1691,6 +1691,7 @@ export default function CandidateScreening({ selectedJob }) {
     .map((p) => ({
       positionId: p.jobPositions?.positionId,
       positionName: p?.masterPositions?.positionName,
+       isLocationWise: p?.jobPositions?.isLocationWise,
     }));
 
   const navPositionIds = location.state?.positionIds || [];
@@ -4276,8 +4277,11 @@ export default function CandidateScreening({ selectedJob }) {
                     requisition: normalizedRequisition,
 
                     position: selectedPosition,
+                    
                   },
+                  
                 });
+               
               }}
               onViewResume={(candidate) => {
                 handleViewFile(candidate);

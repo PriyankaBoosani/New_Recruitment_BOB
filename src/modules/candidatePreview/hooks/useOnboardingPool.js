@@ -31,12 +31,9 @@ const useOnboardingPool = ({
         status: ["OFFER_ACCEPTED", "OFFERED", "PRE_ONBOARDING_PENDING", "PRE_ONBOARDING_COMPLETED", "ONBOARDED"],
       };
 
-      console.log("ONBOARDING POOL PAYLOAD:", payload);
-
       const res =
         await candidateWorkflowServices.getOnboardingPool(payload);
 
-      console.log("ONBOARDING POOL RESPONSE:", res);
 
       const apiData = res?.data;
       const content = apiData?.content || [];

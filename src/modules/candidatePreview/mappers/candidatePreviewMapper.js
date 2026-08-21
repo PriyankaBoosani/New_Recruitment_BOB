@@ -351,7 +351,6 @@ export const mapJobPositionToRequisitionStrip = (
 
   const mandatoryYears = Math.floor(totalMonths / 12);
   const mandatoryMonths = totalMonths % 12;
-
   return {
     requisition_code: apiData.requisitionId || "-",
 
@@ -432,7 +431,7 @@ export const mapJobPositionToRequisitionStrip = (
             }
           }
         });
-
+    
         return {
           stateId: state.stateId,
           cityId: state.cityId,

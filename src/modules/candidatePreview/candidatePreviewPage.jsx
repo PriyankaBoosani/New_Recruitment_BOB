@@ -46,8 +46,7 @@ const CandidatePreviewPage = ({ onHide }) => {
   const requisition = state?.requisition;
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
-  const isLocationWise = state?.position?.isLocationWise;
-
+  const isLocationWise = state?.position?.[0]?.isLocationWise;
   const position = Array.isArray(state?.position)
     ? state.position.find((p) => p.positionId === candidatePositionId) ||
       state.position[0]
@@ -74,15 +73,11 @@ const CandidatePreviewPage = ({ onHide }) => {
     state?.fromInterviewPool ||
     state?.activeTab === "INTERVIEW_POOL";
 
- const LOCKED_APPROVAL_STATUSES = [
-  "L1 PENDING",
-  "APPROVED",
-  "PUBLISHED",
-];
+  const LOCKED_APPROVAL_STATUSES = ["L1 PENDING", "APPROVED", "PUBLISHED"];
 
-const isApprovalLocked = LOCKED_APPROVAL_STATUSES.includes(
-  String(state?.workflowStatus || "").toUpperCase()
-);
+  const isApprovalLocked = LOCKED_APPROVAL_STATUSES.includes(
+    String(state?.workflowStatus || "").toUpperCase()
+  );
 
   useEffect(() => {
     const fetchData = async () => {

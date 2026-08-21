@@ -654,8 +654,6 @@ const ApplicationForm = ({
           await jobPositionApiService.getCandidateDiscrepancyDetails(
             applicationId
           );
-        console.log("DISCREPANCY API FULL RESPONSE:", res);
-        console.log("DISCREPANCY API res.data:", res?.data);
         const data = res?.data;
 
         if (!data) return; // no record → fresh form
