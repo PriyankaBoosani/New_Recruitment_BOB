@@ -1815,7 +1815,7 @@ const disableNoOption = disableShortlistedSection;
                       {data.personalDetails.spouseName || "-"}
                     </td>
                   </tr>
-                  <tr>
+                  {/* <tr>
                     <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
@@ -1826,7 +1826,7 @@ const disableNoOption = disableShortlistedSection;
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.cibilScore}
                     </td>
-                  </tr>
+                  </tr> */}
                   <tr>
                     <td className="fw-med">{t("current_ctc")}</td>
                     <td className="fw-reg" colSpan={2}>
@@ -1885,6 +1885,12 @@ const disableNoOption = disableShortlistedSection;
                       {isLocationWise
                         ? data.personalDetails.isLocalLanguageStudied
                         : "-"}
+                    </td>
+                     <td className="fw-med">{t("twin_sibling")}</td>
+                    <td className="fw-reg" colSpan={2}>
+                      {data.personalDetails.isTwin === "Yes"
+                        ? `Yes (${data.personalDetails.twinName})`
+                        : "No"}
                     </td>
                   </tr>
 

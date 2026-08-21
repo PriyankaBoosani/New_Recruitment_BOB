@@ -221,6 +221,7 @@ const UserFormModal = ({
                     name="interviewCenterId"
                     value={formData.interviewCenterId}
                     onChange={handleInputChange}
+                     disabled={mode === "view"}
                   >
                   <option value="">{t("select_interview_centre")}</option>
                     {interviewCentres.map((centre) => (
