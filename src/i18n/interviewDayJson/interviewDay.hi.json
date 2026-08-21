@@ -8,7 +8,7 @@
   "score": "अंक",
   "actions": "कार्य",
   "no_candidates_found": "कोई उम्मीदवार नहीं मिला",
-  "reg_no": "रजिस्ट्रेशन नंबर",
+  "reg_no": "आवेदन संख्या",
   "view_profile": "प्रोफ़ाइल देखें",
   "view_resume": "रिज़्यूमे देखें",
   "showing_entries": "{{total}} में से {{start}}-{{end}} दिखा रहे हैं",
