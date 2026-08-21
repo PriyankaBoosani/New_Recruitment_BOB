@@ -428,6 +428,9 @@ export default function EducationModal({
     .filter((q) => q.name?.toLowerCase() !== "others")
     .filter((q) => {
       const name = q.name?.trim().toLowerCase();
+        if (name.includes("integrated")) {
+      return false;
+    }
 
       if (isIntermediateRequired) {
         return !(
