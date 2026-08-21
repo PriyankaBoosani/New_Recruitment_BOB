@@ -291,7 +291,7 @@ export default function CandidatePool({
               <th className="fs-14 fw-normal py-3">
                 {t("candidateWorkflow:approvalstatus")}
 
-                {["L1 Pending", "Approved", "Published"].includes(
+                {["L1 Pending", "Approved", "Published", "Rejected"].includes(
                   workflowStatus
                 ) && (
                   <OverlayTrigger

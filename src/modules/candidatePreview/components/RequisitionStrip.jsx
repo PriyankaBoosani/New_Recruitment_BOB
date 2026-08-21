@@ -460,20 +460,6 @@ const RequisitionStrip = ({
                   {renderBullets(job?.roles_responsibilities)}
                 </ul>
               </div>
-
-              {job?.positionStateDistributions?.length > 0 && (
-                <LocationWiseVacancyTable
-                  positionStateDistributions={job.positionStateDistributions}
-                  states={masterData?.states || []}
-                  cities={masterData?.cities || []}
-                  reservationCategories={
-                    masterData?.reservationCategories || []
-                  }
-                  disabilityCategories={masterData?.disabilityCategories || []}
-                  exServicemenGroups={masterData?.exservicemen || []}
-                />
-              )}
-
               {(job?.isAgeRelRiotVictimFamily || job?.isAgeRelWdsWomen) && (
                 <div className="info-card mt-3">
                   <div className="section-title">
@@ -507,6 +493,21 @@ const RequisitionStrip = ({
                   </ul>
                 </div>
               )}
+
+              {job?.positionStateDistributions?.length > 0 && (
+                <LocationWiseVacancyTable
+                  positionStateDistributions={job.positionStateDistributions}
+                  states={masterData?.states || []}
+                  cities={masterData?.cities || []}
+                  reservationCategories={
+                    masterData?.reservationCategories || []
+                  }
+                  disabilityCategories={masterData?.disabilityCategories || []}
+                  exServicemenGroups={masterData?.exservicemen || []}
+                />
+              )}
+
+              
 
               {job?.positionStateDistributions?.length === 0 &&
                 job?.nationalCategoryDistribution && (
