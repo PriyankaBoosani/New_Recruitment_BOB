@@ -115,8 +115,7 @@ export const useExperience = () => {
 
   const handleFieldChange = (formIndex, field, value, specIndex = null) => {
     const courseRegex = /^[A-Za-z0-9\s.&,()+\-_/]*$/;
-    const specializationRegex = /^[A-Za-z0-9\s.&,()\-_/]*$/;
-
+    const specializationRegex = /^[A-Za-z0-9\s.&,()+\-_/]*$/;
     if (field === "course") {
       if (!courseRegex.test(value)) return;
     }
@@ -291,10 +290,15 @@ export const useExperience = () => {
       const specs = formData[0].specializationOthers || [];
 
       // Validate specialization rows BEFORE returning
+      if (!Array.isArray(newErrors.specialization)) {
+        newErrors.specialization = newErrors.specialization
+          ? [{ name: newErrors.specialization }]
+          : [];
+      }
+
       specs.forEach((s, index) => {
         // User added a specialization row but left Name empty
         if (!s.name?.trim()) {
-          newErrors.specialization = newErrors.specialization || [];
           newErrors.specialization[index] = {
             name: t(
               "education:specialization_required",
@@ -304,7 +308,7 @@ export const useExperience = () => {
         }
       });
 
-      const hasSpecializationError = newErrors.specialization?.some(
+      const hasSpecializationError = newErrors.specialization.some(
         (e) => e?.name
       );
 

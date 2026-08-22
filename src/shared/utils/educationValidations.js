@@ -7,8 +7,7 @@ import i18n from "i18next";
 
 const normalize = (v = "") => String(v).trim().toLowerCase();
 
-const validText = (value) => /^[A-Za-z0-9\s.&,()\-_/]+$/.test(value);
-
+const validText = (value) => /^[A-Za-z0-9\s.&,()+\-_/]+$/.test(value);
 const validTextForm = (value) => /^[A-Za-z0-9\s.,&()+/_\-–—]+$/.test(value);
 
 /* =========================
