@@ -89,7 +89,16 @@ const ExperienceModal = ({
           (level) => level.documentTypeId === item?.qualification?.levelId
         )?.documentName;
 
-        return ["Graduation", "Post-Graduation"].includes(levelName);
+        const qualificationName = item?.qualification?.qualificationName
+          ?.trim()
+          .toLowerCase();
+
+        return (
+          ["Graduation", "Post-Graduation"].includes(levelName) &&
+          !["other", "others", "other related fields"].includes(
+            qualificationName
+          )
+        );
       })
       .map((item) => ({
         label: item?.qualification?.qualificationName || "",
@@ -148,7 +157,7 @@ const ExperienceModal = ({
               {/* ✅ FIRST ROW */}
               <div className="row g-3">
                 {/* EDUCATION LEVEL */}
-                <div className="col-md-2">
+                <div className={form.group ? "col-md-2" : "col-md-2"}>
                   <label className="form-label">
                     {t("education:education_level")}{" "}
                     <span className="text-danger">*</span>
@@ -181,7 +190,11 @@ const ExperienceModal = ({
                 </div>
 
                 {/* COURSE */}
-                <div className="col-md-2">
+                <div
+                  className={
+                    form.integratedGroup?.length > 0 ? "col-md-2" : "col-md-3"
+                  }
+                >
                   <label className="form-label">
                     {t("education:course")}{" "}
                     <span className="text-danger">*</span>
@@ -210,7 +223,11 @@ const ExperienceModal = ({
                   )}
                 </div>
 
-                <div className="col-md-2">
+                <div
+                  className={
+                    form.integratedGroup?.length > 0 ? "col-md-2" : "col-md-2"
+                  }
+                >
                   <label className="form-label">
                     {t("education:course_code")}{" "}
                     <span className="text-danger">*</span>
@@ -247,47 +264,16 @@ const ExperienceModal = ({
                   )}
                 </div>
 
-                {/* {showTopGroup && (
- <div className="col">
-    <label className="form-label">
-      {t("education:group")}
-      <span className="text-danger">*</span>
-    </label>
-
-    <select
-     options={groupOptions}
-      className={`form-select ${
-        errors[formIndex]?.group ? "is-invalid" : ""
-      }`}
-      value={groupOptions.find(x => x.value === form.group)}
-       onChange={(option) =>
-    onChange(formIndex, "group", option?.value || "")
-    
-  }
-  menuPlacement="bottom"
-  menuPosition="fixed"
-      
-    >
-      <option value="">{t("common:select")}</option>
-
-      {groupOptions?.map((item) => (
-        <option
-          key={item.value}
-          value={item.value}
-        >
-          {item.label}
-        </option>
-      ))}
-    </select>
-
-    <small className="text-danger">
-      {errors[formIndex]?.group}
-    </small>
-  </div>
-)} */}
-
                 {showTopGroup && (
-                  <div className="col">
+                  <div
+                    className={
+                      ["Graduation", "Post-Graduation"].includes(
+                        selectedEducation?.documentName
+                      )
+                        ? "col-md-2"
+                        : "col-md-3"
+                    }
+                  >
                     <label className="form-label">
                       {t("education:group")}
                       <span className="text-danger">*</span>
@@ -345,7 +331,7 @@ const ExperienceModal = ({
                 {["Graduation", "Post-Graduation"].includes(
                   selectedEducation?.documentName
                 ) && (
-                  <div className="col-md-3">
+                  <div className={form.group ? "col-md-3" : "col-md-3"}>
                     <label className="form-label">Integrated Group</label>
 
                     <Select
@@ -363,11 +349,19 @@ const ExperienceModal = ({
 
                         fetchIntegratedSpecializations(selectedIds);
 
-                        // Clear previously selected integrated specializations
                         onChange(formIndex, "integratedSpecializations", []);
                       }}
                       placeholder="Select Integrated Group"
                       isDisabled={isViewing}
+                      isClearable={!isViewing}
+                      isSearchable={!isViewing}
+                      components={
+                        isViewing
+                          ? {
+                              MultiValueRemove: () => null,
+                            }
+                          : undefined
+                      }
                     />
                   </div>
                 )}
@@ -404,7 +398,7 @@ const ExperienceModal = ({
                           </label>
                         </div>
                         {!hideGroup && (
-                          <div className="col-md-2">
+                          <div className="col-md-3">
                             <label
                               className="form-label"
                               style={{ fontSize: "13px", fontWeight: "400" }}
@@ -449,7 +443,9 @@ const ExperienceModal = ({
                           <div key={i} className="col-md-12 mb-2">
                             <div className="row g-2 align-items-start">
                               {/* SPECIALIZATION NAME */}
-                              <div className="col-md-3">
+                              <div
+                                className={form.group ? "col-md-3" : "col-md-3"}
+                              >
                                 <input
                                   style={{ width: "100%" }}
                                   type="text"
@@ -460,7 +456,9 @@ const ExperienceModal = ({
                               </div>
 
                               {/* SPECIALIZATION CODE */}
-                              <div className="col-md-2">
+                              <div
+                                className={form.group ? "col-md-2" : "col-md-2"}
+                              >
                                 <input
                                   type="text"
                                   style={{ width: "100%" }}
@@ -473,7 +471,9 @@ const ExperienceModal = ({
                               </div>
 
                               {/* GROUP */}
-                              <div className="col-md-3">
+                              <div
+                                className={form.group ? "col-md-3" : "col-md-3"}
+                              >
                                 <input
                                   type="text"
                                   style={{ width: "100%" }}
@@ -491,23 +491,38 @@ const ExperienceModal = ({
                                 />
                               </div>
 
-                              <div className="col-md-3">
-                                <input
-                                  type="text"
-                                  style={{ width: "100%" }}
-                                  className="form-control-view"
-                                  value={
-                                    typeof s === "object"
-                                      ? s.groupName ||
-                                        groupOptions.find(
-                                          (g) => g.value === s.group
-                                        )?.label ||
-                                        "-"
-                                      : "-"
+                              {/* INTEGRATED SPECIALIZATION */}
+                              {form.integratedGroup?.length > 0 && (
+                                <div
+                                  className={
+                                    form.group ? "col-md-3" : "col-md-3"
                                   }
-                                  readOnly
-                                />
-                              </div>
+                                >
+                                  <input
+                                    type="text"
+                                    style={{ width: "100%" }}
+                                    className="form-control-view"
+                                    value={
+                                      typeof s === "object"
+                                        ? (s.integratedSpecializations || [])
+                                            .map(
+                                              (id) =>
+                                                (
+                                                  integratedSpecializationOptions ||
+                                                  []
+                                                ).find(
+                                                  (item) =>
+                                                    item.specializationId === id
+                                                )?.specializationName
+                                            )
+                                            .filter(Boolean)
+                                            .join(", ") || "-"
+                                        : "-"
+                                    }
+                                    readOnly
+                                  />
+                                </div>
+                              )}
                               <div className="col-md-1"></div>
                             </div>
                           </div>
@@ -547,7 +562,11 @@ const ExperienceModal = ({
                                 <div key={i} className="col-md-12 mb-2">
                                   <div className="row g-2 align-items-start">
                                     {/* SPECIALIZATION NAME */}
-                                    <div className="col-md-3">
+                                    <div
+                                      className={
+                                        form.group ? "col-md-3" : "col-md-3"
+                                      }
+                                    >
                                       <input
                                         type="text"
                                         className={`form-control ${
@@ -573,7 +592,11 @@ const ExperienceModal = ({
                                     </div>
 
                                     {/* SPECIALIZATION CODE */}
-                                    <div className="col-md-2">
+                                    <div
+                                      className={
+                                        form.group ? "col-md-2" : "col-md-2"
+                                      }
+                                    >
                                       <input
                                         type="text"
                                         className={`form-control ${
@@ -615,7 +638,11 @@ const ExperienceModal = ({
 
                                     {/* GROUP */}
                                     {!hideGroup && (
-                                      <div className="col-md-2">
+                                      <div
+                                        className={
+                                          form.group ? "col-md-3" : "col-md-3"
+                                        }
+                                      >
                                         <Select
                                           classNamePrefix="react-select"
                                           className={
@@ -681,15 +708,28 @@ const ExperienceModal = ({
                                       form.integratedGroup?.length > 0 && (
                                         <div className="col-md-3">
                                           <Select
-                                            className="react-select"
+                                            classNamePrefix="react-select"
                                             isMulti
                                             options={(
                                               integratedSpecializationOptions ||
                                               []
-                                            ).map((item) => ({
-                                              label: item.specializationName,
-                                              value: item.specializationId,
-                                            }))}
+                                            )
+                                              .filter((item) => {
+                                                const name =
+                                                  item?.specializationName
+                                                    ?.trim()
+                                                    .toLowerCase();
+
+                                                return ![
+                                                  "other",
+                                                  "others",
+                                                  "other related fields",
+                                                ].includes(name);
+                                              })
+                                              .map((item) => ({
+                                                label: item.specializationName,
+                                                value: item.specializationId,
+                                              }))}
                                             value={(
                                               integratedSpecializationOptions ||
                                               []
@@ -717,9 +757,7 @@ const ExperienceModal = ({
                                                 i
                                               );
                                             }}
-                                            placeholder={t(
-                                              "education:specialization_name"
-                                            )}
+                                            placeholder={t("common:select")}
                                             isDisabled={isViewing}
                                             menuPortalTarget={document.body}
                                             menuPosition="fixed"
