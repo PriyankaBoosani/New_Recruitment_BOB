@@ -35,6 +35,11 @@ const ExperienceDetails = () => {
     handleFieldChange,
     handleAddSpec,
     handleRemoveSpec,
+    qualificationOptions, // ADD THIS
+    integratedSpecializationOptions,
+    fetchIntegratedSpecializations
+
+
   } = useExperience();
 
   const [isViewing, setIsViewing] = useState(false);
@@ -129,6 +134,9 @@ const ExperienceDetails = () => {
         isEditing={isEditing}
         educationOptions={educationOptions}
           groupOptions={groupOptions}
+          qualificationOptions={qualificationOptions}
+          fetchIntegratedSpecializations = {fetchIntegratedSpecializations}
+          integratedSpecializationOptions= {integratedSpecializationOptions}
       />
 
       <DeleteConfirmModal

@@ -339,6 +339,8 @@ const masterApiService = {
 
   saveEducation: (payload) =>
     apis.post("/admin-education-master/save", payload),
+  getSpecializations: (payload) =>
+  apis.post("/admin-education-master/get-specialization", payload),
 
   getAllTemplates: () => apis.get("/templates/all"),
   getStates: () => apis.get("/state/all"),

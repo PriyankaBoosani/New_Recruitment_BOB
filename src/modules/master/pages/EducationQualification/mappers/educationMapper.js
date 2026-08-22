@@ -7,6 +7,11 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
   );
 
   return list.map((item) => {
+    console.log("EDUCATION ITEM BEFORE MAPPING:", item);
+  console.log(
+    "IC GROUPS BEFORE MAPPING:",
+    item?.qualification?.icGroups
+  );
     const docId = String(item?.qualification?.levelId || "").toLowerCase();
 
     const firstGroup = item?.specializations?.[0]?.group || null;
@@ -18,18 +23,19 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
 
       //  ADD THIS
       group: firstGroup,
-
+      icGroups: item?.qualification?.icGroups || [],
       specialization:
         item?.specializations?.map((sp) => ({
           id: sp?.specialization?.specializationId || "",
           name: sp?.specialization?.specializationName || "",
           code: sp?.specialization?.specializationCode || "",
+        icGroups:
+            sp?.specialization?.icGroups || [],
 
           group: sp?.group?.educationGroupId || "",
           groupName: sp?.group?.groupName || "",
           groupCode: sp?.group?.groupCode || "",
           readOnly: true,
-        
         })) || [],
 
       educationQualificationsId:

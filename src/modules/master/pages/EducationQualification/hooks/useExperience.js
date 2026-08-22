@@ -17,10 +17,12 @@ export const useExperience = () => {
   const [experienceList, setExperienceList] = useState([]);
   const [educationOptions, setEducationOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [qualificationOptions, setQualificationOptions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [groupOptions, setGroupOptions] = useState([]);
+  const [integratedSpecializationOptions, setIntegratedSpecializationOptions] =
+    useState([]);
 
   const [formData, setFormData] = useState([
     {
@@ -29,6 +31,8 @@ export const useExperience = () => {
       group: "",
       educationQualificationsId: "",
       specializationOthers: [],
+      integratedGroup: [],
+      integratedSpecializations: [],
     },
   ]);
 
@@ -85,7 +89,7 @@ export const useExperience = () => {
       const res = await masterApiService.getAllEducation(ids);
 
       const list = res.data || [];
-
+      setQualificationOptions(list);
       const mapped = mapEducationListFromApi(list, educationOptionsList);
 
       setExperienceList(mapped);
@@ -122,7 +126,18 @@ export const useExperience = () => {
     }
 
     const updated = [...formData];
-    if (field === "specialization") {
+
+    if (field === "integratedSpecializations") {
+      // Integrated Specialization belongs to a specific specialization row
+      if (
+        specIndex !== null &&
+        updated[formIndex].specializationOthers?.[specIndex]
+      ) {
+        updated[formIndex].specializationOthers[
+          specIndex
+        ].integratedSpecializations = value || [];
+      }
+    } else if (field === "specialization") {
       updated[formIndex].specializationOthers[specIndex].name = value;
     } else if (field === "specializationCode") {
       updated[formIndex].specializationOthers[specIndex].code = value;
@@ -163,7 +178,10 @@ export const useExperience = () => {
     }
 
     const updatedErrors = [...errors];
-    if (!updatedErrors[formIndex]) updatedErrors[formIndex] = {};
+
+    if (!updatedErrors[formIndex]) {
+      updatedErrors[formIndex] = {};
+    }
 
     if (field === "specialization") {
       updatedErrors[formIndex].specialization = fieldError;
@@ -180,6 +198,7 @@ export const useExperience = () => {
       name: "",
       code: "",
       id: null,
+      integratedSpecializations: [],
     });
     setFormData(updated);
   };
@@ -199,6 +218,8 @@ export const useExperience = () => {
         course: "",
         courseCode: "",
         group: "",
+        integratedGroup: [],
+        integratedSpecializations: [],
         specializationOthers: [],
         // specializationOthers: [{ name: "", id: "" }]
       },
@@ -223,130 +244,25 @@ export const useExperience = () => {
         group: "",
         educationQualificationsId: "",
         specializationOthers: [],
+
+        integratedGroup: [],
+        integratedSpecializations: [],
       },
     ]);
   };
 
-  //   const saveExperience = async () => {
-  //     try {
-  //       const { valid, errors: newErrors } = validateEducationForm(formData[0], {
-  //         existing: experienceList,
-  //         currentId: formData[0].educationQualificationsId,
-  //         editMode: isEditMode,
-  //       });
-  //       setErrors([newErrors]);
-
-  //       // return
-  //      if (!valid) return;
-
-  // const specs = formData[0].specializationOthers;
-
-  // const specializations =
-  //   specs.length > 0
-  //     ? specs.map((s) => ({
-  //       specializations: formData[0].specializationOthers
-  //   .filter((s) => s?.name.trim())
-  //   .map((s) => ({
-  //     specialization: {
-  //       specializationId: s.id || null,
-  //       specializationName: s.name.trim(),
-  //       specializationCode: s.code || "",
-  //     },
-  //     group: {
-  //       educationGroupId: s.group || "",
-  //     },
-  //   })),
-  //       }))
-  //     : formData[0].group
-  //     ? [
-  //         {
-  //           specialization: {
-  //             specializationId: null,
-  //             educationQualificationsId:
-  //               formData[0].educationQualificationsId || null,
-  //             specializationName: null,
-  //             specializationCode: null,
-  //           },
-  //           group: {
-  //             groupCode: null,
-  //             groupName: null,
-  //             displayOrder: 0,
-  //             educationGroupId: formData[0].group,
-  //           },
-  //         },
-  //       ]
-  //     : [];
-
-  // const payload = {
-  //         qualification: {
-  //           levelId: formData[0].educationLevel,
-  //           qualificationName: formData[0].course,
-  //           // qualificationCode: formData[0].course,
-  //           qualificationCode: formData[0].courseCode || "",
-  //           displayOrder: 0,
-  //           educationQualificationsId:
-  //             formData[0].educationQualificationsId || null,
-  //         },
-  //        specializations: formData[0].specializationOthers
-  //   .filter((s) => s?.name.trim())
-  //   .map((s) => ({
-  //     specialization: {
-  //       specializationId: s.id || null,
-  //       specializationName: s.name.trim(),
-  //       specializationCode: s.code || "",
-  //     },
-  //     group: {
-  //       educationGroupId: s.group || "",
-  //     },
-  //   })),
-  //       };
-
-  //       const res = await masterApiService.saveEducation(payload);
-
-  //       const saved = res.data;
-
-  //       if (isEditMode) {
-  //         if (res.success) {
-  //           toast.success(t("education:updated_success"));
-  //         } else {
-  //           toast.error(res.message + ": " + res.data);
-  //         }
-  //       } else {
-  //         if (res.success) {
-  //           toast.success(t("education:saved_success"));
-  //         } else {
-  //           toast.error(res.message + ": " + res.data);
-  //         }
-  //       }
-  //       if (res.success) {
-  //         await loadData();
-
-  //         setShowModal(false);
-  //         setIsEditMode(false);
-  //         setEditIndex(null);
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //       toast.error("Save failed");
-  //     }
-  //   };
-
   const saveExperience = async () => {
-   
-      try {
-    const selectedEducation = educationOptions.find(
-      (item) => item.documentTypeId === formData[0].educationLevel
-    );
+    try {
+      const selectedEducation = educationOptions.find(
+        (item) => item.documentTypeId === formData[0].educationLevel
+      );
 
-    const { valid, errors: newErrors } = validateEducationForm(
-      formData[0],
-      {
+      const { valid, errors: newErrors } = validateEducationForm(formData[0], {
         existing: experienceList,
         currentId: formData[0].educationQualificationsId,
         editMode: isEditMode,
         educationLevelName: selectedEducation?.documentName || "",
-      }
-    );
+      });
 
       const readOnlyCodes =
         isEditMode &&
@@ -357,7 +273,6 @@ export const useExperience = () => {
           "Any Post-Graduation",
         ].includes(formData[0].course?.trim());
 
-      
       const hideGroup =
         ["Any Graduation", "Any Post-Graduation"].includes(
           formData[0].course?.trim()
@@ -401,6 +316,39 @@ export const useExperience = () => {
         return;
       }
 
+      const selectedIntegratedSpecializationIds =
+        formData[0].integratedSpecializations || [];
+
+      const selectedIntegratedSpecializations = (
+        integratedSpecializationOptions || []
+      ).filter((sp) =>
+        selectedIntegratedSpecializationIds.includes(sp.specializationId)
+      );
+
+      const integratedSpecializations = selectedIntegratedSpecializations.map(
+        (sp) => ({
+          specialization: {
+            specializationId: sp.specializationId,
+            educationQualificationsId:
+              sp.educationQualificationsId ||
+              formData[0].educationQualificationsId ||
+              null,
+            specializationName: sp.specializationName,
+            specializationCode: sp.specializationCode || null,
+
+            // ONLY selected Integrated Group IDs
+            icGroups: sp.integratedSpecializations || [],
+          },
+
+          group: {
+            educationGroupId: null,
+            groupCode: null,
+            groupName: null,
+            displayOrder: 0,
+          },
+        })
+      );
+
       const specializations =
         specs.length > 0
           ? specs.map((s) => ({
@@ -409,6 +357,9 @@ export const useExperience = () => {
                 educationQualificationsId:
                   formData[0].educationQualificationsId || null,
                 specializationName: s.name || null,
+
+                // Add this
+                icGroups: s.integratedSpecializations || [],
                 ...(readOnlyCodes && s.id
                   ? {}
                   : {
@@ -441,7 +392,6 @@ export const useExperience = () => {
                 },
               ]
             : [];
-
       const payload = {
         qualification: {
           levelId: formData[0].educationLevel,
@@ -454,10 +404,13 @@ export const useExperience = () => {
           displayOrder: 0,
           educationQualificationsId:
             formData[0].educationQualificationsId || null,
+          icGroups: formData[0].integratedGroup || [],
         },
-        specializations,
+        specializations: [...specializations, ...integratedSpecializations],
       };
+      console.log("FINAL EDUCATION PAYLOAD:", payload);
       const res = await masterApiService.saveEducation(payload);
+      console.log("savepayload", res);
 
       if (isEditMode) {
         if (res.success) {
@@ -484,13 +437,35 @@ export const useExperience = () => {
       toast.error("Save failed");
     }
   };
+  const fetchIntegratedSpecializations = async (qualificationIds) => {
+    try {
+      if (!qualificationIds?.length) {
+        setIntegratedSpecializationOptions([]);
+        return;
+      }
+
+      console.log(
+        "Integrated Group IDs sent to specialization API:",
+        qualificationIds
+      );
+
+      const res = await masterApiService.getSpecializations(qualificationIds);
+
+      console.log("Integrated Specialization Response:", res.data);
+
+      setIntegratedSpecializationOptions(res.data || []);
+    } catch (error) {
+      console.error("Failed to fetch integrated specializations:", error);
+
+      setIntegratedSpecializationOptions([]);
+    }
+  };
   const handleDelete = (index) => {
     setExperienceList((prev) => prev.filter((_, i) => i !== index));
     toast.success(t("education:deleted_success"));
   };
 
   const handleEditClick = (item, index) => {
-    // 🔥 Convert NAME → ID
     const selectedOption = educationOptions.find(
       (opt) =>
         opt.documentName.toLowerCase() ===
@@ -500,6 +475,11 @@ export const useExperience = () => {
     const hasSpecialization =
       item.specialization?.some((s) => s.name || s.code) || false;
 
+    // Fetch integrated specialization options
+    if (item.icGroups?.length) {
+      fetchIntegratedSpecializations(item.icGroups);
+    }
+
     setFormData([
       {
         educationLevel: selectedOption?.documentTypeId || "",
@@ -507,11 +487,14 @@ export const useExperience = () => {
         courseCode: item.qualificationCode || "",
         educationQualificationsId: item.educationQualificationsId || null,
 
-        specializationOthers: hasSpecialization
-          ? item.specialization.map((spec) => ({
-              ...spec,
-            }))
-          : [],
+        // KEEP ALL SPECIALIZATIONS
+        // Attach icGroups only to the specialization that owns them
+        specializationOthers: (item.specialization || []).map((spec) => ({
+          ...spec,
+          integratedSpecializations: spec.icGroups || [],
+        })),
+
+        integratedGroup: item.icGroups || [],
 
         group: !hasSpecialization ? item.group?.educationGroupId || "" : "",
       },
@@ -564,5 +547,8 @@ export const useExperience = () => {
     handleFieldChange,
     handleAddSpec,
     handleRemoveSpec,
+    qualificationOptions, // ADD THIS
+    integratedSpecializationOptions,
+    fetchIntegratedSpecializations,
   };
 };

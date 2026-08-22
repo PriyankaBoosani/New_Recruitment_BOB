@@ -18,6 +18,9 @@ const ExperienceModal = ({
   isEditing,
   educationOptions,
   groupOptions,
+  qualificationOptions,
+  fetchIntegratedSpecializations,
+  integratedSpecializationOptions,
 }) => {
   const { t } = useTranslation(["education", "common"]);
 
@@ -78,11 +81,27 @@ const ExperienceModal = ({
       name.trim().toLowerCase()
     );
   };
+
+  const integratedGroupOptions =
+    qualificationOptions
+      ?.filter((item) => {
+        const levelName = educationOptions.find(
+          (level) => level.documentTypeId === item?.qualification?.levelId
+        )?.documentName;
+
+        return ["Graduation", "Post-Graduation"].includes(levelName);
+      })
+      .map((item) => ({
+        label: item?.qualification?.qualificationName || "",
+        value: item?.qualification?.educationQualificationsId || "",
+      })) || [];
+
   return (
     <Modal
       show={show}
       onHide={handleCloseModal}
       centered
+      size="xl"
       dialogClassName="education-modal"
     >
       <Modal.Header closeButton className="modal-header-custom">
@@ -124,13 +143,12 @@ const ExperienceModal = ({
 
           const showTopGroup =
             !hideGroup && (form.specializationOthers?.length || 0) === 0;
-
           return (
             <div key={formIndex} className="border rounded p-3 mb-3">
               {/* ✅ FIRST ROW */}
               <div className="row g-3">
                 {/* EDUCATION LEVEL */}
-                <div className="col-md-4">
+                <div className="col-md-2">
                   <label className="form-label">
                     {t("education:education_level")}{" "}
                     <span className="text-danger">*</span>
@@ -163,7 +181,7 @@ const ExperienceModal = ({
                 </div>
 
                 {/* COURSE */}
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <label className="form-label">
                     {t("education:course")}{" "}
                     <span className="text-danger">*</span>
@@ -192,7 +210,7 @@ const ExperienceModal = ({
                   )}
                 </div>
 
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <label className="form-label">
                     {t("education:course_code")}{" "}
                     <span className="text-danger">*</span>
@@ -324,6 +342,35 @@ const ExperienceModal = ({
                     </small>
                   </div>
                 )}
+                {["Graduation", "Post-Graduation"].includes(
+                  selectedEducation?.documentName
+                ) && (
+                  <div className="col-md-3">
+                    <label className="form-label">Integrated Group</label>
+
+                    <Select
+                      classNamePrefix="react-select"
+                      isMulti
+                      options={integratedGroupOptions}
+                      value={integratedGroupOptions.filter((option) =>
+                        form.integratedGroup?.includes(option.value)
+                      )}
+                      onChange={(options) => {
+                        const selectedIds =
+                          options?.map((option) => option.value) || [];
+
+                        onChange(formIndex, "integratedGroup", selectedIds);
+
+                        fetchIntegratedSpecializations(selectedIds);
+
+                        // Clear previously selected integrated specializations
+                        onChange(formIndex, "integratedSpecializations", []);
+                      }}
+                      placeholder="Select Integrated Group"
+                      isDisabled={isViewing}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="row mt-3">
@@ -339,7 +386,7 @@ const ExperienceModal = ({
                         className="row g-2 align-items-start"
                         style={{ marginBottom: "2px" }}
                       >
-                        <div className="col-md-4">
+                        <div className="col-md-3">
                           <label
                             className="form-label"
                             style={{ fontSize: "13px", fontWeight: "400" }}
@@ -348,7 +395,7 @@ const ExperienceModal = ({
                           </label>
                         </div>
 
-                        <div className="col-md-4">
+                        <div className="col-md-2">
                           <label
                             className="form-label"
                             style={{ fontSize: "13px", fontWeight: "400" }}
@@ -357,7 +404,7 @@ const ExperienceModal = ({
                           </label>
                         </div>
                         {!hideGroup && (
-                          <div className="col-md-3">
+                          <div className="col-md-2">
                             <label
                               className="form-label"
                               style={{ fontSize: "13px", fontWeight: "400" }}
@@ -366,7 +413,16 @@ const ExperienceModal = ({
                             </label>
                           </div>
                         )}
-
+                        {form.integratedGroup?.length > 0 && (
+                          <div className="col-md-3">
+                            <label
+                              className="form-label"
+                              style={{ fontSize: "13px", fontWeight: "400" }}
+                            >
+                              Integrated Specilization
+                            </label>
+                          </div>
+                        )}
                         <div className="col-md-1"></div>
                       </div>
                     </>
@@ -393,7 +449,7 @@ const ExperienceModal = ({
                           <div key={i} className="col-md-12 mb-2">
                             <div className="row g-2 align-items-start">
                               {/* SPECIALIZATION NAME */}
-                              <div className="col-md-4">
+                              <div className="col-md-3">
                                 <input
                                   style={{ width: "100%" }}
                                   type="text"
@@ -404,8 +460,7 @@ const ExperienceModal = ({
                               </div>
 
                               {/* SPECIALIZATION CODE */}
-                              {/* SPECIALIZATION CODE */}
-                              <div className="col-md-4">
+                              <div className="col-md-2">
                                 <input
                                   type="text"
                                   style={{ width: "100%" }}
@@ -418,7 +473,7 @@ const ExperienceModal = ({
                               </div>
 
                               {/* GROUP */}
-                              <div className="col-md-4">
+                              <div className="col-md-3">
                                 <input
                                   type="text"
                                   style={{ width: "100%" }}
@@ -436,6 +491,23 @@ const ExperienceModal = ({
                                 />
                               </div>
 
+                              <div className="col-md-3">
+                                <input
+                                  type="text"
+                                  style={{ width: "100%" }}
+                                  className="form-control-view"
+                                  value={
+                                    typeof s === "object"
+                                      ? s.groupName ||
+                                        groupOptions.find(
+                                          (g) => g.value === s.group
+                                        )?.label ||
+                                        "-"
+                                      : "-"
+                                  }
+                                  readOnly
+                                />
+                              </div>
                               <div className="col-md-1"></div>
                             </div>
                           </div>
@@ -475,7 +547,7 @@ const ExperienceModal = ({
                                 <div key={i} className="col-md-12 mb-2">
                                   <div className="row g-2 align-items-start">
                                     {/* SPECIALIZATION NAME */}
-                                    <div className="col-md-4">
+                                    <div className="col-md-3">
                                       <input
                                         type="text"
                                         className={`form-control ${
@@ -501,8 +573,7 @@ const ExperienceModal = ({
                                     </div>
 
                                     {/* SPECIALIZATION CODE */}
-                                    {/* SPECIALIZATION CODE */}
-                                    <div className="col-md-4">
+                                    <div className="col-md-2">
                                       <input
                                         type="text"
                                         className={`form-control ${
@@ -544,7 +615,7 @@ const ExperienceModal = ({
 
                                     {/* GROUP */}
                                     {!hideGroup && (
-                                      <div className="col-md-3">
+                                      <div className="col-md-2">
                                         <Select
                                           classNamePrefix="react-select"
                                           className={
@@ -604,6 +675,67 @@ const ExperienceModal = ({
                                         />
                                       </div>
                                     )}
+                                    {["Graduation", "Post-Graduation"].includes(
+                                      selectedEducation?.documentName
+                                    ) &&
+                                      form.integratedGroup?.length > 0 && (
+                                        <div className="col-md-3">
+                                          <Select
+                                            className="react-select"
+                                            isMulti
+                                            options={(
+                                              integratedSpecializationOptions ||
+                                              []
+                                            ).map((item) => ({
+                                              label: item.specializationName,
+                                              value: item.specializationId,
+                                            }))}
+                                            value={(
+                                              integratedSpecializationOptions ||
+                                              []
+                                            )
+                                              .map((item) => ({
+                                                label: item.specializationName,
+                                                value: item.specializationId,
+                                              }))
+                                              .filter((option) =>
+                                                (
+                                                  val?.integratedSpecializations ||
+                                                  []
+                                                ).includes(option.value)
+                                              )}
+                                            onChange={(options) => {
+                                              const selectedIds =
+                                                options?.map(
+                                                  (option) => option.value
+                                                ) || [];
+
+                                              onChange(
+                                                formIndex,
+                                                "integratedSpecializations",
+                                                selectedIds,
+                                                i
+                                              );
+                                            }}
+                                            placeholder={t(
+                                              "education:specialization_name"
+                                            )}
+                                            isDisabled={isViewing}
+                                            menuPortalTarget={document.body}
+                                            menuPosition="fixed"
+                                            styles={{
+                                              menuPortal: (base) => ({
+                                                ...base,
+                                                zIndex: 9999,
+                                              }),
+                                              menu: (base) => ({
+                                                ...base,
+                                                zIndex: 9999,
+                                              }),
+                                            }}
+                                          />
+                                        </div>
+                                      )}
 
                                     {/* DELETE BUTTON */}
                                     <div className="col-md-1 d-flex align-items-center justify-content-center">
@@ -635,7 +767,7 @@ const ExperienceModal = ({
                                     }}
                                   >
                                     {/* NAME ERROR */}
-                                    <div className="col-md-4">
+                                    <div className="col-md-3">
                                       {/* Duplicate Name */}
                                       {duplicateNames.has(i) && (
                                         <small
@@ -692,7 +824,7 @@ const ExperienceModal = ({
                                     </div>
 
                                     {/* CODE ERROR */}
-                                    <div className="col-md-4">
+                                    <div className="col-md-2">
                                       {/* Duplicate Code */}
                                       {duplicateCodes.has(i) && (
                                         <small
@@ -750,7 +882,7 @@ const ExperienceModal = ({
                                           )}
                                       </div>
                                     )}
-
+                                    <div className="col-md-2"></div>
                                     <div className="col-md-1"></div>
                                   </div>
                                 </div>

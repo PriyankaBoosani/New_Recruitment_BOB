@@ -32,7 +32,7 @@
   "time": "समय",
   "zone": "क्षेत्र",
   "panel_details": "पैनल विवरण",
-  "reg_no": "रजिस्ट्रेशन नंबर",
+  "reg_no": "आवेदन संख्या",
   "ready_to_schedule": "{{count}} उम्मीदवार अनुसूची के लिए तैयार",
   "schedule_interviews": "सबमिट करें",
   "apply_success_text": "{{count}} उम्मीदवारों का साक्षात्कार निर्धारित किया गया",
