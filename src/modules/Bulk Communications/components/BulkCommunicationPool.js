@@ -23,15 +23,38 @@ export default function BulkCommunicationPool({
   const { t } = useTranslation("bulkCommunication");
 
   const CANDIDATE_POOL_STATUSES = [
-    "PENDING", "APPLIED", "RESCHEDULED", "NOT_SCHEDULED", "SCHEDULED", 
-    "SELECTED_FOR_NEXT_ROUND", "NOT_AVAILABLE", "SELECTED", "REJECTED", 
-    "DISQUALIFIED", "CANCELLED", "SHORTLISTED", "ELIGIBLE", "OFFERED", 
-    "OFFER_REJECTED", "OFFER_ACCEPTED", "DISCREPANCY", "PROVISIONALLY_APPROVED", 
-    "OFFER_AWAITED", "OFFER_SENT", "ZONAL_REJECTED", "ZONAL_ABSENT", 
-    "INTERVIEW_ABSENT", "COMPENSATION_PENDING", "COMPENSATION_APPROVED", 
-    "COMPENSATION_REJECTED", "COMPENSATION_RENEGOTITATE", "SCHEDULE_PENDING", 
-    "RESCHEDULE_PENDING", "PRE_ONBOARDING_PENDING", "PRE_ONBOARDING_COMPLETED", 
-    "ONBOARDED"
+    "PENDING",
+    "APPLIED",
+    "RESCHEDULED",
+    "NOT_SCHEDULED",
+    "SCHEDULED",
+    "SELECTED_FOR_NEXT_ROUND",
+    "NOT_AVAILABLE",
+    "REJECTED",
+    "DISQUALIFIED",
+    "CANCELLED",
+    "SHORTLISTED",
+    "ELIGIBLE",
+    "OFFERED",
+    "QUALIFIED",
+    "OFFER_REJECTED",
+    "OFFER_ACCEPTED",
+    "DISCREPANCY",
+    "PROVISIONALLY_APPROVED",
+    "OFFER_AWAITED",
+    "OFFER_SENT",
+    "ZONAL_REJECTED",
+    "ZONAL_ABSENT",
+    "INTERVIEW_ABSENT",
+    "COMPENSATION_PENDING",
+    "COMPENSATION_APPROVED",
+    "COMPENSATION_REJECTED",
+    "COMPENSATION_RENEGOTITATE",
+    "SCHEDULE_PENDING",
+    "RESCHEDULE_PENDING",
+    "PRE_ONBOARDING_PENDING",
+    "PRE_ONBOARDING_COMPLETED",
+    "ONBOARDED",
   ];
 
   const STATUS_CLASS_MAP = {
@@ -43,6 +66,7 @@ export default function BulkCommunicationPool({
     Selected: "bg-success",
     Offered: "bg-success",
     Onboarded: "bg-success",
+    Qualified: "bg-success",
   };
 
   const STATUS_LABEL_MAP = {
@@ -53,6 +77,8 @@ export default function BulkCommunicationPool({
     PENDING: "Pending",
     ELIGIBLE: "Eligible",
     SCHEDULED: "Scheduled",
+    QUALIFIED: "Qualified",
+    DISQUALIFIED: "Disqualified",
   };
 
   const formatStatusFallback = (statusString) => {
@@ -85,8 +111,10 @@ export default function BulkCommunicationPool({
     return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
   }, [allCandidatesForFilters]);
 
-  const allSelected = allCandidatesForFilters?.length > 0 && allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
-const toggleSelectAll = () => {
+  const allSelected =
+    allCandidatesForFilters?.length > 0 &&
+    allCandidatesForFilters.every((c) => selectedIds.includes(c.id));
+  const toggleSelectAll = () => {
     // 1. If already selected, ALWAYS allow clearing selections
     if (allSelected) {
       setSelectedIds([]);
@@ -102,9 +130,7 @@ const toggleSelectAll = () => {
     // 3. Perform select all
     const allIds = allCandidatesForFilters.map((c) => c.id);
     setSelectedIds(allIds);
-    toast.success(
-      t("candidates_added_to_scope", { count: allIds.length })
-    );
+    toast.success(t("candidates_added_to_scope", { count: allIds.length }));
   };
 
   const toggleRow = (id) => {
@@ -117,66 +143,71 @@ const toggleSelectAll = () => {
   const dynamicColSpan = hasLocationData ? 7 : 6;
 
   const statusOptions = [
-  {
-    value: "",
-    label: t("all_statuses"),
-  },
-  ...CANDIDATE_POOL_STATUSES.map((status) => ({
-    value: status,
-    label: STATUS_LABEL_MAP[status] || formatStatusFallback(status),
-  })),
-];
+    {
+      value: "",
+      label: t("all_statuses"),
+    },
+    ...CANDIDATE_POOL_STATUSES.map((status) => ({
+      value: status,
+      label: STATUS_LABEL_MAP[status] || formatStatusFallback(status),
+    })),
+  ];
 
   return (
     <div className="card rounded border-0 mt-4 mb-5">
-      
       {/* 2-Row Toolbar Section */}
       <div className="p-3" style={{ backgroundColor: "#F9FAFB" }}>
-        
         {/* Row 1: Filter Labels & Action Pickers */}
         <div className="d-flex align-items-center gap-3 flex-wrap mb-3">
           <span className="fs-14 text-secondary">{t("filter_by")}:</span>
           <button
             className="btn fs-14 text-danger border-0 bg-transparent p-0 fw-medium"
-            onClick={() => setFilters({ status: [], stateId: "", categoryId: "", searchText: "" })}
+            onClick={() =>
+              setFilters({
+                status: [],
+                stateId: "",
+                categoryId: "",
+                searchText: "",
+              })
+            }
           >
-           {t("clear_all")}
+            {t("clear_all")}
           </button>
-          
+
           <div className="d-flex align-items-center gap-2 ms-2">
-          <Select
-  styles={{
-    container: (base) => ({
-      ...base,
-      width: 200,
-    }),
-    control: (base) => ({
-      ...base,
-      minHeight: 40,
-      borderRadius: 6,
-      fontSize: 14,
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-  }}
-  options={statusOptions}
-  value={
-    statusOptions.find(
-      (o) => o.value === (filters?.status?.[0] || "")
-    ) || statusOptions[0]
-  }
-  onChange={(option) => {
-    onPageChange(0);
-    setFilters((prev) => ({
-      ...prev,
-      status: option?.value ? [option.value] : [],
-    }));
-  }}
-  menuPlacement="bottom"
-  menuPosition="fixed"
-/>
+            <Select
+              styles={{
+                container: (base) => ({
+                  ...base,
+                  width: 200,
+                }),
+                control: (base) => ({
+                  ...base,
+                  minHeight: 40,
+                  borderRadius: 6,
+                  fontSize: 14,
+                }),
+                menu: (base) => ({
+                  ...base,
+                  zIndex: 9999,
+                }),
+              }}
+              options={statusOptions}
+              value={
+                statusOptions.find(
+                  (o) => o.value === (filters?.status?.[0] || "")
+                ) || statusOptions[0]
+              }
+              onChange={(option) => {
+                onPageChange(0);
+                setFilters((prev) => ({
+                  ...prev,
+                  status: option?.value ? [option.value] : [],
+                }));
+              }}
+              menuPlacement="bottom"
+              menuPosition="fixed"
+            />
 
             {/* {hasLocationData && (
               <select
@@ -208,7 +239,10 @@ const toggleSelectAll = () => {
 
         {/* Row 2: Search Box & Pill Counter (Left side group) | Trigger Button (Far Right side) */}
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-          <div className="d-flex align-items-center gap-3 flex-grow-1" style={{ maxWidth: "650px" }}>
+          <div
+            className="d-flex align-items-center gap-3 flex-grow-1"
+            style={{ maxWidth: "650px" }}
+          >
             <div className="input-group" style={{ maxWidth: "440px" }}>
               <span className="input-group-text bg-white border-end-0 py-2">
                 <img alt="search" src={searchIcon} width={15} />
@@ -216,15 +250,20 @@ const toggleSelectAll = () => {
               <input
                 type="text"
                 className="form-control border-start-0 fs-14 py-2"
-               placeholder={t("search_candidates")}
+                placeholder={t("search_candidates")}
                 value={filters.searchText}
-                onChange={(e) => setFilters((prev) => ({ ...prev, searchText: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    searchText: e.target.value,
+                  }))
+                }
                 style={{ borderRadius: "0 6px 6px 0" }}
               />
             </div>
 
             {/* Static layout pill badge precisely matching your design asset */}
-            <span 
+            <span
               className="py-1 px-3 fs-13 text-center"
               style={{
                 backgroundColor: "#EDF2FF",
@@ -232,7 +271,7 @@ const toggleSelectAll = () => {
                 borderRadius: "30px",
                 whiteSpace: "nowrap",
                 display: "inline-block",
-                fontWeight: "400"
+                fontWeight: "400",
               }}
             >
               {/* {selectedIds.length} Candidates Selected */}
@@ -241,16 +280,15 @@ const toggleSelectAll = () => {
           </div>
 
           {/* Action Trigger Button floated smoothly to the right margin */}
-          <button 
+          <button
             className="btn orange-bg text-white py-2 px-4 fs-14"
             disabled={selectedIds.length === 0}
             onClick={onTriggerCommunication}
             style={{ borderRadius: "6px", minWidth: "180px" }}
           >
-           {t("trigger_communication")}
+            {t("trigger_communication")}
           </button>
         </div>
-
       </div>
 
       {/* Structured Evaluation Datagrid */}
@@ -258,14 +296,23 @@ const toggleSelectAll = () => {
         <table className="table table-hover mb-0">
           <thead className="bg-light">
             <tr>
-              <th className="fs-14 fw-normal py-3" style={{ paddingLeft: "1rem", width: "40px" }}>
-                <input type="checkbox" checked={allSelected} onChange={toggleSelectAll} />
+              <th
+                className="fs-14 fw-normal py-3"
+                style={{ paddingLeft: "1rem", width: "40px" }}
+              >
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={toggleSelectAll}
+                />
               </th>
               <th className="fs-14 fw-normal py-3">{t("candidate")}</th>
               <th className="fs-14 fw-normal py-3">{t("email_address")}</th>
               <th className="fs-14 fw-normal py-3">{t("experience")}</th>
               <th className="fs-14 fw-normal py-3">{t("status")}</th>
-              {hasLocationData && <th className="fs-14 fw-normal py-3">{t("location")}</th>}
+              {hasLocationData && (
+                <th className="fs-14 fw-normal py-3">{t("location")}</th>
+              )}
               <th className="fs-14 fw-normal py-3">{t("category")}</th>
             </tr>
           </thead>
@@ -279,19 +326,30 @@ const toggleSelectAll = () => {
             ) : candidates.length === 0 ? (
               <tr>
                 <td colSpan={dynamicColSpan} className="text-center py-4">
-                 {t("no_candidates_found")}
+                  {t("no_candidates_found")}
                 </td>
               </tr>
             ) : (
               candidates.map((c) => (
                 <tr key={c.id}>
-                  <td className="align-content-center" style={{ paddingLeft: "1rem" }}>
-                    <input type="checkbox" checked={selectedIds.includes(c.id)} onChange={() => toggleRow(c.id)} />
+                  <td
+                    className="align-content-center"
+                    style={{ paddingLeft: "1rem" }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(c.id)}
+                      onChange={() => toggleRow(c.id)}
+                    />
                   </td>
                   <td className="align-content-center">
                     <p className="fw-normal fs-14 mb-0">{c.name}</p>
-                    <small className="text-muted fs-12 d-block">{t("application_number")}: {c.applicationNo}</small>
-                    <small className="text-primary fs-12 d-block mt-0.5 fw-medium">{c.positionName}</small>
+                    <small className="text-muted fs-12 d-block">
+                      {t("application_number")}: {c.applicationNo}
+                    </small>
+                    <small className="text-primary fs-12 d-block mt-0.5 fw-medium">
+                      {c.positionName}
+                    </small>
                   </td>
                   <td className="align-content-center fs-14 text-secondary">
                     {c.email}
@@ -299,14 +357,19 @@ const toggleSelectAll = () => {
                   <td className="align-content-center">
                     {/* {((c.experienceMonths ?? 0) / 12).toFixed(1)} years */}
                     {((c.experienceMonths ?? 0) / 12).toFixed(1)} {t("years")}
-                    </td>
+                  </td>
                   <td className="align-content-center">
-                    <span className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"}`}>
+                    <span
+                      className={`round_badge px-3 py-1 fs-12 rounded text-white ${STATUS_CLASS_MAP[c.status] || "bg-secondary"}`}
+                    >
                       {/* {c.status} */}
-                      {t(c.status.toLowerCase())}
+                      {STATUS_LABEL_MAP[c.status] ||
+                        formatStatusFallback(c.status)}
                     </span>
                   </td>
-                  {hasLocationData && <td className="align-content-center">{c.location}</td>}
+                  {hasLocationData && (
+                    <td className="align-content-center">{c.location}</td>
+                  )}
                   <td className="align-content-center">{c.categoryName}</td>
                 </tr>
               ))
@@ -318,7 +381,9 @@ const toggleSelectAll = () => {
       {/* Pagination Toolbar Footer Container */}
       <div className="d-flex justify-content-between align-items-center px-3 py-3 border-top">
         <div className="fs-14 text-muted">
-         {t("showing")} {page * pageSize + 1}–{Math.min((page + 1) * pageSize, totalElements)} {t("of")} {totalElements}
+          {t("showing")} {page * pageSize + 1}–
+          {Math.min((page + 1) * pageSize, totalElements)} {t("of")}{" "}
+          {totalElements}
         </div>
 
         <div className="d-flex align-items-center gap-2">
@@ -332,11 +397,25 @@ const toggleSelectAll = () => {
             }}
           >
             {[10, 20, 50].map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s}>
+                {s}
+              </option>
             ))}
           </select>
-          <button className="btn btn-sm btn-outline-secondary" disabled={page === 0} onClick={() => onPageChange(page - 1)}>{t("prev")}</button>
-          <button className="btn btn-sm btn-outline-secondary" disabled={(page + 1) * pageSize >= totalElements} onClick={() => onPageChange(page + 1)}>{t("next")}</button>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={page === 0}
+            onClick={() => onPageChange(page - 1)}
+          >
+            {t("prev")}
+          </button>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            disabled={(page + 1) * pageSize >= totalElements}
+            onClick={() => onPageChange(page + 1)}
+          >
+            {t("next")}
+          </button>
         </div>
       </div>
     </div>
