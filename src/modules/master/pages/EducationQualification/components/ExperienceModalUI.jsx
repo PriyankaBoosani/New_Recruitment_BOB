@@ -401,7 +401,7 @@ const ExperienceModal = ({
                             </label>
                           </div>
                         )}
-                        {form.integratedGroup?.length > 0 && (
+                        {/* {form.integratedGroup?.length > 0 && (
                           <div className="col-md-3">
                             <label
                               className="form-label"
@@ -410,7 +410,7 @@ const ExperienceModal = ({
                               Integrated Specilization
                             </label>
                           </div>
-                        )}
+                        )} */}
                         <div className="col-md-1"></div>
                       </div>
                     </>
@@ -696,7 +696,7 @@ const ExperienceModal = ({
                                         />
                                       </div>
                                     )}
-                                    {["Graduation", "Post-Graduation"].includes(
+                                    {/* {["Graduation", "Post-Graduation"].includes(
                                       selectedEducation?.documentName
                                     ) &&
                                       form.integratedGroup?.length > 0 && (
@@ -767,7 +767,7 @@ const ExperienceModal = ({
                                             }}
                                           />
                                         </div>
-                                      )}
+                                      )} */}
 
                                     {/* DELETE BUTTON */}
                                     <div className="col-md-1 d-flex align-items-center justify-content-center">
