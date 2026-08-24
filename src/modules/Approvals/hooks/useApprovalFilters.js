@@ -105,6 +105,7 @@ const useApprovalFilters = () => {
         page: 0,
         size: 10,
         positionIds: [position.positionId],
+       
         status:
           stage === "SCREENING"
             ? ["SHORTLISTED", "REJECTED"]
@@ -192,6 +193,8 @@ const useApprovalFilters = () => {
         label: selectedPosition.positionName,
         value: selectedPosition.positionId,
         raw: selectedPosition,
+        isLocationWise: true
+
       }
     : null;
 

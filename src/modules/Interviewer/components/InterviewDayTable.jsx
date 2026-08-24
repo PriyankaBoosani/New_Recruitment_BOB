@@ -22,6 +22,7 @@ const InterviewDayTable = ({
   position,
   selectedDate,
   allCandidatesRaw,
+  isLocationWise
 }) => {
   const { t } = useTranslation("interviewDay");
 
@@ -50,6 +51,7 @@ const InterviewDayTable = ({
         position,
         page,
         pageSize,
+        isLocationWise,
       },
     });
   };

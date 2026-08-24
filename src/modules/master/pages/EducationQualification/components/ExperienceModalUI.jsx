@@ -62,25 +62,7 @@ const ExperienceModal = ({
       duplicateCodes,
     };
   };
-  const filteredSpecializations = (specializations = []) =>
-    specializations.filter((s) => {
-      const name =
-        typeof s === "string" ? s : s?.specializationName || s?.name || "";
 
-      const normalizedName = name.trim().toLowerCase();
-
-      return !["other related fields", "others"].includes(normalizedName);
-    });
-  const shouldShowSpecialization = (val) => {
-    const name =
-      typeof val === "string"
-        ? val
-        : val?.specializationName || val?.name || "";
-
-    return !["other related fields", "others"].includes(
-      name.trim().toLowerCase()
-    );
-  };
 
   const integratedGroupOptions =
     qualificationOptions
@@ -95,7 +77,7 @@ const ExperienceModal = ({
 
         return (
           ["Graduation", "Post-Graduation"].includes(levelName) &&
-          !["other", "others", "other related fields"].includes(
+          !["other", "others", "other related fields", "any graduation", "any post-graduation"].includes(
             qualificationName
           )
         );

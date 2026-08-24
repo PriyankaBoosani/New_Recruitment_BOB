@@ -412,9 +412,7 @@ export const useExperience = () => {
         },
         specializations: [...specializations, ...integratedSpecializations],
       };
-      console.log("FINAL EDUCATION PAYLOAD:", payload);
       const res = await masterApiService.saveEducation(payload);
-      console.log("savepayload", res);
 
       if (isEditMode) {
         if (res.success) {
@@ -448,14 +446,10 @@ export const useExperience = () => {
         return;
       }
 
-      console.log(
-        "Integrated Group IDs sent to specialization API:",
-        qualificationIds
-      );
+    
 
       const res = await masterApiService.getSpecializations(qualificationIds);
 
-      console.log("Integrated Specialization Response:", res.data);
 
       setIntegratedSpecializationOptions(res.data || []);
     } catch (error) {

@@ -30,13 +30,15 @@ import InterviewerImportModal from "./components/InterviewerImportModal";
 export default function InterviewerSchedule() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [searchText, setSearchText] = useState("");
-
   const [masterData, setMasterData] = useState(null);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
   const [rows, setRows] = useState([]);
 
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const [isLocationWise, setIsLocationWise] = useState(false);
+
+
   const [panelPositions, setPanelPositions] = useState([]);
   const [originalRows, setOriginalRows] = useState([]);
 
@@ -61,7 +63,6 @@ export default function InterviewerSchedule() {
   const [showImportModal, setShowImportModal] = useState(false);
 
   /* ================= LOAD MASTERS ================= */
-
   useEffect(() => {
     masterApiService
       .getMasterDisplayAll()
@@ -448,16 +449,20 @@ export default function InterviewerSchedule() {
             position={{
               positionId: selectedPosition?.position?.positionId,
               positionName: selectedPosition?.masterPosition?.positionName,
+              
             }}
             isCardBg={false}
             isSaveEnabled={anyChanged}
             onSave={handleSave}
             isSaveBtn={true}
+           setIsLocationWise={setIsLocationWise}
             //            showImportBtn={isSelectionDone}
             // onImportClick={() => setShowImportModal(true)}
           />
+          
         </div>
       )}
+      
 
       {/* ===== TABLE ===== */}
 
@@ -481,9 +486,11 @@ export default function InterviewerSchedule() {
         position={{
           positionId: selectedPosition?.position?.positionId,
           positionName: selectedPosition?.masterPosition?.positionName,
+          
         }}
         selectedDate={selectedDate}
         allCandidatesRaw={allCandidatesRaw}
+        isLocationWise={isLocationWise}
       />
 
       {/* ===== PDF VIEWER ===== */}

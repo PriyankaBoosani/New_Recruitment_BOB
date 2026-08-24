@@ -50,6 +50,7 @@ export default function CandidateVerification() {
   const [allCandidates, setAllCandidates] = useState([]);
   const [selectedRequisition, setSelectedRequisition] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const [isLocationWise, setIsLocationWise] = useState(false);
   const [allCandidatesRaw, setAllCandidatesRaw] = useState([]);
   const [originalAbsentMap, setOriginalAbsentMap] = useState({});
 
@@ -130,7 +131,13 @@ export default function CandidateVerification() {
 
   const navRequisition = location.state?.requisition || null;
   const navPosition = location.state?.position || null;
+ const navIsLocationWise = location.state?.isLocationWise;
 
+useEffect(() => {
+  if (navIsLocationWise !== undefined) {
+    setIsLocationWise(navIsLocationWise);
+  }
+}, [navIsLocationWise]);
   /* ================= LOAD MASTER ================= */
 
   useEffect(() => {
@@ -501,11 +508,13 @@ export default function CandidateVerification() {
           <RequisitionStrip
             requisition={selectedRequisition}
             position={selectedPosition}
+            setIsLocationWise={setIsLocationWise}
             isCardBg={false}
             isSaveEnabled={anyAbsentChanged}
             onSave={handleSaveAbsent}
              isSaving={savingAbsent}
             isSaveBtn={true}
+
           />
         </div>
       )}
@@ -530,6 +539,7 @@ export default function CandidateVerification() {
         filter={filteredCandidates}
         searchText={searchText}
         activeStage={activeStage}
+        isLocationWise={isLocationWise}
       />
 
       <PdfViewerModal

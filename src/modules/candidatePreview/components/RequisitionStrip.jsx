@@ -24,6 +24,7 @@ const RequisitionStrip = ({
   onImportClick,
   isSaving,
   setDynamicFields,
+  setIsLocationWise,
 }) => {
   const [showPosition, setShowPosition] = useState(false);
   const [job, setJob] = useState(null);
@@ -113,7 +114,7 @@ const RequisitionStrip = ({
         );
 
         const mapped = mapJobPositionToRequisitionStrip(res.data, masterData);
-
+        mapped.isLocationWise = res?.data?.isLocationWise;
         const exclusionNames =
           res.data?.jobPositionExclusion
             ?.filter((item) => item.isExcluded)
@@ -136,6 +137,7 @@ const RequisitionStrip = ({
 
         setJob(mapped);
         setDynamicFields?.(mapped?.dynamicFields || []);
+        setIsLocationWise?.(mapped.isLocationWise);
       } catch (err) {
         console.error("Failed to fetch job details", err);
         toast.error(t("candidateWorkflow:failed_load_position_details"));
@@ -506,8 +508,6 @@ const RequisitionStrip = ({
                   exServicemenGroups={masterData?.exservicemen || []}
                 />
               )}
-
-              
 
               {job?.positionStateDistributions?.length === 0 &&
                 job?.nationalCategoryDistribution && (

@@ -22,6 +22,7 @@ const CandidateTable = ({
   filter,
   searchText,
   activeStage,
+  isLocationWise
 }) => {
   const { t } = useTranslation(["verification", "common"]);
 
@@ -40,8 +41,11 @@ const CandidateTable = ({
           position?.positionId ||
           position?.value ||
           null,
+          
 
         selectedDate,
+        isLocationWise,
+        
         candidates: allCandidatesRaw,
         requisition,
         position,

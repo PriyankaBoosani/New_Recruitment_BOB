@@ -46,7 +46,8 @@ const CandidatePreviewPage = ({ onHide }) => {
   const requisition = state?.requisition;
   const requisitionTitle = requisition?.requisition_title;
   const positionName = state?.position?.positionName;
-  const isLocationWise = state?.position?.[0]?.isLocationWise;
+ const isLocationWise =
+  state?.isLocationWise ?? state?.position?.[0]?.isLocationWise;
   const position = Array.isArray(state?.position)
     ? state.position.find((p) => p.positionId === candidatePositionId) ||
       state.position[0]
@@ -186,6 +187,7 @@ const CandidatePreviewPage = ({ onHide }) => {
                 pageSize: state.pageSize,
                 filters: state.filters,
                 activeTab: state.activeTab,
+                isLocationWise: state.isLocationWise,
               },
             });
           }}
@@ -210,6 +212,7 @@ const CandidatePreviewPage = ({ onHide }) => {
                 page: state.page,
                 pageSize: state.pageSize,
                 filters: state.filters,
+                isLocationWise: state.isLocationWise,
               },
             });
           }}

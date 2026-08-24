@@ -7,11 +7,6 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
   );
 
   return list.map((item) => {
-    console.log("EDUCATION ITEM BEFORE MAPPING:", item);
-  console.log(
-    "IC GROUPS BEFORE MAPPING:",
-    item?.qualification?.icGroups
-  );
     const docId = String(item?.qualification?.levelId || "").toLowerCase();
 
     const firstGroup = item?.specializations?.[0]?.group || null;

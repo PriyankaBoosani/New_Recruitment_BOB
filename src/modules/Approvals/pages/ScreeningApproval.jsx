@@ -39,6 +39,7 @@ export default function Approval() {
         candidate,
         requisition: selectedRequisitionOption?.raw,
         position: selectedPositionOption?.raw,
+       isLocationWise: selectedPositionOption?.raw?.isLocationWise,
 
         candidateId: candidate.candidateId,
         applicationId: candidate.applicationId,

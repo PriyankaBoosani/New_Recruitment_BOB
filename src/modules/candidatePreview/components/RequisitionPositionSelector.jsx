@@ -146,7 +146,6 @@ const RequisitionPositionSelector = ({
       raw: selectedPositionRaw,
     };
   }, [positions, selectedPositionRaw]);
-
   /* ================= UI ================= */
 
   return (
