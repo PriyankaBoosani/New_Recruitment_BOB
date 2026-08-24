@@ -66,6 +66,7 @@ const ApplicationForm = ({
   dynamicFields,
   isFromApproval,
   isApprovalLocked,
+  approvalStage,
 }) => {
   const { t } = useTranslation(["preview", "common", "validation"]);
 
@@ -133,6 +134,7 @@ const ApplicationForm = ({
   };
 
   const isExamDisqualified = examQualificationStatus === "DISQUALIFIED";
+  const isInterviewApproval = isFromApproval && approvalStage === "interview";
 
   useEffect(() => {
     if (!candidate) return;
@@ -593,7 +595,7 @@ const ApplicationForm = ({
 
       let res;
 
-      if (isZonalHr) {
+      if (isZonalHr || isInterviewApproval) {
         res = await jobPositionApiService.getZonalDocumentStatus(applicationId);
       } else {
         res =
@@ -608,8 +610,9 @@ const ApplicationForm = ({
       (res.data || []).forEach((item) => {
         const isZonal = isZonalHr;
 
-        const status =
-          isCandidateWorkflow || isFromApproval
+        const status = isInterviewApproval
+          ? item.zonalHrDocStatus || "PENDING"
+          : isCandidateWorkflow || isFromApproval
             ? item.docScreeningStatus || "PENDING"
             : item.zonalHrDocStatus || "PENDING";
 
@@ -1070,7 +1073,7 @@ const ApplicationForm = ({
     disableShortlistedSection || !areAllCriteriaYes() || hasMissingUploads;
 
   // NO option is disabled if shortlist section is disabled
-const disableNoOption = disableShortlistedSection;
+  const disableNoOption = disableShortlistedSection;
   const handleFinalSubmit = async () => {
     if (isApprovalLocked) {
       toast.warning(
@@ -1329,13 +1332,13 @@ const disableNoOption = disableShortlistedSection;
   const isOptionDisabled = (option, category) => {
     const categorySatisfied = isCategorySatisfied(category);
     const categoryRejected = isCategoryRejected(category);
-     if (
-    (option === "NO" || option === "DISCREPANCY") &&
-    !categorySatisfied &&
-    !categoryRejected
-  ) {
-    return true;
-  }
+    if (
+      (option === "NO" || option === "DISCREPANCY") &&
+      !categorySatisfied &&
+      !categoryRejected
+    ) {
+      return true;
+    }
     // Disable YES whenever any document of that category is rejected
     if (option === "YES" && categoryRejected) {
       return true;
@@ -1355,13 +1358,9 @@ const disableNoOption = disableShortlistedSection;
     if (option === "DISCREPANCY" && allDocsAreVerified) {
       return true;
     }
- if (
-    option === "DISCREPANCY" &&
-    categorySatisfied &&
-    !categoryRejected
-  ) {
-    return true;
-  }
+    if (option === "DISCREPANCY" && categorySatisfied && !categoryRejected) {
+      return true;
+    }
     return false;
   };
   useEffect(() => {
@@ -1884,7 +1883,7 @@ const disableNoOption = disableShortlistedSection;
                         ? data.personalDetails.isLocalLanguageStudied
                         : "-"}
                     </td>
-                     <td className="fw-med">{t("twin_sibling")}</td>
+                    <td className="fw-med">{t("twin_sibling")}</td>
                     <td className="fw-reg" colSpan={2}>
                       {data.personalDetails.isTwin === "Yes"
                         ? `Yes (${data.personalDetails.twinName})`

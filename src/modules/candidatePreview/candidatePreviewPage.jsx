@@ -298,6 +298,7 @@ const CandidatePreviewPage = ({ onHide }) => {
               isCandidateWorkflow={isCandidateWorkflow}
               isFromApproval={isFromApproval}
               isApprovalLocked={isApprovalLocked}
+               approvalStage={activeTab}
             />
           )
         )}
