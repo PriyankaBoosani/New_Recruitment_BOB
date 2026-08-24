@@ -446,10 +446,7 @@ export const useExperience = () => {
         return;
       }
 
-    
-
       const res = await masterApiService.getSpecializations(qualificationIds);
-
 
       setIntegratedSpecializationOptions(res.data || []);
     } catch (error) {
@@ -475,7 +472,7 @@ export const useExperience = () => {
 
     // Fetch integrated specialization options
     if (item.icGroups?.length) {
-      fetchIntegratedSpecializations(item.icGroups);
+      fetchIntegratedSpecializations(item.icGroups.map((group) => group.value));
     }
 
     setFormData([

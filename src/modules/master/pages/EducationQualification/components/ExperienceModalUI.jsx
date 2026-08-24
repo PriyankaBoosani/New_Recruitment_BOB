@@ -63,7 +63,6 @@ const ExperienceModal = ({
     };
   };
 
-
   const integratedGroupOptions =
     qualificationOptions
       ?.filter((item) => {
@@ -77,9 +76,13 @@ const ExperienceModal = ({
 
         return (
           ["Graduation", "Post-Graduation"].includes(levelName) &&
-          !["other", "others", "other related fields", "any graduation", "any post-graduation"].includes(
-            qualificationName
-          )
+          ![
+            "other",
+            "others",
+            "other related fields",
+            "any graduation",
+            "any post-graduation",
+          ].includes(qualificationName)
         );
       })
       .map((item) => ({
@@ -321,13 +324,22 @@ const ExperienceModal = ({
                       isMulti
                       options={integratedGroupOptions}
                       value={integratedGroupOptions.filter((option) =>
-                        form.integratedGroup?.includes(option.value)
+                        form.integratedGroup?.some(
+                          (group) => group?.value === option.value
+                        )
                       )}
                       onChange={(options) => {
-                        const selectedIds =
-                          options?.map((option) => option.value) || [];
+                        const selectedGroups =
+                          options?.map((option, index) => ({
+                            key: index,
+                            value: option.value,
+                          })) || [];
 
-                        onChange(formIndex, "integratedGroup", selectedIds);
+                        const selectedIds = selectedGroups.map(
+                          (item) => item.value
+                        );
+
+                        onChange(formIndex, "integratedGroup", selectedGroups);
 
                         fetchIntegratedSpecializations(selectedIds);
 
