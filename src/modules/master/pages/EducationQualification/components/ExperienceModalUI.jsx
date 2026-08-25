@@ -313,14 +313,15 @@ const ExperienceModal = ({
                     </small>
                   </div>
                 )}
-                
 
                 {["Graduation", "Post-Graduation"].includes(
                   selectedEducation?.documentName
                 ) &&
                   form.isIntegratedCourse === true && (
                     <div className="col-md-3">
-                      <label className="form-label">Integrated Group</label>
+                      <label className="form-label">
+                        Integrated Group <span className="text-danger">*</span>
+                      </label>
 
                       <Select
                         classNamePrefix="react-select"
@@ -358,9 +359,14 @@ const ExperienceModal = ({
                         isClearable={!isViewing}
                         isSearchable={!isViewing}
                       />
+                      {errors[formIndex]?.integratedGroup && (
+                        <small className="text-danger">
+                          {errors[formIndex].integratedGroup}
+                        </small>
+                      )}
                     </div>
                   )}
-                  {["Graduation", "Post-Graduation"].includes(
+                {["Graduation", "Post-Graduation"].includes(
                   selectedEducation?.documentName
                 ) && (
                   <div className="col-md-2">
@@ -378,7 +384,11 @@ const ExperienceModal = ({
 
                           onChange(formIndex, "isIntegratedCourse", checked);
 
-                          if (!checked) {
+                          if (checked) {
+                            // Integrated course → clear normal group
+                            onChange(formIndex, "group", "");
+                          } else {
+                            // Normal course → clear integrated data
                             onChange(formIndex, "integratedGroup", []);
                             onChange(
                               formIndex,
@@ -388,8 +398,6 @@ const ExperienceModal = ({
                           }
                         }}
                       />
-
-                      
                     </div>
                   </div>
                 )}
@@ -959,15 +967,17 @@ const ExperienceModal = ({
                       )}
 
                       {/* BUTTON ALWAYS BOTTOM */}
-                      <div className="mt-2">
-                        <button
-                          type="button"
-                          className="add-spec-btn"
-                          onClick={() => onAddSpec(formIndex)}
-                        >
-                          {t("education:add_specialization")}
-                        </button>
-                      </div>
+                      {!form.isIntegratedCourse && (
+                        <div className="mt-2">
+                          <button
+                            type="button"
+                            className="add-spec-btn"
+                            onClick={() => onAddSpec(formIndex)}
+                          >
+                            {t("education:add_specialization")}
+                          </button>
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
