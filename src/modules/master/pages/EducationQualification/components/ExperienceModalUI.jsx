@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import Select from "react-select";
 import "../../../../../style/Experience.css";
 import { useTranslation } from "react-i18next";
@@ -249,7 +249,7 @@ const ExperienceModal = ({
                   )}
                 </div>
 
-                {showTopGroup && (
+                {showTopGroup && !form.isIntegratedCourse && (
                   <div
                     className={
                       ["Graduation", "Post-Graduation"].includes(
@@ -313,50 +313,84 @@ const ExperienceModal = ({
                     </small>
                   </div>
                 )}
+                
+
                 {["Graduation", "Post-Graduation"].includes(
                   selectedEducation?.documentName
+                ) &&
+                  form.isIntegratedCourse === true && (
+                    <div className="col-md-3">
+                      <label className="form-label">Integrated Group</label>
+
+                      <Select
+                        classNamePrefix="react-select"
+                        isMulti
+                        options={integratedGroupOptions}
+                        value={integratedGroupOptions.filter((option) =>
+                          form.integratedGroup?.some(
+                            (group) => group?.value === option.value
+                          )
+                        )}
+                        onChange={(options) => {
+                          const selectedGroups =
+                            options?.map((option, index) => ({
+                              key: index,
+                              value: option.value,
+                            })) || [];
+
+                          const selectedIds = selectedGroups.map(
+                            (item) => item.value
+                          );
+
+                          onChange(
+                            formIndex,
+                            "integratedGroup",
+                            selectedGroups
+                          );
+
+                          fetchIntegratedSpecializations(selectedIds);
+
+                          // Clear selected integrated specializations
+                          onChange(formIndex, "integratedSpecializations", []);
+                        }}
+                        placeholder="Select Integrated Group"
+                        isDisabled={isViewing}
+                        isClearable={!isViewing}
+                        isSearchable={!isViewing}
+                      />
+                    </div>
+                  )}
+                  {["Graduation", "Post-Graduation"].includes(
+                  selectedEducation?.documentName
                 ) && (
-                  <div className={form.group ? "col-md-3" : "col-md-3"}>
-                    <label className="form-label">Integrated Group</label>
+                  <div className="col-md-2">
+                    <label className="form-label mb-2">Integrated Course</label>
 
-                    <Select
-                      classNamePrefix="react-select"
-                      isMulti
-                      options={integratedGroupOptions}
-                      value={integratedGroupOptions.filter((option) =>
-                        form.integratedGroup?.some(
-                          (group) => group?.value === option.value
-                        )
-                      )}
-                      onChange={(options) => {
-                        const selectedGroups =
-                          options?.map((option, index) => ({
-                            key: index,
-                            value: option.value,
-                          })) || [];
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`isIntegratedCourse-${formIndex}`}
+                        checked={form.isIntegratedCourse === true}
+                        disabled={isViewing}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
 
-                        const selectedIds = selectedGroups.map(
-                          (item) => item.value
-                        );
+                          onChange(formIndex, "isIntegratedCourse", checked);
 
-                        onChange(formIndex, "integratedGroup", selectedGroups);
+                          if (!checked) {
+                            onChange(formIndex, "integratedGroup", []);
+                            onChange(
+                              formIndex,
+                              "integratedSpecializations",
+                              []
+                            );
+                          }
+                        }}
+                      />
 
-                        fetchIntegratedSpecializations(selectedIds);
-
-                        onChange(formIndex, "integratedSpecializations", []);
-                      }}
-                      placeholder="Select Integrated Group"
-                      isDisabled={isViewing}
-                      isClearable={!isViewing}
-                      isSearchable={!isViewing}
-                      components={
-                        isViewing
-                          ? {
-                              MultiValueRemove: () => null,
-                            }
-                          : undefined
-                      }
-                    />
+                      
+                    </div>
                   </div>
                 )}
               </div>
@@ -486,7 +520,7 @@ const ExperienceModal = ({
                               </div>
 
                               {/* INTEGRATED SPECIALIZATION */}
-                              {form.integratedGroup?.length > 0 && (
+                              {/* {form.integratedGroup?.length > 0 && (
                                 <div
                                   className={
                                     form.group ? "col-md-3" : "col-md-3"
@@ -516,7 +550,7 @@ const ExperienceModal = ({
                                     readOnly
                                   />
                                 </div>
-                              )}
+                              )} */}
                               <div className="col-md-1"></div>
                             </div>
                           </div>

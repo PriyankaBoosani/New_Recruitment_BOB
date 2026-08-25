@@ -33,6 +33,7 @@ export const useExperience = () => {
       specializationOthers: [],
       integratedGroup: [],
       integratedSpecializations: [],
+      isIntegratedCourse: false, // ADD
     },
   ]);
 
@@ -220,6 +221,7 @@ export const useExperience = () => {
         integratedGroup: [],
         integratedSpecializations: [],
         specializationOthers: [],
+        isIntegratedCourse: false,
         // specializationOthers: [{ name: "", id: "" }]
       },
     ]);
@@ -243,7 +245,7 @@ export const useExperience = () => {
         group: "",
         educationQualificationsId: "",
         specializationOthers: [],
-
+        isIntegratedCourse: false,
         integratedGroup: [],
         integratedSpecializations: [],
       },
@@ -251,194 +253,266 @@ export const useExperience = () => {
   };
 
   const saveExperience = async () => {
-    try {
-      const selectedEducation = educationOptions.find(
-        (item) => item.documentTypeId === formData[0].educationLevel
+  try {
+    console.log("========== SAVE START ==========");
+
+    console.log("1. FORM DATA BEFORE SAVE:", formData[0]);
+
+    console.log("2. isIntegratedCourse FROM FORM:", {
+      value: formData[0]?.isIntegratedCourse,
+      type: typeof formData[0]?.isIntegratedCourse,
+    });
+
+    console.log("3. integratedGroup FROM FORM:", {
+      value: formData[0]?.integratedGroup,
+      length: formData[0]?.integratedGroup?.length,
+    });
+
+    const selectedEducation = educationOptions.find(
+      (item) => item.documentTypeId === formData[0].educationLevel
+    );
+
+    console.log("4. SELECTED EDUCATION:", selectedEducation);
+
+    const { valid, errors: newErrors } = validateEducationForm(formData[0], {
+      existing: experienceList,
+      currentId: formData[0].educationQualificationsId,
+      editMode: isEditMode,
+      educationLevelName: selectedEducation?.documentName || "",
+    });
+
+    console.log("5. VALIDATION:", {
+      valid,
+      errors: newErrors,
+    });
+
+    const readOnlyCodes =
+      isEditMode &&
+      [
+        "Graduation",
+        "Post-Graduation",
+        "Any Graduation",
+        "Any Post-Graduation",
+      ].includes(formData[0].course?.trim());
+
+    const hideGroup =
+      ["Any Graduation", "Any Post-Graduation"].includes(
+        formData[0].course?.trim()
+      ) ||
+      ["10th / SSC", "Intermediate / 12th / HSC"].includes(
+        selectedEducation?.documentName
       );
 
-      const { valid, errors: newErrors } = validateEducationForm(formData[0], {
-        existing: experienceList,
-        currentId: formData[0].educationQualificationsId,
-        editMode: isEditMode,
-        educationLevelName: selectedEducation?.documentName || "",
-      });
+    const showTopGroup =
+      !hideGroup && (formData[0].specializationOthers?.length || 0) === 0;
 
-      const readOnlyCodes =
-        isEditMode &&
-        [
-          "Graduation",
-          "Post-Graduation",
-          "Any Graduation",
-          "Any Post-Graduation",
-        ].includes(formData[0].course?.trim());
-
-      const hideGroup =
-        ["Any Graduation", "Any Post-Graduation"].includes(
-          formData[0].course?.trim()
-        ) ||
-        ["10th / SSC", "Intermediate / 12th / HSC"].includes(
-          selectedEducation?.documentName
-        );
-
-      const showTopGroup =
-        !hideGroup && (formData[0].specializationOthers?.length || 0) === 0;
-
-      if (showTopGroup && !formData[0].group?.trim()) {
-        newErrors.group = t("education:group_required", "Group is required");
-      }
-
-      const specs = formData[0].specializationOthers || [];
-
-      // Validate specialization rows BEFORE returning
-      if (!Array.isArray(newErrors.specialization)) {
-        newErrors.specialization = newErrors.specialization
-          ? [{ name: newErrors.specialization }]
-          : [];
-      }
-
-      specs.forEach((s, index) => {
-        // User added a specialization row but left Name empty
-        if (!s.name?.trim()) {
-          newErrors.specialization[index] = {
-            name: t(
-              "education:specialization_required",
-              "Specialization Name is required"
-            ),
-          };
-        }
-      });
-
-      const hasSpecializationError = newErrors.specialization.some(
-        (e) => e?.name
-      );
-
-      // Set all errors only once
-      setErrors([newErrors]);
-
-      // Return only after all validations are completed
-      if (!valid || newErrors.group || hasSpecializationError) {
-        return;
-      }
-
-      const selectedIntegratedSpecializationIds =
-        formData[0].integratedSpecializations || [];
-
-      const selectedIntegratedSpecializations = (
-        integratedSpecializationOptions || []
-      ).filter((sp) =>
-        selectedIntegratedSpecializationIds.includes(sp.specializationId)
-      );
-
-      const integratedSpecializations = selectedIntegratedSpecializations.map(
-        (sp) => ({
-          specialization: {
-            specializationId: sp.specializationId,
-            educationQualificationsId:
-              sp.educationQualificationsId ||
-              formData[0].educationQualificationsId ||
-              null,
-            specializationName: sp.specializationName,
-            specializationCode: sp.specializationCode || null,
-
-            // ONLY selected Integrated Group IDs
-            icGroups: sp.integratedSpecializations || [],
-          },
-
-          group: {
-            educationGroupId: null,
-            groupCode: null,
-            groupName: null,
-            displayOrder: 0,
-          },
-        })
-      );
-
-      const specializations =
-        specs.length > 0
-          ? specs.map((s) => ({
-              specialization: {
-                specializationId: s.id || null,
-                educationQualificationsId:
-                  formData[0].educationQualificationsId || null,
-                specializationName: s.name || null,
-
-                // Add this
-                icGroups: s.integratedSpecializations || [],
-                ...(readOnlyCodes && s.id
-                  ? {}
-                  : {
-                      specializationCode: s.code || null,
-                    }),
-              },
-              group: {
-                educationGroupId: s.group || formData[0].group || null,
-                groupCode: null,
-                groupName: null,
-                displayOrder: 0,
-              },
-            }))
-          : formData[0].group
-            ? [
-                {
-                  specialization: {
-                    specializationId: null,
-                    educationQualificationsId:
-                      formData[0].educationQualificationsId || null,
-                    specializationName: null,
-                    specializationCode: null,
-                  },
-                  group: {
-                    educationGroupId: formData[0].group,
-                    groupCode: null,
-                    groupName: null,
-                    displayOrder: 0,
-                  },
-                },
-              ]
-            : [];
-      const payload = {
-        qualification: {
-          levelId: formData[0].educationLevel,
-          qualificationName: formData[0].course,
-          ...(readOnlyCodes
-            ? {}
-            : {
-                qualificationCode: formData[0].courseCode || "",
-              }),
-          displayOrder: 0,
-          educationQualificationsId:
-            formData[0].educationQualificationsId || null,
-          icGroups: formData[0].integratedGroup || [],
-        },
-        specializations: [...specializations, ...integratedSpecializations],
-      };
-      const res = await masterApiService.saveEducation(payload);
-
-      if (isEditMode) {
-        if (res.success) {
-          toast.success(t("education:updated_success"));
-        } else {
-          toast.error(res.message + ": " + res.data);
-        }
-      } else {
-        if (res.success) {
-          toast.success(t("education:saved_success"));
-        } else {
-          toast.error(res.message + ": " + res.data);
-        }
-      }
-
-      if (res.success) {
-        await loadData();
-        setShowModal(false);
-        setIsEditMode(false);
-        setEditIndex(null);
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Save failed");
+    if (showTopGroup && !formData[0].group?.trim()) {
+      newErrors.group = t("education:group_required", "Group is required");
     }
-  };
+
+    const specs = formData[0].specializationOthers || [];
+
+    if (!Array.isArray(newErrors.specialization)) {
+      newErrors.specialization = newErrors.specialization
+        ? [{ name: newErrors.specialization }]
+        : [];
+    }
+
+    specs.forEach((s, index) => {
+      if (!s.name?.trim()) {
+        newErrors.specialization[index] = {
+          name: t(
+            "education:specialization_required",
+            "Specialization Name is required"
+          ),
+        };
+      }
+    });
+
+    const hasSpecializationError = newErrors.specialization.some(
+      (e) => e?.name
+    );
+
+    setErrors([newErrors]);
+
+    if (!valid || newErrors.group || hasSpecializationError) {
+      console.log("6. SAVE STOPPED BECAUSE OF VALIDATION");
+      return;
+    }
+
+    console.log("7. isIntegratedCourse BEFORE CREATING PAYLOAD:", {
+      value: formData[0]?.isIntegratedCourse,
+      isTrue: formData[0]?.isIntegratedCourse === true,
+    });
+
+    const selectedIntegratedSpecializationIds =
+      formData[0].isIntegratedCourse === true
+        ? formData[0].integratedSpecializations || []
+        : [];
+
+    console.log("8. SELECTED INTEGRATED SPECIALIZATION IDS:", {
+      ids: selectedIntegratedSpecializationIds,
+      isIntegratedCourse: formData[0].isIntegratedCourse,
+    });
+
+    const selectedIntegratedSpecializations = (
+      integratedSpecializationOptions || []
+    ).filter((sp) =>
+      selectedIntegratedSpecializationIds.includes(sp.specializationId)
+    );
+
+    console.log(
+      "9. SELECTED INTEGRATED SPECIALIZATIONS:",
+      selectedIntegratedSpecializations
+    );
+
+    const integratedSpecializations = selectedIntegratedSpecializations.map(
+      (sp) => ({
+        specialization: {
+          specializationId: sp.specializationId,
+          educationQualificationsId:
+            sp.educationQualificationsId ||
+            formData[0].educationQualificationsId ||
+            null,
+          specializationName: sp.specializationName,
+          specializationCode: sp.specializationCode || null,
+          icGroups: sp.integratedSpecializations || [],
+        },
+
+        group: {
+          educationGroupId: null,
+          groupCode: null,
+          groupName: null,
+          displayOrder: 0,
+        },
+      })
+    );
+
+    console.log(
+      "10. INTEGRATED SPECIALIZATIONS PAYLOAD:",
+      integratedSpecializations
+    );
+
+    const specializations =
+      specs.length > 0
+        ? specs.map((s) => ({
+            specialization: {
+              specializationId: s.id || null,
+              educationQualificationsId:
+                formData[0].educationQualificationsId || null,
+              specializationName: s.name || null,
+              icGroups: s.integratedSpecializations || [],
+              ...(readOnlyCodes && s.id
+                ? {}
+                : {
+                    specializationCode: s.code || null,
+                  }),
+            },
+            group: {
+              educationGroupId: s.group || formData[0].group || null,
+              groupCode: null,
+              groupName: null,
+              displayOrder: 0,
+            },
+          }))
+        : formData[0].group
+          ? [
+              {
+                specialization: {
+                  specializationId: null,
+                  educationQualificationsId:
+                    formData[0].educationQualificationsId || null,
+                  specializationName: null,
+                  specializationCode: null,
+                },
+                group: {
+                  educationGroupId: formData[0].group,
+                  groupCode: null,
+                  groupName: null,
+                  displayOrder: 0,
+                },
+              },
+            ]
+          : [];
+
+    console.log("11. NORMAL SPECIALIZATIONS:", specializations);
+
+    const payload = {
+      qualification: {
+        levelId: formData[0].educationLevel,
+        qualificationName: formData[0].course,
+        ...(readOnlyCodes
+          ? {}
+          : {
+              qualificationCode: formData[0].courseCode || "",
+            }),
+        displayOrder: 0,
+        educationQualificationsId:
+          formData[0].educationQualificationsId || null,
+
+        isIntegratedCourse: formData[0].isIntegratedCourse === true,
+
+        icGroups: formData[0].integratedGroup || [],
+      },
+
+      specializations: [
+        ...specializations,
+        ...integratedSpecializations,
+      ],
+    };
+
+    console.log("12. FINAL PAYLOAD:", payload);
+
+    console.log("13. PAYLOAD INTEGRATED VALUE:", {
+      isIntegratedCourse: payload.qualification.isIntegratedCourse,
+      type: typeof payload.qualification.isIntegratedCourse,
+      icGroups: payload.qualification.icGroups,
+      icGroupsLength: payload.qualification.icGroups?.length,
+    });
+
+    console.log("14. CALLING saveEducation API...");
+
+    const res = await masterApiService.saveEducation(payload);
+
+    console.log("15. API SAVE RESPONSE:", res);
+
+    if (res.success) {
+      console.log("16. SAVE SUCCESS - NOW RELOADING DATA");
+      await loadData();
+    } else {
+      console.log("16. SAVE FAILED:", {
+        message: res.message,
+        data: res.data,
+      });
+    }
+
+    if (isEditMode) {
+      if (res.success) {
+        toast.success(t("education:updated_success"));
+      } else {
+        toast.error(res.message + ": " + res.data);
+      }
+    } else {
+      if (res.success) {
+        toast.success(t("education:saved_success"));
+      } else {
+        toast.error(res.message + ": " + res.data);
+      }
+    }
+
+    if (res.success) {
+      setShowModal(false);
+      setIsEditMode(false);
+      setEditIndex(null);
+    }
+
+    console.log("========== SAVE END ==========");
+
+  } catch (err) {
+    console.error("SAVE ERROR:", err);
+    toast.error("Save failed");
+  }
+};
   const fetchIntegratedSpecializations = async (qualificationIds) => {
     try {
       if (!qualificationIds?.length) {
@@ -461,45 +535,114 @@ export const useExperience = () => {
   };
 
   const handleEditClick = (item, index) => {
-    const selectedOption = educationOptions.find(
-      (opt) =>
-        opt.documentName.toLowerCase() ===
-        String(item.educationLevel).toLowerCase()
+  console.log("========== EDIT START ==========");
+
+  console.log("1. ORIGINAL ITEM:", item);
+
+  console.log("2. ORIGINAL isIntegratedCourse:", {
+    value: item?.isIntegratedCourse,
+    type: typeof item?.isIntegratedCourse,
+  });
+
+  console.log("3. ORIGINAL icGroups:", {
+    value: item?.icGroups,
+    isArray: Array.isArray(item?.icGroups),
+    length: item?.icGroups?.length,
+  });
+
+  const selectedOption = educationOptions.find(
+    (opt) =>
+      String(opt.documentName).toLowerCase() ===
+      String(item.educationLevel).toLowerCase()
+  );
+
+  console.log("4. SELECTED EDUCATION:", selectedOption);
+
+  const integratedGroup = Array.isArray(item.icGroups)
+    ? item.icGroups.map((group, index) => ({
+        key: group?.key ?? index,
+        value: String(group?.value || ""),
+      }))
+    : [];
+
+  console.log("5. MAPPED integratedGroup:", integratedGroup);
+
+  const isIntegratedCourse = item.isIntegratedCourse === true;
+
+  console.log("6. CALCULATED isIntegratedCourse:", {
+    value: isIntegratedCourse,
+    type: typeof isIntegratedCourse,
+    originalValue: item?.isIntegratedCourse,
+    comparisonResult: item?.isIntegratedCourse === true,
+  });
+
+  const specializationOthers = (item.specialization || []).map((spec, index) => {
+    const integratedSpecializations = Array.isArray(spec.icGroups)
+      ? spec.icGroups.map((g) =>
+          typeof g === "object" ? String(g.value) : String(g)
+        )
+      : [];
+
+    console.log(`7.${index} SPECIALIZATION:`, {
+      spec,
+      originalIcGroups: spec?.icGroups,
+      mappedIntegratedSpecializations: integratedSpecializations,
+    });
+
+    return {
+      ...spec,
+      integratedSpecializations,
+    };
+  });
+
+  const editFormData = {
+    educationLevel: selectedOption?.documentTypeId || "",
+    course: item.course || "",
+    courseCode: item.qualificationCode || "",
+    educationQualificationsId: item.educationQualificationsId || "",
+
+    group: item.group?.educationGroupId || "",
+
+    specializationOthers,
+
+    integratedGroup,
+
+    isIntegratedCourse,
+
+    integratedSpecializations: [],
+  };
+
+  console.log("8. FINAL FORM DATA BEFORE setFormData:", editFormData);
+
+  console.log("9. FINAL isIntegratedCourse:", {
+    value: editFormData.isIntegratedCourse,
+    type: typeof editFormData.isIntegratedCourse,
+  });
+
+  setFormData([editFormData]);
+
+  console.log("10. setFormData CALLED");
+
+  if (integratedGroup.length > 0) {
+    console.log(
+      "11. FETCHING integrated specializations FOR:",
+      integratedGroup.map((group) => group.value)
     );
 
-    const hasSpecialization =
-      item.specialization?.some((s) => s.name || s.code) || false;
+    fetchIntegratedSpecializations(
+      integratedGroup.map((group) => group.value)
+    );
+  } else {
+    console.log("11. NO integratedGroup - skipping fetch");
+  }
 
-    // Fetch integrated specialization options
-    if (item.icGroups?.length) {
-      fetchIntegratedSpecializations(item.icGroups.map((group) => group.value));
-    }
+  setErrors([]);
+  setIsEditMode(true);
+  setEditIndex(index);
+  setShowModal(true);
 
-    setFormData([
-      {
-        educationLevel: selectedOption?.documentTypeId || "",
-        course: item.course,
-        courseCode: item.qualificationCode || "",
-        educationQualificationsId: item.educationQualificationsId || null,
-
-        // KEEP ALL SPECIALIZATIONS
-        // Attach icGroups only to the specialization that owns them
-        specializationOthers: (item.specialization || []).map((spec) => ({
-          ...spec,
-          integratedSpecializations: spec.icGroups || [],
-        })),
-
-        integratedGroup: item.icGroups || [],
-
-        group: !hasSpecialization ? item.group?.educationGroupId || "" : "",
-      },
-    ]);
-
-    setErrors([]);
-    setIsEditMode(true);
-    setEditIndex(index);
-    setShowModal(true);
-  };
+  console.log("========== EDIT END ==========");
+};
 
   // ✅ STEP 3: ADD THIS FILTER
   const filteredList = experienceList.filter((item) => {
