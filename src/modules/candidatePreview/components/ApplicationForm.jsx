@@ -1632,6 +1632,9 @@ const ApplicationForm = ({
     const [day, month, year] = dateStr.split("-");
     return new Date(year, month - 1, day);
   };
+   const hasSpecialization2 = (previewData?.education || []).some(
+    (edu) => edu.specialization2_name,
+  );
 
   return (
     <>
@@ -1955,6 +1958,7 @@ const ApplicationForm = ({
                     <th>{t("university_name")}</th>
                     <th>{t("board")}</th>
                     <th>{t("specialization")}</th>
+                      {hasSpecialization2 && <th>Specialization Course 2</th>}
                     <th style={{ width: "10%" }}>{t("from_date")}</th>
                     <th style={{ width: "10%" }}>{t("to_date")}</th>
                     <th style={{ width: "9%" }}>{t("percentage_cgpa")}</th>
@@ -1973,6 +1977,9 @@ const ApplicationForm = ({
                         <td>{edu.universityName || "-"}</td>
                         <td>{edu.mandatoryQualification_name || "-"}</td>
                         <td>{edu.specialization_name || "-"}</td>
+                         {hasSpecialization2 && (
+                            <td>{edu.specialization2_name || "-"}</td>
+                          )}
                         <td>{edu.startDate || "-"}</td>
                         <td>{edu.endDate || "-"}</td>
                         <td>{edu.percentage || "-"}</td>

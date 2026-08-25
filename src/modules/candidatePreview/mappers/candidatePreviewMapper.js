@@ -243,6 +243,9 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
       const specialization = edu.specializationId
         ? getSpecialization(masters, edu.specializationId)
         : null;
+      const specialization2 = edu.specializationId2
+        ? getSpecialization(masters, edu.specializationId2)
+        : null;
 
       return {
         institution: edu.institutionName || "-",
@@ -257,6 +260,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
         educationLevel_name: educationLevel?.documentName || "-",
         mandatoryQualification_name: qualification?.qualificationName || "-",
         specialization_name: specialization?.specializationName || "-",
+        specialization2_name: specialization2?.specializationName || null,
       };
     }),
 
@@ -431,7 +435,7 @@ export const mapJobPositionToRequisitionStrip = (
             }
           }
         });
-    
+
         return {
           stateId: state.stateId,
           cityId: state.cityId,
