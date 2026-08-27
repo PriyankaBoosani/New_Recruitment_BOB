@@ -1958,7 +1958,7 @@ const ApplicationForm = ({
                     <th>{t("university_name")}</th>
                     <th>{t("board")}</th>
                     <th>{t("specialization")}</th>
-                      {hasSpecialization2 && <th>Specialization Course 2</th>}
+                      {hasSpecialization2 && <th>Course 2 Specialization</th>}
                     <th style={{ width: "10%" }}>{t("from_date")}</th>
                     <th style={{ width: "10%" }}>{t("to_date")}</th>
                     <th style={{ width: "9%" }}>{t("percentage_cgpa")}</th>
