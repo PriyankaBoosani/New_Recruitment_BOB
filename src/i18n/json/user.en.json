@@ -53,5 +53,7 @@
   "upload_users": "Upload File",
   "support_xlsx": "Support for XLSX formats",
   "interview_centre": "Interview Centre",
+  "zonal_office": "Zonal Office",
+  "select_zonal_office": "Select Zonal Office",
   "select_interview_centre": "Select Interview Centre"
 }

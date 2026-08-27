@@ -53,5 +53,7 @@
   "upload_users": "फ़ाइल अपलोड करें",
   "support_xlsx": "XLSX फ़ॉर्मैट का समर्थन",
   "interview_centre": "साक्षात्कार केंद्र",
-  "select_interview_centre": "साक्षात्कार केंद्र चुनें"
+  "select_interview_centre": "साक्षात्कार केंद्र चुनें",
+   "zonal_office": "क्षेत्रीय कार्यालय",
+  "select_zonal_office": "क्षेत्रीय कार्यालय चुनें"
 }

@@ -57,14 +57,15 @@ const UserTable = ({
       showEndEllipsis: end <= totalPages,
     };
   };
-  const formatRole = (role) => {
-    if (!role) return "-";
+ const formatRole = (role) => {
+  if (!role) return "-";
 
-    return role
-      .replace(/_/g, " ")
-      .toLowerCase()
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-  };
+  return role
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+    .replace(/\bHr\b/g, "HR");
+};
 
   return (
     <>
@@ -76,7 +77,7 @@ const UserTable = ({
               <th>{t("role")}</th>
               <th>{t("name")}</th>
               <th>{t("email")}</th>
-              <th>{t("interviewCentre")}</th>
+              <th>{t("zonal_office")}</th>
               <th style={{ textAlign: "center" }}>{t("actions")}</th>
             </tr>
           </thead>

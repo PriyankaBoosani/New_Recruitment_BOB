@@ -160,7 +160,7 @@ const UserFormModal = ({
                 >
                   <option value="">{t("select_role")}</option>
                   <option value="Admin">{t("admin")}</option>
-                  <option value="Zonal_HR">{t("zonal Hr")}</option>
+                  <option value="Zonal_HR">{t("Zonal HR")}</option>
                   <option value="Recruiter">{t("recruiter")}</option>
                   <option value="Committee_Member">
                     {t("Committee Member")}
@@ -214,7 +214,7 @@ const UserFormModal = ({
               {formData.role === "Zonal_HR" && (
                 <Col md={6}>
                   <Form.Label>
-                    {t("interview_centre")} <span className="text-danger">*</span>
+                    {t("zonal_office")} <span className="text-danger">*</span>
                   </Form.Label>
 
                   <Form.Select
@@ -223,7 +223,7 @@ const UserFormModal = ({
                     onChange={handleInputChange}
                      disabled={mode === "view"}
                   >
-                  <option value="">{t("select_interview_centre")}</option>
+                  <option value="">{t("select_zonal_office")}</option>
                     {interviewCentres.map((centre) => (
                       <option
                         key={centre.interviewCentreId}
