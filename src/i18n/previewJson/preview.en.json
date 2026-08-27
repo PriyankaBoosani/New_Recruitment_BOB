@@ -48,6 +48,7 @@
   "degree": "Degree",
   "board": "Board/Course",
   "specialization": "Specialization",
+  "course_specialization": "Course 2 Specialization",
   "from_date": "From Date",
   "to_date": "To Date",
   "percentage": "Percentage",

@@ -26,7 +26,7 @@
   "duplicate_specialization": "Duplicate specialization",
   "group_required": "Group is required",
   "group": "Group",
-   "group_placeholder": "Enter group",
+  "group_placeholder": "Enter group",
   "duplicate_course": "Course already exists",
   "specialization_required": "Specialization is required",
   "course": "Course",
@@ -37,9 +37,12 @@
   "edit_education": "Edit Education",
   "specialization_name_placeholder": "Specialization Name",
   "specialization_code_placeholder": "Specialization Code",
-      "course_required": "Course is required",
-
+  "course_required": "Course is required",
   "course_code_required": "Course Code is required",
   "specialization_code_required": "Specialization Code is required",
-  "duplicate_specialization_code": "Duplicate specialization code"
+  "duplicate_specialization_code": "Duplicate specialization code",
+  "integrated_course":"Integrated Course",
+  "integrated_group": "Integrated Group",
+  "select_integrated_group": "Select Integrated Group",
+  "integrated_group_required": "Integrated Group is required"
 }

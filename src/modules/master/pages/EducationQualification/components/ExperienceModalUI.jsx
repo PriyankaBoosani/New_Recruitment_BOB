@@ -138,7 +138,7 @@ const ExperienceModal = ({
           const showTopGroup =
             !hideGroup && (form.specializationOthers?.length || 0) === 0;
           return (
-            <div key={formIndex} className="border rounded p-3 mb-3">
+            <div key={formIndex} className="border rounded p-3 mb-3 errorcls">
               {/* ✅ FIRST ROW */}
               <div className="row g-3">
                 {/* EDUCATION LEVEL */}
@@ -320,7 +320,7 @@ const ExperienceModal = ({
                   form.isIntegratedCourse === true && (
                     <div className="col-md-3">
                       <label className="form-label">
-                        Integrated Group <span className="text-danger">*</span>
+                        {t("education:integrated_group")} <span className="text-danger">*</span>
                       </label>
 
                       <Select
@@ -354,7 +354,7 @@ const ExperienceModal = ({
                           // Clear selected integrated specializations
                           onChange(formIndex, "integratedSpecializations", []);
                         }}
-                        placeholder="Select Integrated Group"
+                        placeholder={t("education:select_integrated_group")}
                         isDisabled={isViewing}
                         isClearable={!isViewing}
                         isSearchable={!isViewing}
@@ -370,7 +370,7 @@ const ExperienceModal = ({
                   selectedEducation?.documentName
                 ) && (
                   <div className="col-md-2">
-                    <label className="form-label mb-2">Integrated Course</label>
+                    <label className="form-label mb-2">{t("education:integrated_course")}</label>
 
                     <div className="form-check">
                       <input

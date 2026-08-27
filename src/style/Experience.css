@@ -98,3 +98,6 @@
 .add-spec-btn:hover {
   background-color: #2f3f7a;
 }
+.errorcls .text-danger{
+  font-size: 0.75rem;
+}

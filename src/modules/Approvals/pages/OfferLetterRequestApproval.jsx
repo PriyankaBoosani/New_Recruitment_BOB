@@ -196,7 +196,7 @@ useEffect(() => {
           <Col md={4}>
           <Form.Control
             type="text"
-            placeholder="Search Candidate"
+            placeholder={t("approvalHistory:search_candidate")}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />

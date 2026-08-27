@@ -25,7 +25,7 @@
   "invalid_characters": "अमान्य अक्षर",
   "duplicate_specialization": "डुप्लिकेट विशेषज्ञता",
   "course_required": "पाठ्यक्रम आवश्यक है",
-    "group_required": "समूह आवश्यक है",
+  "group_required": "समूह आवश्यक है",
   "group": "समूह",
   "duplicate_course": "यह कोर्स पहले से मौजूद है",
   "specialization_required": "विशेषज्ञता आवश्यक है",
@@ -33,11 +33,15 @@
   "edit_education": "शैक्षिक योग्यता संपादित करें",
   "specialization_name_placeholder": "विशेषज्ञता का नाम",
   "specialization_code_placeholder": "विशेषज्ञता कोड",
-   "course_code": "कोर्स कोड",
+  "course_code": "कोर्स कोड",
   "course_code_placeholder": "कोर्स कोड दर्ज करें",
   "course_code_required": "पाठ्यक्रम कोड आवश्यक है",
   "specialization_name": "विशेषज्ञता का नाम",
   "specialization_code": "विशेषज्ञता कोड",
   "duplicate_specialization_code": "डुप्लिकेट विशेषज्ञता कोड",
-  "specialization_code_required": "विशेषज्ञता कोड आवश्यक है"
+  "specialization_code_required": "विशेषज्ञता कोड आवश्यक है",
+  "integrated_course": "एकीकृत पाठ्यक्रम",
+  "integrated_group": "एकीकृत समूह",
+  "select_integrated_group": "एकीकृत समूह चुनें",
+   "integrated_group_required": "एकीकृत समूह आवश्यक है"
 }
