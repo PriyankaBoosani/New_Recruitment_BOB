@@ -205,7 +205,7 @@ export default function InterviewPool({
                     {t("candidateWorkflow:application_number")}: {c.regNo}
                   </p>
                   <p className="text-muted fs-12 mb-0">
-                    Position:{" "}
+                    {t("candidateWorkflow:position")}:{" "}
                     {position?.find((p) => p.positionId === c.positionId)
                       ?.positionName || "-"}
                   </p>

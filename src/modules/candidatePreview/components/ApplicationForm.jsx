@@ -1124,7 +1124,7 @@ const ApplicationForm = ({
     } else if (!isAgeValid || !isEducationValid) {
       finalShortlist = "NO";
     }
-
+const finalIsEligible = hasAdditionalDocuments ? false : isEligible;
     const payload = {
       ...screeningForm,
       isShortlisted: finalShortlist,
@@ -1596,6 +1596,7 @@ const ApplicationForm = ({
         }
 
         if (field === "documentName" && value.trim()) {
+           setIsEligible(false);
           setOtherDocumentErrors((prev) => {
             const updated = { ...prev };
             delete updated[id];
