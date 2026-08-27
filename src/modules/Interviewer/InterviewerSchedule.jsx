@@ -119,13 +119,13 @@ export default function InterviewerSchedule() {
 
   useEffect(() => {
     //  ADD THIS BLOCK
-    if (
-      cameFromPreviewBack &&
-      navState.preloadedCandidates?.length &&
-      selectedPosition
-    ) {
-      return;
-    }
+    // if (
+    //   cameFromPreviewBack &&
+    //   navState.preloadedCandidates?.length &&
+    //   selectedPosition
+    // ) {
+    //   return;
+    // }
 
     const posId = selectedPosition?.position?.positionId;
 
