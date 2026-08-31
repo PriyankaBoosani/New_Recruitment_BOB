@@ -59,5 +59,6 @@
 
   "category_wise_reservation_state": "Category Wise Reservation (State-wise)",
   "no_state_wise_summary_found": "No state-wise summary found",
-  "section_name": "Section Name"
+  "section_name": "Section Name",
+  "submit_for_approval": "Submit for Approval"
 }

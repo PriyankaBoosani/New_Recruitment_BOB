@@ -84,5 +84,6 @@
   "failed_open_document": "Failed to open document",
   "please_select_position_to_download": "Please select a position to download",
   "failed_to_load_candidates": "Failed to load candidates",
-  "failed_to_download_pdf": "Failed to download PDF"
+  "failed_to_download_pdf": "Failed to download PDF",
+  "page_size": "Page Size:"
 }

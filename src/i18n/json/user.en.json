@@ -55,5 +55,6 @@
   "interview_centre": "Interview Centre",
   "zonal_office": "Zonal Office",
   "select_zonal_office": "Select Zonal Office",
-  "select_interview_centre": "Select Interview Centre"
+  "select_interview_centre": "Select Interview Centre",
+  "close": "Close"
 }

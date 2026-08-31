@@ -71,5 +71,7 @@
   "l2_rejected": "एल2 अस्वीकृत",
   "approved": "स्वीकृत",
   "finalized": "अंतिम रूप से स्वीकृत",
-  "section_name": "अनुभाग का नाम"
+  "section_name": "अनुभाग का नाम",
+    "submit_for_approval": "अनुमोदन के लिए भेजें"
+
 }

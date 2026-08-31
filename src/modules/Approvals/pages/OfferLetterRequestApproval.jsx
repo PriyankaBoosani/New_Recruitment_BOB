@@ -374,7 +374,7 @@ useEffect(() => {
                         placement="bottom"
                         overlay={
                           <Tooltip id={`offer-preview-${candidate.id}`}>
-                            Preview Offer Letter
+                            {t("preview_offer")}
                           </Tooltip>
                         }
                       >
@@ -402,7 +402,7 @@ useEffect(() => {
                           <Tooltip
                             id={`history-tooltip-${candidate.historyId}`}
                           >
-                            View History
+                            {t("view_history")}
                           </Tooltip>
                         }
                       >

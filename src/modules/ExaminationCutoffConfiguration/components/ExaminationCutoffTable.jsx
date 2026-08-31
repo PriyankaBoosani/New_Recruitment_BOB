@@ -37,7 +37,7 @@ export default function ExaminationCutoffTable({
             )
           }
         >
-          Submit for Approval
+          {t("submit_for_approval")}
         </button>
       </div>
 

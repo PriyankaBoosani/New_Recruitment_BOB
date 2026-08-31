@@ -84,5 +84,6 @@
   "failed_open_document": "दस्तावेज़ खोलने में विफल। कृपया बाद में पुनः प्रयास करें।",
   "please_select_position_to_download": "डाउनलोड करने के लिए कृपया एक पद चुनें",
   "failed_to_load_candidates": "उम्मीदवारों को लोड करने में विफल।",
-  "failed_to_download_pdf": "पीडीएफ डाउनलोड करने में विफल"
+  "failed_to_download_pdf": "पीडीएफ डाउनलोड करने में विफल",
+    "page_size": "पृष्ठ आकार:"
 }

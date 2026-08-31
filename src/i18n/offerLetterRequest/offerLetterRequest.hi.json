@@ -14,5 +14,7 @@
   "offer_letter_number": "ऑफ़र लेटर संख्या",
   "accept_before_date": "स्वीकृति की अंतिम तिथि",
   "posting_location": "पोस्टिंग स्थान",
-  "reporting_alpha": "रिपोर्टिंग अल्फ़ा"
+  "reporting_alpha": "रिपोर्टिंग अल्फ़ा",
+  "preview_offer": "ऑफ़र लेटर का पूर्वावलोकन",
+  "view_history": "इतिहास देखें"
 }

@@ -1,5 +1,6 @@
 import React from "react";
 import { Form } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 export default function ApprovalPagination({
   page,
@@ -8,15 +9,21 @@ export default function ApprovalPagination({
   setPageSize,
   pageInfo,
   getVisiblePages,
-}) {
+  
+})
+ 
+{
+    const { t } = useTranslation(["approvalHistory"]);
+  
   if (pageInfo.totalElements === 0) {
     return null;
   }
 
   return (
+    
     <div className="table-footer d-flex justify-content-between align-items-center flex-wrap">
       <div className="d-flex align-items-center gap-2">
-        <span>Page Size:</span>
+        <span>{t("page_size")}</span>
 
         <Form.Select
           style={{ width: 90 }}
