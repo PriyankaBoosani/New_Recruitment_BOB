@@ -123,14 +123,15 @@
 
 /* View Mode Styles */
 .form-control-view {
-  padding: 0.375rem 0.75rem;
-  margin-bottom: 0;
-  line-height: 1.5;
-  color: #212529;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 0.25rem;
-  min-height: calc(1.5em + 0.75rem + 2px);
+	padding: 0.375rem 0.75rem;
+	margin-bottom: 0;
+	line-height: 1.5;
+	color: #212529;
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 0.25rem;
+	min-height: calc(1.5em + 0.75rem + 2px);
+	word-wrap: break-word;
 }
 
 .form-group .form-label.fw-bold {
