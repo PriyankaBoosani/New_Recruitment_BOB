@@ -185,7 +185,7 @@ export const mapCandidateToPreview = (apiData = {}, masters = {}, job = {}) => {
       languages: mapLanguageNames(languagesKnown, masters),
       gender_name: gender?.gender || "-",
       religion_name: religion?.religion || "-",
-      nationality_name: nationality?.countryName || "-",
+      nationality_name: nationality?.nationality || "-",
       maritalStatus_name: maritalStatus?.maritalStatus || "-",
 
       caste: profile.community || "-",
