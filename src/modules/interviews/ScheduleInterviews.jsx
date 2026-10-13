@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import HeaderWithBack from "../../shared/components/HeaderWithBack";
@@ -15,6 +15,8 @@ import "../../style/css/CandidateScreening.css";
 import InterviewCentreAllocationModal from "../interviews/components/InterviewCentreAllocationModal";
 import InterviewCentreConfirmModal from "../interviews/components/InterviewCentreConfirmModal";
 import ScheduleErrorModal from "../interviews/components/ScheduleErrorModal";
+import { Modal } from "react-bootstrap";
+import interviewService from "./services/interviewService";
 const ScheduleInterviews = () => {
   const navigate = useNavigate();
 
@@ -26,6 +28,10 @@ const ScheduleInterviews = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showCentreConfirmModal, setShowCentreConfirmModal] = useState(false);
   const [pendingApplyData, setPendingApplyData] = useState(null);
+  const [candidateJobPage, setCandidateJobPage] = useState(0);
+  const [candidateJobPageSize, setCandidateJobPageSize] = useState(10);
+  const [candidateJobTotalElements, setCandidateJobTotalElements] = useState(0);
+  const [allocationRefreshKey, setAllocationRefreshKey] = useState(0);
 
   const [centreRows, setCentreRows] = useState([
     {
@@ -36,8 +42,14 @@ const ScheduleInterviews = () => {
 
   const location = useLocation();
   const state = location.state || {};
+  const jobDetails = state.jobDetails;
+  const isSchedulingOngoing =
+    !!jobDetails && (state.status === "ACTIVE" || state.status === "COMPLETED");
+  const isCompleted = state.status === "COMPLETED";
   const isEditMode = location.state?.isEditMode;
   const isReschedule = location.state?.isReschedule;
+  const isCandidateDetailsPaginated =
+    isSchedulingOngoing || isCompleted || allocationRefreshKey > 0;
   const {
     schedule,
     setSchedule,
@@ -58,7 +70,8 @@ const ScheduleInterviews = () => {
   const selectedRequisition = requisitions.find(
     (r) => r.id === selectedRequisitionId
   );
-const [isScheduling, setIsScheduling] = useState(false);
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [showSchedulingProgress, setShowSchedulingProgress] = useState(false);
   const normalizedRequisition = selectedRequisition
     ? {
         requisition_id: selectedRequisition.id,
@@ -72,6 +85,17 @@ const [isScheduling, setIsScheduling] = useState(false);
   //from schedule pool
 
   const schedulePoolData = location.state?.schedulePoolData;
+  useEffect(() => {
+    // Scheduling job is still running
+    if (state.status === "ACTIVE") {
+      setIsScheduling(true);
+    }
+
+    // Scheduling Ongoing → show Submit / Cancel
+    if (isSchedulingOngoing && state.status === "COMPLETED") {
+      setShowReadyBar(true);
+    }
+  }, [state.status, isSchedulingOngoing]);
 
   useEffect(() => {
     if (!isEditMode || !schedulePoolData?.length) {
@@ -120,6 +144,105 @@ const [isScheduling, setIsScheduling] = useState(false);
     //setShowReadyBar(true);
   }, [isEditMode, schedulePoolData]);
 
+  const loadCandidateJobDetails = useCallback(
+    async (page = candidateJobPage, pageSize = candidateJobPageSize) => {
+      const positionId = state.positionId;
+
+      if (!positionId) return;
+
+      try {
+        const response = await interviewService.getInterviewCandidateJobDetails(
+          {
+            positionId: Array.isArray(positionId) ? positionId : [positionId],
+            page,
+            size: pageSize,
+          }
+        );
+
+        const data = response?.data;
+
+        // ONLY job/details response
+        const content = data?.content || [];
+
+        // Pagination comes ONLY from job/details
+        const pageInfo = data?.page;
+
+        setCandidateJobTotalElements(pageInfo?.totalElements || 0);
+
+        const mappedRows = content.map((item) => {
+          const staging = item?.interviewScheduleStaging;
+          const application = staging?.application;
+
+          const start = staging?.interviewStartAt;
+          const end = staging?.interviewEndAt;
+
+          const startTime = start?.split("T")[1]?.slice(0, 5) || "";
+
+          const endTime = end?.split("T")[1]?.slice(0, 5) || "";
+
+          return {
+            id: application?.id || item?.applicationId,
+
+            applicationId: application?.id || item?.applicationId,
+
+            positionId: item?.positionId,
+
+            panelId: item?.interviewPanels?.interviewPanelId,
+
+            interviewCenterId: item?.interviewCentres?.interviewCentreId,
+
+            name: item?.fullName || staging?.candidateProfile?.fullName || "-",
+
+            regNo:
+              application?.applicationNo ||
+              item?.candidateApplications?.applicationNo ||
+              "-",
+
+            date: start?.split("T")[0] || "-",
+
+            time: startTime && endTime ? `${startTime} - ${endTime}` : "-",
+
+            zone:
+              item?.interviewCentres?.displayName ||
+              item?.interviewCentres?.interviewCentre ||
+              "-",
+
+            panel: item?.interviewPanels?.panelName || "-",
+
+            rawDate: start?.split("T")[0] || "",
+
+            startTime,
+            endTime,
+            interviewSchedulingJobStatus:
+              item?.interviewSchedulingJobStatus || "-",
+            remarks: item?.remarks || "",
+          };
+        });
+
+        // ONLY job/details data goes into table
+        setSchedule(mappedRows);
+
+        // Total also comes from job/details
+        setScheduledCount(pageInfo?.totalElements || mappedRows.length);
+      } catch (error) {
+        console.error("Failed to fetch job details:", error);
+      }
+    },
+    [state.positionId, candidateJobPage, candidateJobPageSize, setSchedule]
+  );
+  useEffect(() => {
+    if (state.status !== "COMPLETED" && allocationRefreshKey === 0) {
+      return;
+    }
+
+    loadCandidateJobDetails(candidateJobPage, candidateJobPageSize);
+  }, [
+    state.status,
+    candidateJobPage,
+    candidateJobPageSize,
+    allocationRefreshKey,
+    loadCandidateJobDetails,
+  ]);
   //end
 
   const selectedPosition = positions.filter((p) =>
@@ -152,7 +275,31 @@ const [isScheduling, setIsScheduling] = useState(false);
       panelNameMap[item.panelId] = item.panel;
     }
   });
+  const ongoingSelectedPanels = Object.values(
+    (jobDetails?.panelScheduleModelList || []).reduce((acc, item) => {
+      const panelId = item?.panelId;
 
+      if (!panelId) return acc;
+
+      if (!acc[panelId]) {
+        acc[panelId] = {
+          id: panelId,
+          name: "",
+          slots: [],
+        };
+      }
+
+      acc[panelId].slots.push({
+        date: item.panelDate,
+        startTime: item.startTime?.slice(0, 5) || "",
+        endTime: item.endTime?.slice(0, 5) || "",
+        duration: String(item.durationInMinutes || 15),
+        perDay: String(item.interviewPerDay || 1),
+      });
+
+      return acc;
+    }, {})
+  );
   const rebuiltSelectedPanels = Object.values(
     (schedulePoolData || []).reduce((acc, item) => {
       const configurations = item.panelScheduleConfigurations || [];
@@ -328,8 +475,35 @@ const [isScheduling, setIsScheduling] = useState(false);
           //   setShowReadyBar(true);   // ✅ trigger here
         }} // ✅ ADD
         onApplyAll={(data) => {
-          // ✅ EDIT MODE
-          if (isEditMode) {
+          // ===== SCHEDULING ONGOING =====
+          if (isSchedulingOngoing) {
+            const applicationIds =
+              jobDetails?.schedulingPanelModel?.applicationIds || [];
+
+            const ongoingPayload = {
+              selectedPanels: data.selectedPanels,
+
+              positionId: Array.isArray(selectedPositionId)
+                ? selectedPositionId
+                : [selectedPositionId],
+
+              candidates: applicationIds.map((applicationId) => ({
+                id: applicationId,
+              })),
+            };
+
+            console.log(
+              "Scheduling Ongoing - Application IDs:",
+              applicationIds
+            );
+
+            console.log("Scheduling Ongoing Apply Payload:", ongoingPayload);
+
+            setPendingApplyData(ongoingPayload);
+          }
+
+          // ===== EDIT MODE =====
+          else if (isEditMode) {
             const editPayload = {
               selectedPanels: data.selectedPanels,
 
@@ -339,63 +513,71 @@ const [isScheduling, setIsScheduling] = useState(false);
 
               candidates: schedule.map((item) => ({
                 id: item.applicationId || item.id,
-
                 interviewCenterId: item.interviewCenterId,
               })),
             };
 
             setPendingApplyData(editPayload);
-          } else {
+          }
+
+          // ===== NORMAL FLOW =====
+          else {
             setPendingApplyData(data);
           }
 
           setShowCentreConfirmModal(true);
         }}
-        initialSelectedPanels={isReschedule ? [] : rebuiltSelectedPanels}
+        initialSelectedPanels={
+          isReschedule
+            ? []
+            : isSchedulingOngoing
+              ? ongoingSelectedPanels
+              : rebuiltSelectedPanels
+        }
       />
 
       {showReadyBar && (
         <div className="mt-3">
           <ScheduleReadyBar
             count={scheduledCount}
-             isScheduling={isScheduling}
+            isScheduling={isScheduling}
             onCancel={() => setShowReadyBar(false)}
             onSchedule={async () => {
-                if (isScheduling) return;
+              if (isScheduling) return;
 
-                try {
-                  setIsScheduling(true);
+              try {
+                setIsScheduling(true);
 
-                  const res = await scheduleInterview();
+                const res = await scheduleInterview();
 
-                  if (!res?.success) {
-                    setErrorMessage(
-                      res?.message || "Failed to schedule interviews"
-                    );
+                if (!res?.success) {
+                  setErrorMessage(
+                    res?.message || "Failed to schedule interviews"
+                  );
 
-                    setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
+                  setErrorCandidates(Array.isArray(res?.data) ? res.data : []);
 
-                    setShowErrorModal(true);
+                  setShowErrorModal(true);
 
-                    return;
-                  }
-
-                  toast.success("Interview scheduled successfully");
-
-                  navigate("/candidate-workflow", {
-                    state: {
-                      requisitionId: selectedRequisitionId,
-                      positionIds: Array.isArray(selectedPositionId)
-                        ? selectedPositionId
-                        : [selectedPositionId],
-                      activeTab: "SCHEDULE_POOL",
-                      refreshSchedulePool: true,
-                    },
-                  });
-                } finally {
-                  setIsScheduling(false);
+                  return;
                 }
-              }}
+
+                toast.success("Interview scheduled successfully");
+
+                navigate("/candidate-workflow", {
+                  state: {
+                    requisitionId: selectedRequisitionId,
+                    positionIds: Array.isArray(selectedPositionId)
+                      ? selectedPositionId
+                      : [selectedPositionId],
+                    activeTab: "SCHEDULE_POOL",
+                    refreshSchedulePool: true,
+                  },
+                });
+              } finally {
+                setIsScheduling(false);
+              }
+            }}
           />
         </div>
       )}
@@ -405,6 +587,15 @@ const [isScheduling, setIsScheduling] = useState(false);
         rows={schedule}
         positionId={selectedPositionId}
         position={selectedPosition}
+        isSchedulingOngoing={isCandidateDetailsPaginated}
+        page={candidateJobPage}
+        pageSize={candidateJobPageSize}
+        totalElements={candidateJobTotalElements}
+        onPageChange={setCandidateJobPage}
+        onPageSizeChange={(size) => {
+          setCandidateJobPageSize(size);
+          setCandidateJobPage(0);
+        }}
       />
 
       {showCentreModal && (
@@ -483,29 +674,82 @@ const [isScheduling, setIsScheduling] = useState(false);
           uniqueAllocatedCentres.forEach((centre) => {
             zonalChangeMap[centre.interviewCentreId] = "";
           });
-          const res = await applySchedule({
-            ...pendingApplyData,
-            zonalChangeMap,
-          });
 
-          if (!res.success) {
-            setErrorMessage(res.message);
+          setIsScheduling(true);
 
-            setErrorCandidates(res.data || []);
+          try {
+            const res = await applySchedule({
+              ...pendingApplyData,
+              zonalChangeMap,
+            });
 
+            setIsScheduling(false);
+
+            // Allocate failed
+            if (!res?.success) {
+              setErrorMessage(res?.message || "Scheduling failed");
+              setErrorCandidates(res?.data || []);
+              setShowErrorModal(true);
+              return;
+            }
+
+            // ==========================================
+            // ALLOCATE SUCCESS
+            // NOW GET DATA ONLY FROM job/details
+            // ==========================================
+
+            setAllocationRefreshKey((currentKey) => currentKey + 1);
+
+            setShowReadyBar(true);
+          } catch (error) {
+            setIsScheduling(false);
+
+            setErrorMessage("Something went wrong while scheduling");
+
+            setErrorCandidates([]);
             setShowErrorModal(true);
-
-            return;
           }
-
-          // ✅ IMPORTANT
-          setSchedule(res.rows);
-
-          setScheduledCount(res.rows.length);
-
-          setShowReadyBar(true);
         }}
       />
+      <Modal
+        show={isScheduling}
+        centered
+        backdrop="static"
+        keyboard={false}
+        onHide={() => {}}
+      >
+        <Modal.Body className="text-center p-4">
+          <div className="spinner-border text-primary mb-3" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+
+          <h5>Scheduling is in progress</h5>
+
+          <p className="text-muted mb-4">
+            Please wait while the candidates are being scheduled.
+          </p>
+
+          <button
+            type="button"
+            className="btn blue-bg text-white px-4"
+            onClick={() => {
+              setIsScheduling(false);
+
+              navigate("/candidate-workflow", {
+                state: {
+                  requisitionId: selectedRequisitionId,
+                  positionIds: Array.isArray(selectedPositionId)
+                    ? selectedPositionId
+                    : [selectedPositionId],
+                  activeTab: "CANDIDATE_POOL",
+                },
+              });
+            }}
+          >
+            OK
+          </button>
+        </Modal.Body>
+      </Modal>
 
       <ScheduleErrorModal
         show={showErrorModal}

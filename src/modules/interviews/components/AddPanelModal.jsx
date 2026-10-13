@@ -5,6 +5,7 @@ import "../../../style/css/InterviewPanelsConfig.css";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Select from "react-select";
 const AddPanelModal = ({
   show,
   onClose,
@@ -16,6 +17,7 @@ const AddPanelModal = ({
   selectedPanels = [],
 }) => {
   const { t } = useTranslation(["interviewSchedule", "common"]);
+  
 
   const {
     panelId,
@@ -97,32 +99,32 @@ const AddPanelModal = ({
           </Form.Label>
 
           <div className="ap-select-wrap">
-            <Form.Select
-              className={`ap-input ap-modern-select ${
-                errors?.panelId ? "ap-error" : ""
-              }`}
-              disabled={mode === "edit"}
-              value={panelId || ""}
-              onChange={(e) => {
-                setPanelId(e.target.value);
+            <Select
+              isMulti
+              className={errors?.panelId ? "ap-error" : ""}
+              classNamePrefix="ap-react-select"
+              isDisabled={mode === "edit"}
+              placeholder={t("select_panel_placeholder")}
+              options={panels.map((panel) => ({
+                value: panel.id,
+                label: panel.name,
+              }))}
+              value={panels
+                .filter((panel) => panelId?.includes(panel.id))
+                .map((panel) => ({
+                  value: panel.id,
+                  label: panel.name,
+                }))}
+              onChange={(selectedOptions) => {
+                const selectedValues = selectedOptions
+                  ? selectedOptions.map((option) => option.value)
+                  : [];
+
+                setPanelId(selectedValues);
                 clearPanelError();
               }}
-            >
-              <option value="">{t("select_panel_placeholder")}</option>
-
-              {panels.map((panel) => {
-                const isSelected = selectedPanels?.some(
-                  (p) => p.id === panel.id
-                );
-
-                return (
-                  <option key={panel.id} value={panel.id}>
-                    {panel.name}
-                  </option>
-                );
-              })}
-            </Form.Select>
-            {panelId && (
+            />
+            {panelId?.length > 0 && (
               <button
                 type="button"
                 className="ap-info-btn"
@@ -141,7 +143,7 @@ const AddPanelModal = ({
                 <div className="ap-panel-popover-header">
                   <h6 className="ap-panel-popover-title">
                     <i className="bi bi-calendar-check me-2 text-primary" />{" "}
-                     {t("scheduled_interviews")}
+                    {t("scheduled_interviews")}
                   </h6>
                   <button
                     type="button"
@@ -173,7 +175,8 @@ const AddPanelModal = ({
                             {formatDateDDMMYYYY(day.panelDate)}
                           </span>
                           <span className="ap-count-badge">
-                              {day.panelAvailableModels?.length || 0} {t("allocated")}
+                            {day.panelAvailableModels?.length || 0}{" "}
+                            {t("allocated")}
                           </span>
                         </div>
 
@@ -219,13 +222,14 @@ const AddPanelModal = ({
           {/* DATE RANGE TEXT BELOW DROPDOWN */}
           {panelRanges.length > 0 && (
             <div className="ap-date-range-text">
-               {t("allowed_ranges")}:
+              {t("allowed_ranges")}:
               {panelRanges.map((range, index) => (
                 <div key={index} className="ap-range-item">
-                  <div className="ap-range-position">{range.positionName}</div>
+                  <div className="ap-range-position">{range.panelName} - {range.positionName}</div>
 
                   <div className="ap-range-dates">
-                   {formatDateDDMMYYYY(range.startDate)} {t("to")} {formatDateDDMMYYYY(range.endDate)}
+                    {formatDateDDMMYYYY(range.startDate)} {t("to")}{" "}
+                    {formatDateDDMMYYYY(range.endDate)}
                   </div>
                 </div>
               ))}
@@ -265,7 +269,7 @@ const AddPanelModal = ({
                     }}
                     filterDate={(date) => isDateAllowed(date, panelRanges)}
                     dateFormat="dd/MM/yyyy"
-                   placeholderText={t("select_date")}
+                    placeholderText={t("select_date")}
                     className={`ap-input ap-no-date ${
                       errors?.rows?.[i]?.date ? "ap-error" : ""
                     }`}
@@ -282,7 +286,7 @@ const AddPanelModal = ({
               {/* START TIME */}
               <div className="ap-field">
                 <Form.Label className="ap-label">
-                   {t("start_time")} <span>*</span>
+                  {t("start_time")} <span>*</span>
                 </Form.Label>
 
                 <input
@@ -327,7 +331,7 @@ const AddPanelModal = ({
               {/* DURATION */}
               <div className="ap-select-wrap">
                 <Form.Label className="ap-label">
-                   {t("duration")} <span>*</span>
+                  {t("duration")} <span>*</span>
                 </Form.Label>
 
                 <Form.Select
@@ -338,10 +342,10 @@ const AddPanelModal = ({
                   onChange={(e) => updateRow(i, "duration", e.target.value)}
                 >
                   <option value="10">10 {t("minutes")}</option>
-<option value="15">15 {t("minutes")}</option>
-<option value="30">30 {t("minutes")}</option>
-<option value="45">45 {t("minutes")}</option>
-<option value="60">60 {t("minutes")}</option>
+                  <option value="15">15 {t("minutes")}</option>
+                  <option value="30">30 {t("minutes")}</option>
+                  <option value="45">45 {t("minutes")}</option>
+                  <option value="60">60 {t("minutes")}</option>
                 </Form.Select>
 
                 <i className="bi bi-chevron-down ap-select-icon" />

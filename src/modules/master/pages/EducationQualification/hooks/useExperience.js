@@ -351,7 +351,6 @@ export const useExperience = () => {
         hasSpecializationError ||
         hasIntegratedGroupError
       ) {
-        console.log("SAVE STOPPED - VALIDATION ERRORS:", newErrors);
 
         setErrors([newErrors]);
         return;
@@ -361,21 +360,12 @@ export const useExperience = () => {
           ? formData[0].integratedSpecializations || []
           : [];
 
-      console.log("8. SELECTED INTEGRATED SPECIALIZATION IDS:", {
-        ids: selectedIntegratedSpecializationIds,
-        isIntegratedCourse: formData[0].isIntegratedCourse,
-      });
-
       const selectedIntegratedSpecializations = (
         integratedSpecializationOptions || []
       ).filter((sp) =>
         selectedIntegratedSpecializationIds.includes(sp.specializationId)
       );
 
-      console.log(
-        "9. SELECTED INTEGRATED SPECIALIZATIONS:",
-        selectedIntegratedSpecializations
-      );
 
       const integratedSpecializations = selectedIntegratedSpecializations.map(
         (sp) => ({
@@ -397,11 +387,6 @@ export const useExperience = () => {
             displayOrder: 0,
           },
         })
-      );
-
-      console.log(
-        "10. INTEGRATED SPECIALIZATIONS PAYLOAD:",
-        integratedSpecializations
       );
 
       const specializations =
@@ -446,7 +431,6 @@ export const useExperience = () => {
               ]
             : [];
 
-      console.log("11. NORMAL SPECIALIZATIONS:", specializations);
 
       const payload = {
         qualification: {
@@ -469,29 +453,11 @@ export const useExperience = () => {
         specializations: [...specializations, ...integratedSpecializations],
       };
 
-      console.log("12. FINAL PAYLOAD:", payload);
-
-      console.log("13. PAYLOAD INTEGRATED VALUE:", {
-        isIntegratedCourse: payload.qualification.isIntegratedCourse,
-        type: typeof payload.qualification.isIntegratedCourse,
-        icGroups: payload.qualification.icGroups,
-        icGroupsLength: payload.qualification.icGroups?.length,
-      });
-
-      console.log("14. CALLING saveEducation API...");
-
       const res = await masterApiService.saveEducation(payload);
 
-      console.log("15. API SAVE RESPONSE:", res);
 
       if (res.success) {
-        console.log("16. SAVE SUCCESS - NOW RELOADING DATA");
         await loadData();
-      } else {
-        console.log("16. SAVE FAILED:", {
-          message: res.message,
-          data: res.data,
-        });
       }
 
       if (isEditMode) {
@@ -514,7 +480,6 @@ export const useExperience = () => {
         setEditIndex(null);
       }
 
-      console.log("========== SAVE END ==========");
     } catch (err) {
       console.error("SAVE ERROR:", err);
       toast.error("Save failed");
@@ -542,28 +507,12 @@ export const useExperience = () => {
   };
 
   const handleEditClick = (item, index) => {
-    console.log("========== EDIT START ==========");
-
-    console.log("1. ORIGINAL ITEM:", item);
-
-    console.log("2. ORIGINAL isIntegratedCourse:", {
-      value: item?.isIntegratedCourse,
-      type: typeof item?.isIntegratedCourse,
-    });
-
-    console.log("3. ORIGINAL icGroups:", {
-      value: item?.icGroups,
-      isArray: Array.isArray(item?.icGroups),
-      length: item?.icGroups?.length,
-    });
 
     const selectedOption = educationOptions.find(
       (opt) =>
         String(opt.documentName).toLowerCase() ===
         String(item.educationLevel).toLowerCase()
     );
-
-    console.log("4. SELECTED EDUCATION:", selectedOption);
 
     const integratedGroup = Array.isArray(item.icGroups)
       ? item.icGroups.map((group, index) => ({

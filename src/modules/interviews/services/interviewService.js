@@ -10,7 +10,10 @@ const interviewService = {
   allocatePanels(payload) {
     return api.post(
       `recruiter/interview-scheduling/allocate-interview`,
-      payload
+      payload,
+      {
+        timeout: 3000000,
+      }
     );
   },
   scheduleInterview(payload) {
@@ -22,6 +25,13 @@ const interviewService = {
   getScheduledSlots(payload) {
     return api.post(`recruiter/interview-scheduling/scheduled-slots`, payload);
   },
+   getInterviewCandidateJobDetails(payload) {
+    return api.post(
+      `recruiter/interview-scheduling/job/details`,
+      payload
+    );
+  },
+ 
 };
 
 export default interviewService;

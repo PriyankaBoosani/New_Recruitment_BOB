@@ -181,7 +181,7 @@ export default function InterviewPool({
         <tbody>
           {candidates.length === 0 ? (
             <tr>
-              <td colSpan="9" className="text-center py-4 text-muted fs-14">
+              <td colSpan="11" className="text-center py-4 text-muted fs-14">
                 {t("candidateWorkflow:no_candidates_interview_pool")}
               </td>
             </tr>

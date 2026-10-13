@@ -229,41 +229,83 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
 
       setPanelExcelModelList(excelPanels);
 
-      // ✅ Call API
       const res = await interviewService.allocatePanels(payload);
 
       if (!res?.success) {
         return {
           success: false,
-
           message: res?.message || "Scheduling failed",
-
           data: res?.data || [],
         };
       }
-      setScheduleApiData(res.data); // 🔥 IMPORTANT
 
-      // ✅ Convert response → table rows
-      const rows = res.data.map((item) => {
+      // Candidate allocation details from API response
+      const allocatedCandidates = (res.data || []).map((item) => {
         const start = item.interviewScheduleStaging?.interviewStartAt;
         const end = item.interviewScheduleStaging?.interviewEndAt;
 
         return {
-          id: item.application?.id,
-          name: item.fullName,
-          regNo: item.application?.applicationNo,
-          date: start?.split("T")[0] || "-",
-          time: formatTimeRange(start, end),
-          zone: item.interviewCentres?.displayName,
-          panel: item.interviewPanels?.panelName,
+          candidateId: item.interviewScheduleStaging?.candidateId,
+          applicationId: item.application?.id,
+          candidateName: item.fullName,
+          applicationNumber: item.application?.applicationNo,
           positionId: item.application?.positionId,
+
+          interviewPanel: {
+            panelId: item.interviewPanels?.interviewPanelId,
+            panelName: item.interviewPanels?.panelName,
+          },
+
+          interviewCentre: {
+            centreId: item.interviewCentres?.interviewCentreId,
+            centreName: item.interviewCentres?.displayName,
+          },
+
+          interviewSchedule: {
+            date: start?.split("T")[0] || null,
+            startTime: start || null,
+            endTime: end || null,
+            displayTime: formatTimeRange(start, end),
+          },
         };
       });
 
-      // ✅ Update table
-      setSchedule(rows);
+      // BOTH request + allocated candidate details
+      const completeSchedulingJson = {
+        schedulingRequest: payload,
 
-      return { success: true, rows };
+        allocationResult: {
+          positionId: positionId,
+          totalCandidates: allocatedCandidates.length,
+          candidates: allocatedCandidates,
+        },
+      };
+
+      setScheduleApiData(res.data); //  IMPORTANT
+
+      // ✅ Convert response → table rows
+      // const rows = res.data.map((item) => {
+      //   const start = item.interviewScheduleStaging?.interviewStartAt;
+      //   const end = item.interviewScheduleStaging?.interviewEndAt;
+
+      //   return {
+      //     id: item.application?.id,
+      //     name: item.fullName,
+      //     regNo: item.application?.applicationNo,
+      //     date: start?.split("T")[0] || "-",
+      //     time: formatTimeRange(start, end),
+      //     zone: item.interviewCentres?.displayName,
+      //     panel: item.interviewPanels?.panelName,
+      //     positionId: item.application?.positionId,
+      //   };
+      // });
+
+      // ✅ Update table
+      // setSchedule(rows);
+
+     return {
+  success: true,
+};
     } catch (err) {
       console.error("ALLOCATE ERROR", err);
 
@@ -288,64 +330,46 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
     }
   };
 
-  const scheduleInterview = async () => {
-    try {
-      const updatedScheduleData = scheduleApiData.map((item) => ({
-        ...item,
+ const scheduleInterview = async () => {
+  try {
+    const finalPayload = Array.isArray(selectedPositionId)
+      ? selectedPositionId
+      : [selectedPositionId];
 
-        interviewScheduleStaging: {
-          ...item.interviewScheduleStaging,
+    const res = await interviewService.scheduleInterview(finalPayload);
 
-          // ✅ backend requirement
-          rescheduled: isReschedule,
-        },
-      }));
-
-      const finalPayload = {
-        allocatedRequestModelList: updatedScheduleData,
-
-        panelExcelModelList,
-      };
-      const res = await interviewService.scheduleInterview(finalPayload);
-      //  const res = await interviewService.scheduleInterview(scheduleApiData);
-
-      if (!res?.success) {
-        return {
-          success: false,
-
-          message: res.message || "Failed to schedule interviews",
-
-          data: res.data || [],
-        };
-      }
-
-      return { success: true };
-    } catch (err) {
-      console.error("SCHEDULE ERROR", err);
-
-      const backendError = err?.response?.data;
-
-      // ✅ HANDLE BACKEND VALIDATION
-      if (backendError) {
-        return {
-          success: false,
-
-          message: backendError?.message || "Failed to schedule interviews",
-
-          data: Array.isArray(backendError?.data) ? backendError.data : [],
-        };
-      }
-
-      // ✅ FALLBACK ERROR
+    if (!res?.success) {
       return {
         success: false,
-
-        message: "Failed to schedule interviews",
-
-        data: [],
+        message: res.message || "Failed to schedule interviews",
+        data: res.data || [],
       };
     }
-  };
+
+    return { success: true };
+  } catch (err) {
+    console.error("SCHEDULE ERROR", err);
+
+    const backendError = err?.response?.data;
+
+    if (backendError) {
+      return {
+        success: false,
+        message:
+          backendError?.message || "Failed to schedule interviews",
+        data: Array.isArray(backendError?.data)
+          ? backendError.data
+          : [],
+      };
+    }
+
+    return {
+      success: false,
+      message: "Failed to schedule interviews",
+      data: [],
+    };
+  }
+};
 
   return {
     schedule,

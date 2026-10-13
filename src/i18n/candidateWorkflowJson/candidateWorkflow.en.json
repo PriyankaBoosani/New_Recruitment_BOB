@@ -372,5 +372,6 @@
   "approvalstatus": "Approval Status",
   "candidate_approval_screening": "Candidate Approval Screening",
   "manage_candidate_approvals": "Review and approve candidate results",
-  "remarks_required_for_extension": "Comments are mandatory for extending the offer"
+  "remarks_required_for_extension": "Comments are mandatory for extending the offer",
+  "Scheduling_ongoing": "Scheduling Ongoing"
 }

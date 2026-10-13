@@ -364,5 +364,6 @@
   "approvalstatus": "स्वीकृति स्थिति",
   "candidate_approval_screening": "उम्मीदवार स्वीकृति स्क्रीनिंग",
   "manage_candidate_approvals": "उम्मीदवारों के परिणामों की समीक्षा करें और उन्हें स्वीकृत करें",
-  "remarks_required_for_extension": "ऑफ़र बढ़ाने के लिए टिप्पणियाँ अनिवार्य हैं"
+  "remarks_required_for_extension": "ऑफ़र बढ़ाने के लिए टिप्पणियाँ अनिवार्य हैं",
+  "Scheduling_ongoing": "शेड्यूलिंग जारी है"
 }

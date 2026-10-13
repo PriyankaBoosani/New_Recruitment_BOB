@@ -218,7 +218,15 @@ export default function CandidateScreening({ selectedJob }) {
 
   const [positions, setPositions] = useState([]);
   const [selectedPositionId, setSelectedPositionId] = useState([]);
-
+  const [isSchedulingOngoing, setIsSchedulingOngoing] = useState(false);
+  const [hasUnpublishedInterviewPosition, setHasUnpublishedInterviewPosition] =
+    useState(false);
+  const [interviewStatusData, setInterviewStatusData] = useState([]);
+  const [showSchedulingConfigModal, setShowSchedulingConfigModal] =
+    useState(false);
+  const [schedulingConfigMessage, setSchedulingConfigMessage] = useState(
+    "One or more selected positions do not have an interview job configured. Configure all selected positions before opening ongoing scheduling."
+  );
   const [showApprovalModal, setShowApprovalModal] = useState(false);
 
   const [submittingApproval, setSubmittingApproval] = useState(false);
@@ -316,11 +324,11 @@ export default function CandidateScreening({ selectedJob }) {
   const canUpdateCandidateScore = selectedPositionId?.some(
     (id) => examConfigMap[id]?.status !== "FINALIZED"
   );
- const isCandidateScoreUploadDisabled = !selectedPositionId?.some(
-  (id) =>
-    examConfigMap[id]?.isFrozen === true &&
-    examConfigMap[id]?.status === "APPROVED"
-);
+  const isCandidateScoreUploadDisabled = !selectedPositionId?.some(
+    (id) =>
+      examConfigMap[id]?.isFrozen === true &&
+      examConfigMap[id]?.status === "APPROVED"
+  );
 
   const canAccessExamActions = isRecruiter;
 
@@ -463,6 +471,8 @@ export default function CandidateScreening({ selectedJob }) {
         return;
       }
 
+      setDownloadingCandidateReport(true);
+
       const res =
         await committeeManagementService.downloadAllCandidateDetailsExcel(
           selectedPositionId
@@ -487,6 +497,8 @@ export default function CandidateScreening({ selectedJob }) {
       toast.error(
         err?.response?.data?.message || "Failed to download candidate details"
       );
+    } finally {
+      setDownloadingCandidateReport(false);
     }
   };
   const handleScheduleInterview = () => {
@@ -527,6 +539,109 @@ export default function CandidateScreening({ selectedJob }) {
       },
     });
   };
+
+const handleSchedulingOngoing = async () => {
+  try {
+    const positionIds = Array.isArray(selectedPositionId)
+      ? selectedPositionId.filter(Boolean)
+      : selectedPositionId
+        ? [selectedPositionId]
+        : [];
+
+    if (positionIds.length === 0) {
+      toast.error("Position ID is missing");
+      return;
+    }
+
+    if (
+      positionIds.length > 1 &&
+      positionIds.some((positionId) => {
+        const status = interviewStatusData.find(
+          (item) => String(item?.positionId) === String(positionId)
+        );
+        return !status?.jobNumber;
+      })
+    ) {
+      setShowSchedulingConfigModal(true);
+      return;
+    }
+
+    const response =
+      await candidateWorkflowServices.getInterviewJobDetails(positionIds);
+
+    // API returns multiple job details in an array
+    const jobDataList = response?.data?.data ?? response?.data ?? [];
+
+    if (!Array.isArray(jobDataList) || jobDataList.length === 0) {
+      toast.error("Interview scheduling details not found");
+      return;
+    }
+
+    let jobData;
+
+    if (positionIds.length > 1) {
+      const selectedJobs = positionIds.map((positionId) =>
+        jobDataList.find(
+          (job) => String(job?.positionId) === String(positionId)
+        )
+      );
+
+      if (selectedJobs.some((job) => !job?.jobNumber)) {
+        setShowSchedulingConfigModal(true);
+        return;
+      }
+
+      const jobNumbers = new Set(
+        selectedJobs.map((job) => String(job.jobNumber))
+      );
+
+      if (jobNumbers.size !== 1) {
+        setSchedulingConfigMessage(
+          "The selected positions belong to different interview schedules. Please select positions associated with the same schedule to continue."
+        );
+        setShowSchedulingConfigModal(true);
+        return;
+      }
+
+      jobData =
+        selectedJobs.find((job) => job?.jobDetails) ||
+        selectedJobs.find((job) => job?.status === "ACTIVE");
+    } else {
+      // Find an active scheduling job first, otherwise use a job with details.
+      const activeJob = jobDataList.find((job) => job?.status === "ACTIVE");
+      jobData = activeJob || jobDataList.find((job) => job?.jobDetails);
+    }
+
+    if (!jobData) {
+      toast.error("Interview scheduling details not found");
+      return;
+    }
+
+    navigate("/schedule-interviews", {
+      state: {
+        positionIds,
+        positionId: positionIds.length > 1 ? positionIds : jobData.positionId,
+        jobNumber: jobData.jobNumber,
+        status: jobData.status,
+        jobDetails: jobData.jobDetails,
+
+        requisitionId: selectedRequisitionId,
+        requisition: normalizedRequisition,
+        position: selectedPosition,
+
+        activeTab: "CANDIDATE_POOL",
+        sourceTab: "CANDIDATE_POOL",
+      },
+    });
+  } catch (error) {
+    console.error("Failed to fetch interview job details:", error);
+
+    toast.error(
+      error?.response?.data?.message ||
+        "Failed to load interview scheduling details"
+    );
+  }
+};
 
   const handleScreeningAction = async (action) => {
     try {
@@ -753,7 +868,8 @@ export default function CandidateScreening({ selectedJob }) {
   const dispatch = useDispatch();
   const [templates, setTemplates] = useState([]);
   const [generatingOffer, setGeneratingOffer] = useState(false);
-
+  const [downloadingCandidateReport, setDownloadingCandidateReport] =
+    useState(false);
   const isRankEnabled = useSelector((state) => state.rank.isRankEnabled);
   const isScoreEnabled = useSelector((state) => state.rank.isScoreEnabled);
 
@@ -1647,13 +1763,25 @@ export default function CandidateScreening({ selectedJob }) {
   const selectedCandidates = candidates.filter((c) =>
     selectedCandidateIds.includes(c.id)
   );
+  const allSelectedCandidatesPublished =
+    selectedCandidates.length > 0 &&
+    selectedCandidates.every(
+      (candidate) => candidate.workflowStatus === "Published"
+    );
 
   // const canScheduleInterview =
   //   selectedCandidates.length > 0 &&
   //   selectedCandidates.every((c) => c.status === "Shortlisted");
+  const selectedCandidatesPublished =
+    selectedCandidates.length > 0 &&
+    selectedCandidates.every(
+      (candidate) => candidate.workflowStatus === "Published"
+    );
 
   const canScheduleInterview =
     isWorkflowPublished &&
+    allSelectedCandidatesPublished &&
+    selectedCandidatesPublished &&
     selectedCandidates.length > 0 &&
     selectedCandidates.every((c) => {
       if (!hasExamConfiguration) {
@@ -1691,7 +1819,7 @@ export default function CandidateScreening({ selectedJob }) {
     .map((p) => ({
       positionId: p.jobPositions?.positionId,
       positionName: p?.masterPositions?.positionName,
-       isLocationWise: p?.jobPositions?.isLocationWise,
+      isLocationWise: p?.jobPositions?.isLocationWise,
     }));
 
   const navPositionIds = location.state?.positionIds || [];
@@ -1995,6 +2123,41 @@ export default function CandidateScreening({ selectedJob }) {
 
     isNavModeRef.current = false;
   }, [positions]);
+  useEffect(() => {
+    const fetchSchedulingStatus = async () => {
+      const positionIds = Array.isArray(selectedPositionId)
+        ? selectedPositionId.filter(Boolean)
+        : [];
+
+      if (!positionIds.length) {
+        setIsSchedulingOngoing(false);
+        setHasUnpublishedInterviewPosition(false);
+        setInterviewStatusData([]);
+        return;
+      }
+
+      try {
+        const response =
+          await candidateWorkflowServices.getInterviewStatus(positionIds);
+        const statusData = Array.isArray(response?.data) ? response.data : [];
+
+        setIsSchedulingOngoing(
+          statusData.some((position) => position?.isScheduled === true)
+        );
+        setHasUnpublishedInterviewPosition(
+          statusData.some((position) => position?.ispublished === false)
+        );
+        setInterviewStatusData(statusData);
+      } catch (error) {
+        console.error("Failed to fetch scheduling status:", error);
+        setIsSchedulingOngoing(false);
+        setHasUnpublishedInterviewPosition(false);
+        setInterviewStatusData([]);
+      }
+    };
+
+    fetchSchedulingStatus();
+  }, [selectedPositionId]);
 
   const refreshCandidatesAfterSchedule = async () => {
     // reset pagination if needed
@@ -4036,6 +4199,15 @@ export default function CandidateScreening({ selectedJob }) {
                     {(activeTab === "CANDIDATE_POOL" ||
                       activeTab === "INTERVIEW_POOL") && (
                       <>
+                        {isSchedulingOngoing && (
+                          <button
+                            className="btn btn-primary fs-14 text-white"
+                            type="button"
+                            onClick={handleSchedulingOngoing}
+                          >
+                            {t("candidateWorkflow:Scheduling_ongoing")}
+                          </button>
+                        )}
                         {hasCandidatesInPool && isRecruiter && (
                           <button
                             className="btn blue-bg text-white fs-14"
@@ -4045,7 +4217,7 @@ export default function CandidateScreening({ selectedJob }) {
                             {t("candidateWorkflow:send_for_approval")}
                           </button>
                         )}
-                        {hasCandidatesInPool && isRecruiter &&  (
+                        {hasCandidatesInPool && isRecruiter && (
                           <button
                             className="btn btn-success text-white fs-14"
                             type="button"
@@ -4060,13 +4232,37 @@ export default function CandidateScreening({ selectedJob }) {
 
                     {activeTab === "CANDIDATE_POOL" &&
                       hasPrivilege("Interview Pool") &&
-                      canScheduleMultiPositionInterview && (
-                        <button
-                          className="btn blue-bg text-white fs-14"
-                          onClick={handleScheduleInterview}
-                        >
-                          {t("candidateWorkflow:schedule_interview")}
-                        </button>
+                      selectedPositionId.length > 0 &&
+                      selectedCandidateIds.length > 0 && (
+                        <div className="d-flex gap-2">
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={
+                              <Tooltip id="schedule-interview-tooltip">
+                                {hasUnpublishedInterviewPosition
+                                  ? "Cannot schedule while one or more selected positions are unpublished."
+                                  : !canScheduleMultiPositionInterview
+                                    ? "Schedule Interview is available only when all selected candidates are Published."
+                                    : "Schedule an interview for the selected candidates."}
+                              </Tooltip>
+                            }
+                          >
+                            <span>
+                              <button
+                                type="button"
+                                className="btn blue-bg text-white fs-14"
+                                disabled={
+                                  !canScheduleMultiPositionInterview ||
+                                  hasUnpublishedInterviewPosition ||
+                                  selectedCandidateIds.length === 0
+                                }
+                                onClick={handleScheduleInterview}
+                              >
+                                {t("candidateWorkflow:schedule_interview")}
+                              </button>
+                            </span>
+                          </OverlayTrigger>
+                        </div>
                       )}
                     {activeTab === "INTERVIEW_POOL" &&
                       canSendToOfferPool &&
@@ -4277,11 +4473,8 @@ export default function CandidateScreening({ selectedJob }) {
                     requisition: normalizedRequisition,
 
                     position: selectedPosition,
-                    
                   },
-                  
                 });
-               
               }}
               onViewResume={(candidate) => {
                 handleViewFile(candidate);
@@ -4433,6 +4626,25 @@ export default function CandidateScreening({ selectedJob }) {
         errorCandidates={errorCandidates}
       />
 
+      <Modal
+        show={showSchedulingConfigModal}
+        onHide={() => setShowSchedulingConfigModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Unable to Open Ongoing Scheduling</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{schedulingConfigMessage}</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowSchedulingConfigModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <ScheduleApprovalModal
         show={showApprovalModal}
         onClose={() => setShowApprovalModal(false)}
@@ -4538,13 +4750,42 @@ export default function CandidateScreening({ selectedJob }) {
       />
       {/* Render Loader when generating Offer OR Rank List */}
       {/* Render Loader when generating Offer, Rank List, or Moving Candidates */}
-      {(generatingOffer || generatingRankList || movingCandidate) && <Loader />}
+      {(generatingOffer ||
+        generatingRankList ||
+        movingCandidate ||
+        downloadingCandidateReport) && <Loader />}
       <ApprovalHistoryModal
         show={showApprovalHistory}
         onClose={() => setShowApprovalHistory(false)}
         historyData={approvalHistory}
         loading={loadingApprovalHistory}
       />
+     
+<Modal
+  show={showSchedulingConfigModal}
+  onHide={() => {}} 
+  backdrop="static"
+  keyboard={false}
+  centered
+>
+  <Modal.Header>
+    <Modal.Title>Unable to Open Ongoing Scheduling</Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    {schedulingConfigMessage}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button
+      variant="secondary"
+      onClick={() => setShowSchedulingConfigModal(false)}
+    >
+      Close
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </div>
   );
 }

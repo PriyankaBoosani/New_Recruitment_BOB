@@ -171,16 +171,25 @@ const candidateWorkflowServices = {
     return api.post("/recruiter/position-stage/action", payload);
   },
   getWorkflowHistory(posStageWorkflowId) {
-  return api.get(
-    `/recruiter/position-stage/get-workflow-history/${posStageWorkflowId}`
-  );
-  },
-  getOnboardingPool (payload)  {
-    return api.post(
-      "/recruiter/onboarding-pool/onboarding-pool",
-      payload
+    return api.get(
+      `/recruiter/position-stage/get-workflow-history/${posStageWorkflowId}`
     );
   },
+  getOnboardingPool(payload) {
+    return api.post("/recruiter/onboarding-pool/onboarding-pool", payload);
+  },
+getInterviewStatus(positionIds) {
+  return api.post(
+    "recruiter/interview-scheduling/job/status",
+    positionIds
+  );
+},
+  getInterviewJobDetails(positionIds) {
+    return api.post("/recruiter/interview-scheduling/job",
+      positionIds
+    );   
+  },
+
 };
 
 export default candidateWorkflowServices;

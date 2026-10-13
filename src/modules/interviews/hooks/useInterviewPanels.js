@@ -28,36 +28,100 @@ export const useInterviewPanels = (positionId, initialSelectedPanels = []) => {
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
-  const savePanel = (data) => {
-    try {
-      const isDuplicate = selectedPanels.some((p) => p.id === data.panelId);
+ const savePanel = (data) => {
+  try {
+    // NEW: support multi-select
+    // If panelIds exists, use it.
+    // Otherwise keep your existing single panelId behavior.
+    const panelIds = Array.isArray(data.panelIds)
+      ? data.panelIds
+      : [data.panelId];
 
-      // ❌ BLOCK duplicate (only in ADD mode)
-      if (!editPanel && isDuplicate) {
+    // Keep existing duplicate check for single panel
+    if (!editPanel && panelIds.length === 1) {
+      const isDuplicate = selectedPanels.some(
+        (p) => p.id === data.panelId
+      );
+
+      if (isDuplicate) {
         toast.error("Panel already selected");
         return;
       }
+    }
 
+    // NEW: check duplicates for multiple panels
+    if (!editPanel && panelIds.length > 1) {
+      const duplicatePanel = panelIds.find((id) =>
+        selectedPanels.some(
+          (p) => String(p.id) === String(id)
+        )
+      );
+
+      if (duplicatePanel) {
+        toast.error("Panel already selected");
+        return;
+      }
+    }
+
+    // EDIT MODE
+    if (editPanel) {
+      // Keep your existing edit behavior
       const newPanel = {
         id: data.panelId || Date.now(),
         name: data.panelName,
         slots: data.slots,
       };
 
-      if (editPanel) {
-        setSelectedPanels((prev) =>
-          prev.map((p, i) => (i === editPanel.index ? newPanel : p))
-        );
-      } else {
-        setSelectedPanels((prev) => [...prev, newPanel]);
+      setSelectedPanels((prev) =>
+        prev.map((p, i) =>
+          i === editPanel.index ? newPanel : p
+        )
+      );
+    }
+
+    // ADD MODE
+    else {
+      // Existing single-panel behavior
+      if (panelIds.length === 1) {
+        const newPanel = {
+          id: data.panelId || Date.now(),
+          name: data.panelName,
+          slots: data.slots,
+        };
+
+        setSelectedPanels((prev) => [
+          ...prev,
+          newPanel,
+        ]);
       }
 
-      setEditPanel(null);
-      setShowAddModal(false);
-    } catch {
-      toast.error("Failed to save panel");
+      // NEW multi-panel behavior
+      else {
+        const newPanels = panelIds.map((panelId) => {
+          const panel = availablePanels.find(
+            (p) => String(p.id) === String(panelId)
+          );
+
+          return {
+            id: panelId,
+            name: panel?.name || data.panelName,
+            slots: data.slots,
+          };
+        });
+
+        setSelectedPanels((prev) => [
+          ...prev,
+          ...newPanels,
+        ]);
+      }
     }
-  };
+
+    setEditPanel(null);
+    setShowAddModal(false);
+  } catch {
+    toast.error("Failed to save panel");
+  }
+};
   const confirmDelete = (index) => {
     setSelectedPanels((prev) => prev.filter((_, i) => i !== index));
 
@@ -80,10 +144,16 @@ export const useInterviewPanels = (positionId, initialSelectedPanels = []) => {
   };
   //new for load the panles which are assigned in committe management
   const loadPanels = async (positionId) => {
-    if (!positionId) return;
+    const positionIds = Array.isArray(positionId)
+      ? positionId
+      : positionId
+        ? [positionId]
+        : [];
+
+    if (!positionIds.length) return;
 
     try {
-      const response = await interviewService.getPanelsByPosition(positionId);
+      const response = await interviewService.getPanelsByPosition(positionIds);
 
       // ✅ FIXED PATH
       const apiList = response?.data || [];
@@ -131,9 +201,25 @@ export const useInterviewPanels = (positionId, initialSelectedPanels = []) => {
       const formatted = Object.values(groupedPanels);
 
       setAvailablePanels(formatted);
+// Get panel name for already selected/ongoing panels
+if (initialSelectedPanels?.length) {
+  const updatedSelectedPanels = initialSelectedPanels.map(
+    (selectedPanel) => {
+      const matchedPanel = formatted.find(
+        (panel) =>
+          String(panel.id) === String(selectedPanel.id)
+      );
 
-      // ❗ OPTIONAL: If you want already assigned panels pre-selected
-      // setSelectedPanels(formatted);
+      return {
+        ...selectedPanel,
+        name: matchedPanel?.name || selectedPanel.name || "",
+      };
+    }
+  );
+
+  setSelectedPanels(updatedSelectedPanels);
+}
+    
     } catch (error) {
       console.error("Error loading panels:", error);
       setAvailablePanels([]); // ✅ fix wrong state

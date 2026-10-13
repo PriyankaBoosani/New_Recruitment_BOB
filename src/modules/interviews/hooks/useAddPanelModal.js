@@ -25,7 +25,7 @@ export const useAddPanelModal = ({
         ];
 
   // const [panelName, setPanelName] = useState("");
-  const [panelId, setPanelId] = useState("");
+  const [panelId, setPanelId] = useState([]);
   const [rows, setRows] = useState([
     {
       date: "",
@@ -51,8 +51,13 @@ export const useAddPanelModal = ({
 
     setPanelAvailability([]);
 
-    setPanelId(initialPanel || "");
-
+    setPanelId(
+      Array.isArray(initialPanel)
+        ? initialPanel
+        : initialPanel
+          ? [initialPanel]
+          : []
+    );
     const builtRows = buildRows();
 
     setRows(builtRows);
@@ -77,11 +82,21 @@ export const useAddPanelModal = ({
     });
 
     setErrors(duplicateDates);
-  }, [initialPanel, show]); // 🔥 ONLY show// 🔥 ONLY show — do NOT add initialRows
+  }, [initialPanel, show]); // 
 
-  const selectedPanel = panels.find((p) => String(p.id) === String(panelId));
+  const selectedPanels = panels.filter((p) =>
+    panelId?.some((id) => String(id) === String(p.id))
+  );
 
-  const panelRanges = selectedPanel?.ranges || [];
+  const selectedPanel = selectedPanels[0];
+
+  //const panelRanges = selectedPanels.flatMap((panel) => panel.ranges || []);
+  const panelRanges = selectedPanels.flatMap((panel) =>
+    (panel.ranges || []).map((range) => ({
+      ...range,
+      panelName: panel.name,
+    }))
+  );
 
   const isDateWithinRanges = (date) => {
     if (!date) return false;
@@ -349,7 +364,9 @@ export const useAddPanelModal = ({
     }
 
     // ✅ FIND SELECTED PANEL
-    const selectedPanel = panels.find((p) => p.id === panelId);
+    const selectedPanel = panels.find(
+      (p) => String(p.id) === String(panelId?.[0])
+    );
 
     const invalidDateExists = rows.some(
       (row) => row.date && !isDateWithinRanges(row.date)
@@ -374,8 +391,15 @@ export const useAddPanelModal = ({
     }
 
     onSave({
-      panelId,
-      panelName: selectedPanel?.name, // ✅ FIX HERE
+      // Backward compatibility
+      panelId: panelId?.[0] || "",
+
+      // New multi-panel value
+      panelIds: panelId || [],
+
+      // Existing functionality
+      panelName: selectedPanel?.name,
+
       slots: rows,
     });
 
@@ -401,7 +425,7 @@ export const useAddPanelModal = ({
       setPanelInfoLoading(true);
 
       const res = await interviewService.getScheduledSlots({
-        panelId,
+       panelId: panelId?.[0] || "",
 
         panelStartDate: minDate,
 

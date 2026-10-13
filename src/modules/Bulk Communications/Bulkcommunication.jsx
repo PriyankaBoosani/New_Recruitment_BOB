@@ -5,9 +5,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import DropdownStripMultipleposition from "../candidatePreview/components/DropdownStripMultipleposition";
 import DropdownStrip from "../candidatePreview/components/DropdownStrip";
-import RequisitionStripformultiplepositions from "../candidatePreview/components/RequisitionStripformultiplepositions";
 import RequisitionStrip from "../candidatePreview/components/RequisitionStrip";
 import jobPositionApiService from "../jobPosting/services/jobPositionApiService";
 import masterApiService from "../master/services/masterApiService";
@@ -15,7 +13,6 @@ import BulkCommunicationPool from "./components/BulkCommunicationPool";
 import upload_icon from "../../assets/upload_Icon.png";
 import edit_icon from "../../assets/edit_icon.png";
 import view_icon from "../../assets/view_icon.png";
-import file_icon from "../../assets/file_icon.png";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
@@ -556,15 +553,6 @@ const Bulkcommunication = () => {
 
           <div className="mt-2 pt-1 pb-3">
             {normalizedRequisition && normalizedPosition && (
-              // <RequisitionStripformultiplepositions
-              //   requisition={normalizedRequisition}
-              //   position={selectedPosition}
-              //   isCardBg={false}
-              //   isSaveEnabled={false}
-              //   isSaveBtn={false}
-              //   saveButton={false}
-              //   onRemovePosition={handleRemovePosition}
-              // />
               <RequisitionStrip
                 requisition={normalizedRequisition}
                 position={normalizedPosition}
@@ -709,6 +697,7 @@ const Bulkcommunication = () => {
                       type="file"
                       ref={fileInputRef}
                       className="d-none"
+                      
                       onChange={handleFileChange}
                     />
 
