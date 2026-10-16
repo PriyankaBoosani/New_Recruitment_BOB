@@ -117,17 +117,17 @@ setCapacityMessage(
           </div>
 
           <div className="d-flex gap-2">
-            {/* VIEW SUMMARY BUTTON */}
-            <button
+          
+            {/* <button
               className="ipc-btn-outline"
               onClick={() => {
-                // open summary modal
+               
                 setShowSummaryModal(true);
               }}
             >
               <i className="bi bi-eye me-2"></i>
             {t("view_summary")}
-            </button>
+            </button> */}
 
             <button
               className="ipc-btn-blue"
@@ -270,14 +270,14 @@ setCapacityMessage(
         count={scheduledCount}
         onOk={() => setShowApplySuccess(false)}
       />
-
-      <InterviewScheduleSummaryModal
+ {/* disabled for now, as we are not showing summary modal */}
+      {/* <InterviewScheduleSummaryModal
         show={showSummaryModal}
         onClose={() => setShowSummaryModal(false)}
         candidates={candidates}
         selectedPanels={selectedPanels}
         availablePanels={availablePanels}
-      />
+      /> */}
       {showCapacityModal && (
         <div className="ipc-alert-overlay">
           <div className="ipc-alert-modal">

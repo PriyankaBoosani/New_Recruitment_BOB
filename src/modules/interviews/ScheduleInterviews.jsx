@@ -741,7 +741,7 @@ const ScheduleInterviews = () => {
                   positionIds: Array.isArray(selectedPositionId)
                     ? selectedPositionId
                     : [selectedPositionId],
-                  activeTab: "CANDIDATE_POOL",
+                   activeTab: sourceTab,
                 },
               });
             }}

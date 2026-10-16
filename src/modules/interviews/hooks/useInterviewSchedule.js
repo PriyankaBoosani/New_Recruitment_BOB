@@ -209,6 +209,10 @@ export default function useInterviewSchedule(isEditMode, isReschedule) {
           : [],
 
         zonalChangeMap: updatedZonalChangeMap,
+        sourceTab:
+          location.state?.sourceTab ||
+          location.state?.activeTab ||
+          "CANDIDATE_POOL",
       };
 
       const excelPanels = selectedPanels.flatMap((panel) =>

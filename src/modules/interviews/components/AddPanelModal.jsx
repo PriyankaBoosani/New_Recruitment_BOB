@@ -5,7 +5,7 @@ import "../../../style/css/InterviewPanelsConfig.css";
 import { formatDateDDMMYYYY } from "../../../shared/utils/dateUtils";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Select from "react-select";
+import Select, { components } from "react-select";
 const AddPanelModal = ({
   show,
   onClose,
@@ -18,6 +18,29 @@ const AddPanelModal = ({
 }) => {
   const { t } = useTranslation(["interviewSchedule", "common"]);
   
+const CustomMultiValueRemove = (props) => (
+  <>
+    <button
+      type="button"
+      className="ap-info-btn"
+      title={t("scheduled_interviews")}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        loadPanelAvailability();
+      }}
+    >
+      <i className="bi bi-info-circle" />
+    </button>
+
+    <components.MultiValueRemove {...props} />
+  </>
+);
+
 
   const {
     panelId,
@@ -99,32 +122,38 @@ const AddPanelModal = ({
           </Form.Label>
 
           <div className="ap-select-wrap">
-            <Select
-              isMulti
-              className={errors?.panelId ? "ap-error" : ""}
-              classNamePrefix="ap-react-select"
-              isDisabled={mode === "edit"}
-              placeholder={t("select_panel_placeholder")}
-              options={panels.map((panel) => ({
-                value: panel.id,
-                label: panel.name,
-              }))}
-              value={panels
-                .filter((panel) => panelId?.includes(panel.id))
-                .map((panel) => ({
-                  value: panel.id,
-                  label: panel.name,
-                }))}
-              onChange={(selectedOptions) => {
-                const selectedValues = selectedOptions
-                  ? selectedOptions.map((option) => option.value)
-                  : [];
+         <Select
+  isMulti
+ components={{
+  MultiValueRemove: CustomMultiValueRemove,
+}}
+  menuIsOpen={mode === "edit" ? false : undefined}
+  isSearchable={mode !== "edit"}
+  className={errors?.panelId ? "ap-error" : ""}
+  classNamePrefix="ap-react-select"
+  placeholder={t("select_panel_placeholder")}
+  options={panels.map((panel) => ({
+    value: panel.id,
+    label: panel.name,
+  }))}
+  value={panels
+    .filter((panel) => panelId?.includes(panel.id))
+    .map((panel) => ({
+      value: panel.id,
+      label: panel.name,
+    }))}
+  onChange={(selectedOptions) => {
+    if (mode === "edit") return;
 
-                setPanelId(selectedValues);
-                clearPanelError();
-              }}
-            />
-            {panelId?.length > 0 && (
+    const selectedValues = selectedOptions
+      ? selectedOptions.map((option) => option.value)
+      : [];
+
+    setPanelId(selectedValues);
+    clearPanelError();
+  }}
+/>
+            {/* {panelId?.length > 0 && (
               <button
                 type="button"
                 className="ap-info-btn"
@@ -136,7 +165,7 @@ const AddPanelModal = ({
               >
                 <i className="bi bi-info-circle" />
               </button>
-            )}
+            )} */}
 
             {showPanelInfo && (
               <div className="ap-panel-popover">
@@ -225,7 +254,9 @@ const AddPanelModal = ({
               {t("allowed_ranges")}:
               {panelRanges.map((range, index) => (
                 <div key={index} className="ap-range-item">
-                  <div className="ap-range-position">{range.panelName} - {range.positionName}</div>
+                  <div className="ap-range-position">
+                    {range.panelName} - {range.positionName}
+                  </div>
 
                   <div className="ap-range-dates">
                     {formatDateDDMMYYYY(range.startDate)} {t("to")}{" "}

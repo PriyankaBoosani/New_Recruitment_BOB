@@ -222,6 +222,7 @@ export default function CandidateScreening({ selectedJob }) {
   const [hasUnpublishedInterviewPosition, setHasUnpublishedInterviewPosition] =
     useState(false);
   const [interviewStatusData, setInterviewStatusData] = useState([]);
+  const [schedulingSourceTab, setSchedulingSourceTab] = useState(null);
   const [showSchedulingConfigModal, setShowSchedulingConfigModal] =
     useState(false);
   const [schedulingConfigMessage, setSchedulingConfigMessage] = useState(
@@ -540,108 +541,110 @@ export default function CandidateScreening({ selectedJob }) {
     });
   };
 
-const handleSchedulingOngoing = async () => {
-  try {
-    const positionIds = Array.isArray(selectedPositionId)
-      ? selectedPositionId.filter(Boolean)
-      : selectedPositionId
-        ? [selectedPositionId]
-        : [];
+  const handleSchedulingOngoing = async () => {
+    try {
+      const positionIds = Array.isArray(selectedPositionId)
+        ? selectedPositionId.filter(Boolean)
+        : selectedPositionId
+          ? [selectedPositionId]
+          : [];
 
-    if (positionIds.length === 0) {
-      toast.error("Position ID is missing");
-      return;
-    }
+      if (positionIds.length === 0) {
+        toast.error("Position ID is missing");
+        return;
+      }
 
-    if (
-      positionIds.length > 1 &&
-      positionIds.some((positionId) => {
-        const status = interviewStatusData.find(
-          (item) => String(item?.positionId) === String(positionId)
-        );
-        return !status?.jobNumber;
-      })
-    ) {
-      setShowSchedulingConfigModal(true);
-      return;
-    }
-
-    const response =
-      await candidateWorkflowServices.getInterviewJobDetails(positionIds);
-
-    // API returns multiple job details in an array
-    const jobDataList = response?.data?.data ?? response?.data ?? [];
-
-    if (!Array.isArray(jobDataList) || jobDataList.length === 0) {
-      toast.error("Interview scheduling details not found");
-      return;
-    }
-
-    let jobData;
-
-    if (positionIds.length > 1) {
-      const selectedJobs = positionIds.map((positionId) =>
-        jobDataList.find(
-          (job) => String(job?.positionId) === String(positionId)
-        )
-      );
-
-      if (selectedJobs.some((job) => !job?.jobNumber)) {
+      if (
+        positionIds.length > 1 &&
+        positionIds.some((positionId) => {
+          const status = interviewStatusData.find(
+            (item) => String(item?.positionId) === String(positionId)
+          );
+          return !status?.jobNumber;
+        })
+      ) {
         setShowSchedulingConfigModal(true);
         return;
       }
 
-      const jobNumbers = new Set(
-        selectedJobs.map((job) => String(job.jobNumber))
-      );
+      const response =
+        await candidateWorkflowServices.getInterviewJobDetails(positionIds);
 
-      if (jobNumbers.size !== 1) {
-        setSchedulingConfigMessage(
-          "The selected positions belong to different interview schedules. Please select positions associated with the same schedule to continue."
-        );
-        setShowSchedulingConfigModal(true);
+      // API returns multiple job details in an array
+      const jobDataList = response?.data?.data ?? response?.data ?? [];
+
+      if (!Array.isArray(jobDataList) || jobDataList.length === 0) {
+        toast.error("Interview scheduling details not found");
         return;
       }
 
-      jobData =
-        selectedJobs.find((job) => job?.jobDetails) ||
-        selectedJobs.find((job) => job?.status === "ACTIVE");
-    } else {
-      // Find an active scheduling job first, otherwise use a job with details.
-      const activeJob = jobDataList.find((job) => job?.status === "ACTIVE");
-      jobData = activeJob || jobDataList.find((job) => job?.jobDetails);
+      let jobData;
+
+      if (positionIds.length > 1) {
+        const selectedJobs = positionIds.map((positionId) =>
+          jobDataList.find(
+            (job) => String(job?.positionId) === String(positionId)
+          )
+        );
+
+        if (selectedJobs.some((job) => !job?.jobNumber)) {
+          setShowSchedulingConfigModal(true);
+          return;
+        }
+
+        const jobNumbers = new Set(
+          selectedJobs.map((job) => String(job.jobNumber))
+        );
+
+        if (jobNumbers.size !== 1) {
+          setSchedulingConfigMessage(
+            "The selected positions belong to different interview schedules. Please select positions associated with the same schedule to continue."
+          );
+          setShowSchedulingConfigModal(true);
+          return;
+        }
+
+        jobData =
+          selectedJobs.find((job) => job?.jobDetails) ||
+          selectedJobs.find((job) => job?.status === "ACTIVE");
+      } else {
+        // Find an active scheduling job first, otherwise use a job with details.
+        const activeJob = jobDataList.find((job) => job?.status === "ACTIVE");
+        jobData = activeJob || jobDataList.find((job) => job?.jobDetails);
+      }
+
+      if (!jobData) {
+        toast.error("Interview scheduling details not found");
+        return;
+      }
+
+      const sourceTab = jobData.sourceTab || jobData.activeTab || activeTab;
+
+      navigate("/schedule-interviews", {
+        state: {
+          positionIds,
+          positionId: positionIds.length > 1 ? positionIds : jobData.positionId,
+          jobNumber: jobData.jobNumber,
+          status: jobData.status,
+          jobDetails: jobData.jobDetails,
+
+          requisitionId: selectedRequisitionId,
+          requisition: normalizedRequisition,
+          position: selectedPosition,
+
+          activeTab: sourceTab,
+          sourceTab,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to fetch interview job details:", error);
+
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to load interview scheduling details"
+      );
     }
-
-    if (!jobData) {
-      toast.error("Interview scheduling details not found");
-      return;
-    }
-
-    navigate("/schedule-interviews", {
-      state: {
-        positionIds,
-        positionId: positionIds.length > 1 ? positionIds : jobData.positionId,
-        jobNumber: jobData.jobNumber,
-        status: jobData.status,
-        jobDetails: jobData.jobDetails,
-
-        requisitionId: selectedRequisitionId,
-        requisition: normalizedRequisition,
-        position: selectedPosition,
-
-        activeTab: "CANDIDATE_POOL",
-        sourceTab: "CANDIDATE_POOL",
-      },
-    });
-  } catch (error) {
-    console.error("Failed to fetch interview job details:", error);
-
-    toast.error(
-      error?.response?.data?.message ||
-        "Failed to load interview scheduling details"
-    );
-  }
-};
+  };
 
   const handleScreeningAction = async (action) => {
     try {
@@ -675,6 +678,9 @@ const handleSchedulingOngoing = async () => {
           ? "Submitted for approval successfully."
           : "Published successfully."
       );
+      if (action === "PUBLISH") {
+        await fetchSchedulingStatus();
+      }
 
       if (activeTab === "INTERVIEW_POOL") {
         await refetchInterviewPool();
@@ -2123,41 +2129,54 @@ const handleSchedulingOngoing = async () => {
 
     isNavModeRef.current = false;
   }, [positions]);
+  const fetchSchedulingStatus = async () => {
+    const positionIds = Array.isArray(selectedPositionId)
+      ? selectedPositionId.filter(Boolean)
+      : [];
+
+    if (!positionIds.length) {
+      setIsSchedulingOngoing(false);
+      setHasUnpublishedInterviewPosition(false);
+      setInterviewStatusData([]);
+      return;
+    }
+
+    try {
+      const response =
+        await candidateWorkflowServices.getInterviewStatus(positionIds);
+
+      const statusData = Array.isArray(response?.data) ? response.data : [];
+      const sourceTabs = [
+        ...new Set(
+          statusData
+            .map((position) => position?.sourceTab || position?.activeTab)
+            .filter(Boolean)
+            .map((tab) => String(tab).toUpperCase())
+        ),
+      ];
+
+      setIsSchedulingOngoing(
+        statusData.some((position) => position?.isScheduled === true)
+      );
+      setSchedulingSourceTab(sourceTabs.length === 1 ? sourceTabs[0] : null);
+
+      setHasUnpublishedInterviewPosition(
+        statusData.some((position) => position?.ispublished === false)
+      );
+
+      setInterviewStatusData(statusData);
+    } catch (error) {
+      console.error("Failed to fetch scheduling status:", error);
+      setIsSchedulingOngoing(false);
+      setSchedulingSourceTab(null);
+      setHasUnpublishedInterviewPosition(false);
+      setInterviewStatusData([]);
+    }
+  };
+
   useEffect(() => {
-    const fetchSchedulingStatus = async () => {
-      const positionIds = Array.isArray(selectedPositionId)
-        ? selectedPositionId.filter(Boolean)
-        : [];
-
-      if (!positionIds.length) {
-        setIsSchedulingOngoing(false);
-        setHasUnpublishedInterviewPosition(false);
-        setInterviewStatusData([]);
-        return;
-      }
-
-      try {
-        const response =
-          await candidateWorkflowServices.getInterviewStatus(positionIds);
-        const statusData = Array.isArray(response?.data) ? response.data : [];
-
-        setIsSchedulingOngoing(
-          statusData.some((position) => position?.isScheduled === true)
-        );
-        setHasUnpublishedInterviewPosition(
-          statusData.some((position) => position?.ispublished === false)
-        );
-        setInterviewStatusData(statusData);
-      } catch (error) {
-        console.error("Failed to fetch scheduling status:", error);
-        setIsSchedulingOngoing(false);
-        setHasUnpublishedInterviewPosition(false);
-        setInterviewStatusData([]);
-      }
-    };
-
     fetchSchedulingStatus();
-  }, [selectedPositionId]);
+  }, [selectedPositionId, activeTab]);
 
   const refreshCandidatesAfterSchedule = async () => {
     // reset pagination if needed
@@ -4196,18 +4215,26 @@ const handleSchedulingOngoing = async () => {
 
                   {/* RIGHT SIDE BUTTONS */}
                   <div className="d-flex gap-2">
+                    {[
+                      "CANDIDATE_POOL",
+                      "INTERVIEW_POOL",
+                      "SCHEDULE_POOL",
+                    ].includes(activeTab) &&
+                      isSchedulingOngoing &&
+                    //  schedulingSourceTab === activeTab && (
+                        <button
+                          className="btn btn-primary fs-14 text-white"
+                          type="button"
+                          onClick={handleSchedulingOngoing}
+                        >
+                          {t("candidateWorkflow:Scheduling_ongoing")}
+                        </button>
+          //            )}
+          }
+
                     {(activeTab === "CANDIDATE_POOL" ||
                       activeTab === "INTERVIEW_POOL") && (
                       <>
-                        {isSchedulingOngoing && (
-                          <button
-                            className="btn btn-primary fs-14 text-white"
-                            type="button"
-                            onClick={handleSchedulingOngoing}
-                          >
-                            {t("candidateWorkflow:Scheduling_ongoing")}
-                          </button>
-                        )}
                         {hasCandidatesInPool && isRecruiter && (
                           <button
                             className="btn blue-bg text-white fs-14"
@@ -4233,35 +4260,50 @@ const handleSchedulingOngoing = async () => {
                     {activeTab === "CANDIDATE_POOL" &&
                       hasPrivilege("Interview Pool") &&
                       selectedPositionId.length > 0 &&
-                      selectedCandidateIds.length > 0 && (
+                      selectedCandidateIds.length > 0 &&
+                      selectedCandidates.length > 0 &&
+                      selectedCandidates.every(
+                        (candidate) => candidate.status === "Shortlisted"
+                      ) && (
                         <div className="d-flex gap-2">
-                          <OverlayTrigger
-                            placement="top"
-                            overlay={
-                              <Tooltip id="schedule-interview-tooltip">
-                                {hasUnpublishedInterviewPosition
-                                  ? "Cannot schedule while one or more selected positions are unpublished."
-                                  : !canScheduleMultiPositionInterview
-                                    ? "Schedule Interview is available only when all selected candidates are Published."
-                                    : "Schedule an interview for the selected candidates."}
-                              </Tooltip>
-                            }
-                          >
-                            <span>
-                              <button
-                                type="button"
-                                className="btn blue-bg text-white fs-14"
-                                disabled={
-                                  !canScheduleMultiPositionInterview ||
-                                  hasUnpublishedInterviewPosition ||
-                                  selectedCandidateIds.length === 0
-                                }
-                                onClick={handleScheduleInterview}
-                              >
-                                {t("candidateWorkflow:schedule_interview")}
-                              </button>
-                            </span>
-                          </OverlayTrigger>
+                          {hasUnpublishedInterviewPosition ? (
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id="schedule-interview-tooltip">
+                                  Cannot schedule while one or more selected
+                                  positions are unpublished.
+                                </Tooltip>
+                              }
+                            >
+                              <span>
+                                <button
+                                  type="button"
+                                  className="btn blue-bg text-white fs-14"
+                                  disabled={
+                                    !canScheduleMultiPositionInterview ||
+                                    hasUnpublishedInterviewPosition ||
+                                    selectedCandidateIds.length === 0
+                                  }
+                                  onClick={handleScheduleInterview}
+                                >
+                                  {t("candidateWorkflow:schedule_interview")}
+                                </button>
+                              </span>
+                            </OverlayTrigger>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn blue-bg text-white fs-14"
+                              disabled={
+                                !canScheduleMultiPositionInterview ||
+                                selectedCandidateIds.length === 0
+                              }
+                              onClick={handleScheduleInterview}
+                            >
+                              {t("candidateWorkflow:schedule_interview")}
+                            </button>
+                          )}
                         </div>
                       )}
                     {activeTab === "INTERVIEW_POOL" &&
@@ -4626,25 +4668,6 @@ const handleSchedulingOngoing = async () => {
         errorCandidates={errorCandidates}
       />
 
-      <Modal
-        show={showSchedulingConfigModal}
-        onHide={() => setShowSchedulingConfigModal(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Unable to Open Ongoing Scheduling</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{schedulingConfigMessage}</Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => setShowSchedulingConfigModal(false)}
-          >
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
       <ScheduleApprovalModal
         show={showApprovalModal}
         onClose={() => setShowApprovalModal(false)}
@@ -4760,32 +4783,32 @@ const handleSchedulingOngoing = async () => {
         historyData={approvalHistory}
         loading={loadingApprovalHistory}
       />
-     
-<Modal
-  show={showSchedulingConfigModal}
-  onHide={() => {}} 
-  backdrop="static"
-  keyboard={false}
-  centered
->
-  <Modal.Header>
-    <Modal.Title>Unable to Open Ongoing Scheduling</Modal.Title>
-  </Modal.Header>
 
-  <Modal.Body>
-    {schedulingConfigMessage}
-  </Modal.Body>
+      <Modal
+        show={showSchedulingConfigModal}
+        onHide={() => {}}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Modal.Header className="border-0 pb-2 blue-color ">
+          <Modal.Title className="fs-15">
+            Unable to Open Ongoing Scheduling
+          </Modal.Title>
+        </Modal.Header>
 
-  <Modal.Footer>
-    <Button
-      variant="secondary"
-      onClick={() => setShowSchedulingConfigModal(false)}
-    >
-      Close
-    </Button>
-  </Modal.Footer>
-</Modal>
+        <Modal.Body className="fs-15">{schedulingConfigMessage}</Modal.Body>
 
+        <Modal.Footer className="border-0">
+          <Button
+            className="fs-15"
+            variant="outline-secondary"
+            onClick={() => setShowSchedulingConfigModal(false)}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

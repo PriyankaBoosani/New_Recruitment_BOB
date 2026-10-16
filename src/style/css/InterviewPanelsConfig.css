@@ -882,7 +882,7 @@
   line-height: 1.5;
 }
 
-.ap-info-btn {
+/* .ap-info-btn {
   position: absolute;
 
   right: 42px;
@@ -916,14 +916,30 @@
   justify-content: center;
 
   transition: all 0.2s ease;
-}
+} */
 
-.ap-info-btn:hover {
+/* .ap-info-btn:hover {
   background: #1971c2;
 
   color: #fff;
 
   transform: translateY(-50%) scale(1.1);
+} */
+ .ap-info-btn {
+  border: none;
+  background: transparent;
+  color: #0d6efd;
+  cursor: pointer;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.ap-info-btn:hover {
+  color: #084298;
 }
 
 .ap-no-arrow {
