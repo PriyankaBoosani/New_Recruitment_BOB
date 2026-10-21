@@ -521,17 +521,7 @@ export const useExperience = () => {
         }))
       : [];
 
-    console.log("5. MAPPED integratedGroup:", integratedGroup);
-
     const isIntegratedCourse = item.isIntegratedCourse === true;
-
-    console.log("6. CALCULATED isIntegratedCourse:", {
-      value: isIntegratedCourse,
-      type: typeof isIntegratedCourse,
-      originalValue: item?.isIntegratedCourse,
-      comparisonResult: item?.isIntegratedCourse === true,
-    });
-
     const specializationOthers = isIntegratedCourse
       ? []
       : (item.specialization || [])
@@ -542,12 +532,6 @@ export const useExperience = () => {
                   typeof g === "object" ? String(g.value) : String(g)
                 )
               : [];
-
-            console.log(`7.${index} SPECIALIZATION:`, {
-              spec,
-              originalIcGroups: spec?.icGroups,
-              mappedIntegratedSpecializations: integratedSpecializations,
-            });
 
             return {
               ...spec,
@@ -572,36 +556,21 @@ export const useExperience = () => {
       integratedSpecializations: [],
     };
 
-    console.log("8. FINAL FORM DATA BEFORE setFormData:", editFormData);
-
-    console.log("9. FINAL isIntegratedCourse:", {
-      value: editFormData.isIntegratedCourse,
-      type: typeof editFormData.isIntegratedCourse,
-    });
-
     setFormData([editFormData]);
 
-    console.log("10. setFormData CALLED");
 
     if (integratedGroup.length > 0) {
-      console.log(
-        "11. FETCHING integrated specializations FOR:",
-        integratedGroup.map((group) => group.value)
-      );
 
       fetchIntegratedSpecializations(
         integratedGroup.map((group) => group.value)
       );
-    } else {
-      console.log("11. NO integratedGroup - skipping fetch");
-    }
+    } 
 
     setErrors([]);
     setIsEditMode(true);
     setEditIndex(index);
     setShowModal(true);
 
-    console.log("========== EDIT END ==========");
   };
 
   // ✅ STEP 3: ADD THIS FILTER

@@ -10,10 +10,7 @@ export const mapEducationListFromApi = (list = [], educationOptions = []) => {
     const docId = String(item?.qualification?.levelId || "").toLowerCase();
 
     const firstGroup = item?.specializations?.[0]?.group || null;
-console.log(
-  "API isIntegratedCourse:",
-  item?.qualification?.isIntegratedCourse
-);
+
     return {
       educationLevel: docMap.get(docId) || "-",
       qualificationCode: item?.qualification?.qualificationCode || "-",

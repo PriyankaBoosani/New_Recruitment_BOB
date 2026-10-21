@@ -492,13 +492,6 @@ const ScheduleInterviews = () => {
               })),
             };
 
-            console.log(
-              "Scheduling Ongoing - Application IDs:",
-              applicationIds
-            );
-
-            console.log("Scheduling Ongoing Apply Payload:", ongoingPayload);
-
             setPendingApplyData(ongoingPayload);
           }
 
